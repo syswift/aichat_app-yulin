@@ -3,8 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
-import 'package:video_thumbnail/video_thumbnail.dart';
-import 'package:path_provider/path_provider.dart';
 import '../../../utils/responsive_size.dart';
 
 class MediaPreviewPage extends StatefulWidget {
@@ -38,40 +36,6 @@ class _MediaPreviewPageState extends State<MediaPreviewPage> {
     ]);
     if (widget.isVideo) {
       _initVideoPlayer();
-      _generateThumbnail();
-    }
-  }
-
-  Future<void> _generateThumbnail() async {
-    if (!widget.isVideo) return;
-
-    try {
-      setState(() {
-      });
-
-      // 生成缩略图
-      final directory = await getApplicationDocumentsDirectory();
-      final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final thumbnailPath = '${directory.path}/thumbnail_$timestamp.jpg';
-
-      // 使用 video_thumbnail 生成缩略图
-      final String? path = await VideoThumbnail.thumbnailFile(
-        video: widget.mediaPath,
-        thumbnailPath: thumbnailPath,
-        imageFormat: ImageFormat.JPEG,
-        maxWidth: 512, // 可以调整缩略图大小
-        quality: 75,   // 可以调整图片质量
-      );
-
-      if (path != null) {
-        setState(() {
-          _thumbnailPath = path;
-        });
-      }
-    } catch (e) {
-      debugPrint('生成缩略图错误: $e');
-      setState(() {
-      });
     }
   }
 

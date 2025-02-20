@@ -5,7 +5,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:intl/intl.dart';
-import 'package:video_thumbnail/video_thumbnail.dart';
+import 'package:video_player/video_player.dart';
 import 'chat_message.dart';
 import 'teacher.dart';
 import '../../../utils/responsive_size.dart';
@@ -31,6 +31,7 @@ class _TeacherChatPageState extends State<TeacherChatPage> {
   String? _currentAudioPath;
   final Map<String, bool> _playingStates = {};
   Teacher? _currentTeacher;
+  final Map<String, VideoPlayerController> _videoControllers = {};
 
   @override
   void initState() {
@@ -139,70 +140,43 @@ class _TeacherChatPageState extends State<TeacherChatPage> {
     }
   }
 
-   Future<void> _pickVideo() async {
-  try {
-    debugPrint('开始选择视频...');
-    final ImagePicker picker = ImagePicker();
-    final XFile? video = await picker.pickVideo(
-      source: ImageSource.gallery,
-      maxDuration: const Duration(minutes: 10), // 添加最大时长限制
-    );
-    
-    if (video != null) {
-      debugPrint('选择视频成功，路径: ${video.path}');
-      
-      // 检查视频文件是否存在
-      final videoFile = File(video.path);
-      if (!await videoFile.exists()) {
-        throw Exception('视频文件不存在');
-      }
-      
-      debugPrint('开始生成缩略图...');
-      // 先生成缩略图
-      final directory = await getApplicationDocumentsDirectory();
-      final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final thumbnailPath = '${directory.path}/thumbnail_$timestamp.jpg';
-      
-      // 生成缩略图
-      final String? thumbnail = await VideoThumbnail.thumbnailFile(
-        video: video.path,
-        thumbnailPath: thumbnailPath,
-        imageFormat: ImageFormat.JPEG,
-        maxWidth: 512,
-        quality: 75,
+  Future<void> _pickVideo() async {
+    try {
+      debugPrint('开始选择视频...');
+      final ImagePicker picker = ImagePicker();
+      final XFile? video = await picker.pickVideo(
+        source: ImageSource.gallery,
+        maxDuration: const Duration(minutes: 10),
       );
-
-      debugPrint('缩略图生成结果: $thumbnail');
-
-      if (thumbnail != null) {
-        // 检查缩略图文件是否存在
-        final thumbnailFile = File(thumbnail);
-        if (!await thumbnailFile.exists()) {
-          throw Exception('缩略图文件生成失败');
+      
+      if (video != null) {
+        debugPrint('选择视频成功，路径: ${video.path}');
+        
+        // 检查视频文件是否存在
+        final videoFile = File(video.path);
+        if (!await videoFile.exists()) {
+          throw Exception('视频文件不存在');
         }
 
-        debugPrint('发送视频消息...');
-        // 发送带有缩略图的视频消息
+        // 直接发送视频消息，使用默认封面
         await _sendMessage(
           '视频消息',
           MessageType.video,
           mediaPath: video.path,
-          thumbnailPath: thumbnail,
         );
         debugPrint('视频消息发送成功');
+        
       } else {
-        throw Exception('缩略图生成失败');
+        debugPrint('用户取消选择视频');
       }
-    } else {
-      debugPrint('用户取消选择视频');
+    } catch (e, stackTrace) {
+      debugPrint('选择视频失败: $e');
+      debugPrint('错误堆栈: $stackTrace');
+      _showError('选择视频失败: $e');
     }
-  } catch (e, stackTrace) {
-    debugPrint('选择视频失败: $e');
-    debugPrint('错误堆栈: $stackTrace');
-    _showError('选择视频失败: $e');
   }
-}
-    Future<void> _startRecording() async {
+
+  Future<void> _startRecording() async {
     try {
       if (_isRecording) {
         await _stopRecording();
@@ -547,8 +521,22 @@ class _TeacherChatPageState extends State<TeacherChatPage> {
     );
   }
 
-  // 添加视频气泡构建方法
+  // 修改视频气泡构建方法
   Widget _buildVideoBubble(ChatMessage message) {
+    // 如果这个消息的视频控制器还没有初始化，就初始化它
+    if (!_videoControllers.containsKey(message.id)) {
+      final controller = VideoPlayerController.file(File(message.mediaUrl!));
+      _videoControllers[message.id] = controller;
+      controller.initialize().then((_) {
+        // 确保组件还在树中
+        if (mounted) {
+          setState(() {});
+        }
+      });
+    }
+
+    final controller = _videoControllers[message.id]!;
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -575,31 +563,73 @@ class _TeacherChatPageState extends State<TeacherChatPage> {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            // 显示缩略图
-            if (message.thumbnailUrl != null)
-              ClipRRect(
-                borderRadius: BorderRadius.circular(ResponsiveSize.w(16)),
-                child: Image.file(
-                  File(message.thumbnailUrl!),
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  height: double.infinity,
+            // 视频预览
+            ClipRRect(
+              borderRadius: BorderRadius.circular(ResponsiveSize.w(16)),
+              child: controller.value.isInitialized
+                  ? AspectRatio(
+                      aspectRatio: controller.value.aspectRatio,
+                      child: VideoPlayer(controller),
+                    )
+                  : const Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                      ),
+                    ),
+            ),
+            // 播放/暂停按钮
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  if (controller.value.isPlaying) {
+                    controller.pause();
+                  } else {
+                    // 暂停其他正在播放的视频
+                    for (var otherController in _videoControllers.values) {
+                      if (otherController != controller && otherController.value.isPlaying) {
+                        otherController.pause();
+                      }
+                    }
+                    controller.play();
+                  }
+                });
+                // 阻止事件冒泡到外层的 GestureDetector
+                return;
+              },
+              child: Container(
+                width: ResponsiveSize.w(50),
+                height: ResponsiveSize.w(50),
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.5),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
+                  color: Colors.white,
+                  size: ResponsiveSize.w(30),
                 ),
               ),
-            // 播放按钮
-            Container(
-              width: ResponsiveSize.w(50),
-              height: ResponsiveSize.w(50),
-              decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.5),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.play_arrow,
-                color: Colors.white,
-                size: ResponsiveSize.w(30),
-              ),
             ),
+            // 视频进度条
+            if (controller.value.isInitialized)
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: VideoProgressIndicator(
+                  controller,
+                  allowScrubbing: true,
+                  colors: const VideoProgressColors(
+                    playedColor: Color(0xFFFFDFA7),
+                    bufferedColor: Colors.white24,
+                    backgroundColor: Colors.grey,
+                  ),
+                  padding: EdgeInsets.symmetric(
+                    vertical: ResponsiveSize.h(8),
+                    horizontal: ResponsiveSize.w(8),
+                  ),
+                ),
+              ),
           ],
         ),
       ),
@@ -819,6 +849,11 @@ class _TeacherChatPageState extends State<TeacherChatPage> {
 
   @override
   void dispose() {
+    // 释放所有视频控制器
+    for (var controller in _videoControllers.values) {
+      controller.dispose();
+    }
+    _videoControllers.clear();
     _messageController.dispose();
     _scrollController.dispose();
     _audioRecorder.dispose();
