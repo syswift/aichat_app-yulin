@@ -15,11 +15,63 @@ import './studentSchoolnews/student_school_news.dart';
 import '../utils/responsive_size.dart';
 import './freeStudyView/happyListen/happy_listen_chapters.dart';
 import '../common/widgets/logout_button.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-class StudentPage extends StatelessWidget {
+// Get Supabase client instance
+final supabase = Supabase.instance.client;
+
+class StudentPage extends StatefulWidget {
   const StudentPage({super.key});
+
+  @override
+  State<StudentPage> createState() => _StudentPageState();
+}
+
+class _StudentPageState extends State<StudentPage> {
   final int unreadCount = 2;
   final int unreadNewsCount = 3;
+
+  bool _isLoading = true;
+  String _username = "加载中...";
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserProfile();
+  }
+
+  Future<void> _loadUserProfile() async {
+    try {
+      // Get the current authenticated user
+      final User? user = supabase.auth.currentUser;
+
+      if (user != null) {
+        // Fetch the user's profile from the profiles table
+        final response =
+            await supabase
+                .from('profiles')
+                .select('username')
+                .eq('id', user.id)
+                .single();
+
+        setState(() {
+          _username = response['username'] ?? "未知用户";
+          _isLoading = false;
+        });
+      } else {
+        setState(() {
+          _username = "未登录";
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _username = "获取失败";
+        _isLoading = false;
+      });
+      debugPrint('Error loading profile: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -298,35 +350,25 @@ class StudentPage extends StatelessWidget {
                   CrossAxisAlignment.center, // Center vertically
               children: [
                 Container(
-                  width: ResponsiveSize.w(170), // Further reduced from 180
-                  padding: EdgeInsets.symmetric(
-                    // Changed to symmetric padding
-                    horizontal: ResponsiveSize.w(10),
-                    vertical: ResponsiveSize.h(15),
-                  ),
+                  width: ResponsiveSize.w(200),
                   child: Row(
-                    mainAxisSize: MainAxisSize.min, // Added to prevent overflow
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       CircleAvatar(
-                        radius: ResponsiveSize.w(25), // Further reduced from 30
-                        backgroundImage: const AssetImage('assets/AIStudy.png'),
+                        radius: ResponsiveSize.w(25),
+                        backgroundColor: Colors.blue.shade100,
+                        child: Icon(
+                          Icons.person,
+                          size: ResponsiveSize.w(30),
+                          color: Colors.blue.shade800,
+                        ),
                       ),
-                      SizedBox(
-                        width: ResponsiveSize.w(8),
-                      ), // Further reduced from 10
-                      Flexible(
-                        // Wrapped with Flexible to allow text to squeeze if needed
-                        child: Text(
-                          '示例学生',
-                          style: TextStyle(
-                            fontSize: ResponsiveSize.sp(
-                              20,
-                            ), // Further reduced from 22
-                            fontWeight: FontWeight.bold,
-                          ),
-                          overflow:
-                              TextOverflow
-                                  .ellipsis, // Added to handle long text
+                      SizedBox(width: ResponsiveSize.w(10)),
+                      Text(
+                        _isLoading ? "加载中..." : _username,
+                        style: TextStyle(
+                          fontSize: ResponsiveSize.sp(18),
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ],
