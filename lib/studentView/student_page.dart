@@ -15,6 +15,7 @@ import './studentSchoolnews/student_school_news.dart';
 import '../utils/responsive_size.dart';
 import './freeStudyView/happyListen/happy_listen_chapters.dart';
 import '../common/widgets/logout_button.dart';
+import '../common/widgets/profile_username_widget.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 // Get Supabase client instance
@@ -31,46 +32,10 @@ class _StudentPageState extends State<StudentPage> {
   final int unreadCount = 2;
   final int unreadNewsCount = 3;
 
-  bool _isLoading = true;
-  String _username = "加载中...";
-
   @override
   void initState() {
     super.initState();
-    _loadUserProfile();
-  }
-
-  Future<void> _loadUserProfile() async {
-    try {
-      // Get the current authenticated user
-      final User? user = supabase.auth.currentUser;
-
-      if (user != null) {
-        // Fetch the user's profile from the profiles table
-        final response =
-            await supabase
-                .from('profiles')
-                .select('username')
-                .eq('id', user.id)
-                .single();
-
-        setState(() {
-          _username = response['username'] ?? "未知用户";
-          _isLoading = false;
-        });
-      } else {
-        setState(() {
-          _username = "未登录";
-          _isLoading = false;
-        });
-      }
-    } catch (e) {
-      setState(() {
-        _username = "获取失败";
-        _isLoading = false;
-      });
-      debugPrint('Error loading profile: $e');
-    }
+    // Removed _loadUserProfile() call as ProfileUsernameWidget handles it
   }
 
   @override
@@ -364,11 +329,11 @@ class _StudentPageState extends State<StudentPage> {
                         ),
                       ),
                       SizedBox(width: ResponsiveSize.w(10)),
-                      Text(
-                        _isLoading ? "加载中..." : _username,
+                      const ProfileUsernameWidget(
                         style: TextStyle(
-                          fontSize: ResponsiveSize.sp(18),
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
+                          color: Color(0xFF2B4C80),
                         ),
                       ),
                     ],
