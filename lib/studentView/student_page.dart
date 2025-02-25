@@ -8,7 +8,7 @@ import './fixedStudyView/fixed_study_page.dart';
 import 'pointsExchange/points_exchange_page.dart';
 import 'historyRecord/reading_history.dart';
 import './parentCenter/parent_auth_page.dart';
-import 'personalInfo/personal_info_page.dart';
+//import 'personalInfo/personal_info_page.dart';
 import 'workShow/show_room.dart';
 import 'messageReceive/message_receive_page.dart';
 import './studentSchoolnews/student_school_news.dart';
