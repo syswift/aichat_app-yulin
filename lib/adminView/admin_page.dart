@@ -284,20 +284,55 @@ class AdminPage extends StatelessWidget {
   }
 
   Widget _buildMainContent(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(ResponsiveSize.w(20)),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildContentCard(context, '学员管理', 'assets/student_manage.png'),
-          SizedBox(width: ResponsiveSize.w(20)),
-          _buildContentCard(context, '班级管理', 'assets/class2.png'),
-          SizedBox(width: ResponsiveSize.w(20)),
-          _buildContentCard(context, '员工管理', 'assets/staff_manage.png'),
-          SizedBox(width: ResponsiveSize.w(20)),
-          _buildContentCard(context, '积分商城', 'assets/points_shop.png'),
-        ],
+    return Center(
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.all(ResponsiveSize.w(20)),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // First row - existing cards
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildContentCard(
+                    context,
+                    '学员管理',
+                    'assets/student_manage.png',
+                  ),
+                  SizedBox(width: ResponsiveSize.w(40)),
+                  _buildContentCard(context, '班级管理', 'assets/class2.png'),
+                  SizedBox(width: ResponsiveSize.w(40)),
+                  _buildContentCard(context, '员工管理', 'assets/staff_manage.png'),
+                  SizedBox(width: ResponsiveSize.w(40)),
+                  _buildContentCard(context, '积分商城', 'assets/points_shop.png'),
+                ],
+              ),
+
+              SizedBox(height: ResponsiveSize.h(40)), // Spacing between rows
+              // Second row - new cards
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildContentCard(
+                    context,
+                    '绘本编辑',
+                    'assets/textbook_manage.png',
+                  ),
+                  SizedBox(width: ResponsiveSize.w(40)),
+                  _buildContentCard(context, '系统设置', 'assets/setting.png'),
+                  SizedBox(width: ResponsiveSize.w(40)),
+                  _buildContentCard(context, '数据统计', 'assets/statistics.png'),
+                  SizedBox(width: ResponsiveSize.w(40)),
+                  _buildContentCard(context, '用户反馈', 'assets/feedback.png'),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -310,6 +345,7 @@ class AdminPage extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         switch (title) {
+          // Existing cases
           case '学员管理':
             Navigator.push(
               context,
@@ -337,6 +373,24 @@ class AdminPage extends StatelessWidget {
                 builder: (context) => const PointsShopManagePage(),
               ),
             );
+            break;
+
+          // New cases - Add placeholder logic for new destinations
+          case '绘本编辑':
+            // TODO: Create TextbookReviewPage and update navigation
+            _showComingSoonDialog(context, '绘本编辑');
+            break;
+          case '系统设置':
+            // TODO: Create SystemSettingsPage and update navigation
+            _showComingSoonDialog(context, '系统设置');
+            break;
+          case '数据统计':
+            // TODO: Create StatisticsPage and update navigation
+            _showComingSoonDialog(context, '数据统计');
+            break;
+          case '用户反馈':
+            // TODO: Create UserFeedbackPage and update navigation
+            _showComingSoonDialog(context, '用户反馈');
             break;
         }
       },
@@ -396,6 +450,27 @@ class AdminPage extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  // Helper method to show a temporary dialog for unimplemented features
+  void _showComingSoonDialog(BuildContext context, String feature) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('功能开发中'),
+          content: Text('$feature 功能即将推出，敬请期待！'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('确定'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }
