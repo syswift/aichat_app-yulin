@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+//import 'package:supabase_flutter/supabase_flutter.dart';
 import '../studentView/student_page.dart';
 import '../teacherView/teacher_page.dart';
 import 'studentManage/student_manage_page.dart';
@@ -7,9 +8,20 @@ import 'staffManage/staff_manage_page.dart';
 import 'pointsShop/points_shop_manage_page.dart';
 import '../../../utils/responsive_size.dart';
 import '../common/widgets/logout_button.dart';
+import '../common/widgets/profile_username_widget.dart';
 
-class AdminPage extends StatelessWidget {
+class AdminPage extends StatefulWidget {
   const AdminPage({super.key});
+
+  @override
+  State<AdminPage> createState() => _AdminPageState();
+}
+
+class _AdminPageState extends State<AdminPage> {
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -125,14 +137,7 @@ class AdminPage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          '管理员',
-                          style: TextStyle(
-                            fontSize: ResponsiveSize.sp(24),
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xFF2B4C80),
-                          ),
-                        ),
+                        const ProfileUsernameWidget(),
                         SizedBox(height: ResponsiveSize.h(6)),
                         Container(
                           padding: EdgeInsets.symmetric(

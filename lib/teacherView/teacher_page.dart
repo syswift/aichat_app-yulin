@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+//import 'package:supabase_flutter/supabase_flutter.dart';
 import '../studentView/student_page.dart';
 import '../adminView/admin_page.dart';
 import './assignTask/assign_task_page.dart';
@@ -11,9 +12,20 @@ import './pointsManage/points_manage_page.dart';
 import '../studentView/workShow/show_room.dart';
 import '../../../utils/responsive_size.dart';
 import '../common/widgets/logout_button.dart';
+import '../common/widgets/profile_username_widget.dart';
 
-class TeacherPage extends StatelessWidget {
+class TeacherPage extends StatefulWidget {
   const TeacherPage({super.key});
+
+  @override
+  State<TeacherPage> createState() => _TeacherPageState();
+}
+
+class _TeacherPageState extends State<TeacherPage> {
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -139,14 +151,7 @@ class TeacherPage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          '王老师',
-                          style: TextStyle(
-                            fontSize: ResponsiveSize.sp(24),
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xFF2B4C80),
-                          ),
-                        ),
+                        const ProfileUsernameWidget(),
                         SizedBox(height: ResponsiveSize.h(6)),
                         Container(
                           padding: EdgeInsets.symmetric(
