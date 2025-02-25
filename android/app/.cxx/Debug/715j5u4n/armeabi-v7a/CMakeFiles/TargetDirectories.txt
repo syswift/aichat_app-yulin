@@ -1,0 +1,2 @@
+D:/ai_project/aichat_app-yulin/android/app/.cxx/Debug/715j5u4n/armeabi-v7a/CMakeFiles/edit_cache.dir
+D:/ai_project/aichat_app-yulin/android/app/.cxx/Debug/715j5u4n/armeabi-v7a/CMakeFiles/rebuild_cache.dir
