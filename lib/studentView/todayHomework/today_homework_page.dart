@@ -5,6 +5,7 @@ import 'writing_homework_page.dart';
 import 'listening_homework_page.dart';
 import 'speaking_homework_page.dart';
 import 'reading_homework_page.dart';
+
 class TodayHomeworkPage extends StatefulWidget {
   const TodayHomeworkPage({super.key});
 
@@ -25,46 +26,49 @@ class _TodayHomeworkPageState extends State<TodayHomeworkPage> {
   ];
 
   // 示例作业数据
- // 在 homeworkList 中添加 content 字段
-final List<Map<String, dynamic>> homeworkList = [
-  {
-    'title': 'Unit 1 - Animals',
-    'type': '听力理解',
-    'status': '未完成',
-    'cover': 'assets/cartoon.png',
-    'publishDate': '2024-03-15',
-    'dueDate': '2024-11-28',
-    'content': '请听录音，回答以下问题：\n1. What animals are mentioned in the recording?\n2. What do they eat?',
-  },
-  {
-    'title': 'Unit 2 - Daily Life',
-    'type': '口语表达',
-    'status': '有点评',
-    'cover': 'assets/cartoon.png',
-    'publishDate': '2024-03-16',
-    'dueDate': '2024-11-29',
-    'content': '请录制一段口语，描述你的日常生活：\n1. 描述你的早晨routine\n2. 描述你最喜欢的课程',
-  },
-  {
-    'title': 'Unit 3 - Stories',
-    'type': '自读闯关',
-    'status': '已完成',
-    'cover': 'assets/cartoon.png',
-    'publishDate': '2024-03-14',
-    'dueDate': '2024-11-30',
-    'content': '请朗读以下段落：\nOnce upon a time, there was a little girl who loved to read books...',
-  },
-  // 保持原有的书写听写作业不变
-  {
-    'title': 'Unit 4 - Writing Practice',
-    'type': '书写听写',
-    'status': '未完成',
-    'cover': 'assets/cartoon.png',
-    'publishDate': '2024-03-17',
-    'dueDate': '2024-11-30',
-    'content': '请完成以下单词的书写练习：\n1. beautiful\n2. wonderful\n3. happiness\n4. sunshine\n5. rainbow',
-  },
-];
+  // 在 homeworkList 中添加 content 字段
+  final List<Map<String, dynamic>> homeworkList = [
+    {
+      'title': 'Unit 1 - Animals',
+      'type': '听力理解',
+      'status': '未完成',
+      'cover': 'assets/cartoon.png',
+      'publishDate': '2024-03-15',
+      'dueDate': '2024-11-28',
+      'content':
+          '请听录音，回答以下问题：\n1. What animals are mentioned in the recording?\n2. What do they eat?',
+    },
+    {
+      'title': 'Unit 2 - Daily Life',
+      'type': '口语表达',
+      'status': '有点评',
+      'cover': 'assets/cartoon.png',
+      'publishDate': '2024-03-16',
+      'dueDate': '2024-11-29',
+      'content': '请录制一段口语，描述你的日常生活：\n1. 描述你的早晨routine\n2. 描述你最喜欢的课程',
+    },
+    {
+      'title': 'Unit 3 - Stories',
+      'type': '自读闯关',
+      'status': '已完成',
+      'cover': 'assets/cartoon.png',
+      'publishDate': '2024-03-14',
+      'dueDate': '2024-11-30',
+      'content':
+          '请朗读以下段落：\nOnce upon a time, there was a little girl who loved to read books...',
+    },
+    // 保持原有的书写听写作业不变
+    {
+      'title': 'Unit 4 - Writing Practice',
+      'type': '书写听写',
+      'status': '未完成',
+      'cover': 'assets/cartoon.png',
+      'publishDate': '2024-03-17',
+      'dueDate': '2024-11-30',
+      'content':
+          '请完成以下单词的书写练习：\n1. beautiful\n2. wonderful\n3. happiness\n4. sunshine\n5. rainbow',
+    },
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -77,24 +81,27 @@ final List<Map<String, dynamic>> homeworkList = [
             fit: BoxFit.cover,
           ),
         ),
-        child: Column(
-          children: [
-            SafeArea(
-              child: Padding(
+        // Replace Column with SafeArea + Flex layout
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Top navigation and filters - use minimal fixed height
+              Padding(
                 padding: EdgeInsets.only(
                   left: ResponsiveSize.w(10),
                   right: ResponsiveSize.w(8),
-                  top: ResponsiveSize.h(20),
-                  bottom: ResponsiveSize.h(20),
+                  top: ResponsiveSize.h(10),
+                  bottom: ResponsiveSize.h(10),
                 ),
                 child: Row(
                   children: [
+                    // Back button
                     GestureDetector(
                       onTap: () => Navigator.pop(context),
                       child: Image.asset(
                         'assets/backbutton1.png',
-                        width: ResponsiveSize.w(100),
-                        height: ResponsiveSize.h(100),
+                        width: ResponsiveSize.w(80), // Reduced size
+                        height: ResponsiveSize.h(80), // Reduced size
                       ),
                     ),
                     const Spacer(),
@@ -108,30 +115,36 @@ final List<Map<String, dynamic>> homeworkList = [
                             minWidth: ResponsiveSize.w(135),
                             maxWidth: ResponsiveSize.w(135),
                           ),
-                          itemBuilder: (context) => statusList.map((String value) {
-                            return PopupMenuItem<String>(
-                              value: value,
-                              height: ResponsiveSize.h(45),
-                              padding: EdgeInsets.symmetric(horizontal: ResponsiveSize.w(20)),
-                              child: Container(
-                                alignment: Alignment.center,
-                                child: Text(
-                                  value,
-                                  style: TextStyle(
-                                    fontSize: ResponsiveSize.sp(22),
-                                    color: Colors.black87,
-                                  ),
-                                ),
-                              ),
-                            );
-                          }).toList(),
+                          itemBuilder:
+                              (context) =>
+                                  statusList.map((String value) {
+                                    return PopupMenuItem<String>(
+                                      value: value,
+                                      height: ResponsiveSize.h(45),
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: ResponsiveSize.w(20),
+                                      ),
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          value,
+                                          style: TextStyle(
+                                            fontSize: ResponsiveSize.sp(22),
+                                            color: Colors.black87,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
                           onSelected: (String value) {
                             setState(() {
                               currentStatus = value;
                             });
                           },
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(ResponsiveSize.w(20)),
+                            borderRadius: BorderRadius.circular(
+                              ResponsiveSize.w(20),
+                            ),
                           ),
                           color: Colors.white,
                           elevation: 10,
@@ -143,7 +156,9 @@ final List<Map<String, dynamic>> homeworkList = [
                             ),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(ResponsiveSize.w(20)),
+                              borderRadius: BorderRadius.circular(
+                                ResponsiveSize.w(20),
+                              ),
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.black.withOpacity(0.1),
@@ -176,9 +191,10 @@ final List<Map<String, dynamic>> homeworkList = [
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => TaskCalendarPage(
-                                  homeworkList: homeworkList,
-                                ),
+                                builder:
+                                    (context) => TaskCalendarPage(
+                                      homeworkList: homeworkList,
+                                    ),
                               ),
                             );
                           },
@@ -186,7 +202,9 @@ final List<Map<String, dynamic>> homeworkList = [
                             padding: EdgeInsets.all(ResponsiveSize.w(12)),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(ResponsiveSize.w(20)),
+                              borderRadius: BorderRadius.circular(
+                                ResponsiveSize.w(20),
+                              ),
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.black.withOpacity(0.1),
@@ -207,96 +225,115 @@ final List<Map<String, dynamic>> homeworkList = [
                   ],
                 ),
               ),
-            ),
-            // 作业类型选择
-            Container(
-              height: ResponsiveSize.h(50),
-              margin: EdgeInsets.symmetric(vertical: ResponsiveSize.h(10)),
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                padding: EdgeInsets.symmetric(horizontal: ResponsiveSize.w(15)),
-                itemCount: homeworkTypes.length,
-                itemBuilder: (context, index) {
-                  final type = homeworkTypes[index];
-                  final isSelected = type['name'] == currentType;
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        currentType = type['name'];
-                      });
-                    },
-                    child: Container(
-                      margin: EdgeInsets.symmetric(horizontal: ResponsiveSize.w(8)),
-                      padding: EdgeInsets.symmetric(horizontal: ResponsiveSize.w(20)),
-                      decoration: BoxDecoration(
-                        color: isSelected ? const Color(0xFF2E7D32) : Colors.white,
-                        borderRadius: BorderRadius.circular(ResponsiveSize.w(25)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: ResponsiveSize.w(5),
-                            offset: Offset(0, ResponsiveSize.h(2)),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            type['icon'],
-                            color: isSelected ? Colors.white : Colors.black87,
-                            size: ResponsiveSize.w(20),
-                          ),
-                          SizedBox(width: ResponsiveSize.w(8)),
-                          Text(
-                            type['name'],
-                            style: TextStyle(
-                              color: isSelected ? Colors.white : Colors.black87,
-                              fontSize: ResponsiveSize.sp(25),
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-            // 作业列表部分
-            Container(
-              margin: EdgeInsets.only(top: ResponsiveSize.h(20)),
-              child: Center(
-                child: Container(
-                  width: MediaQuery.of(context).size.width * 0.95,
-                  height: MediaQuery.of(context).size.height * 0.65,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(ResponsiveSize.w(12)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: ResponsiveSize.w(4),
-                        offset: Offset(0, ResponsiveSize.h(2)),
-                      ),
-                    ],
+
+              // Type selection - use auto-sized container
+              Container(
+                height: ResponsiveSize.h(45), // Reduced height
+                margin: EdgeInsets.only(bottom: ResponsiveSize.h(10)),
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: ResponsiveSize.w(15),
                   ),
-                  child: GridView.builder(
-                    padding: EdgeInsets.all(ResponsiveSize.w(16)),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 4,
-                      childAspectRatio: 0.85,
-                      crossAxisSpacing: ResponsiveSize.w(16),
-                      mainAxisSpacing: ResponsiveSize.h(16),
+                  itemCount: homeworkTypes.length,
+                  itemBuilder: (context, index) {
+                    final type = homeworkTypes[index];
+                    final isSelected = type['name'] == currentType;
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          currentType = type['name'];
+                        });
+                      },
+                      child: Container(
+                        margin: EdgeInsets.symmetric(
+                          horizontal: ResponsiveSize.w(8),
+                        ),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: ResponsiveSize.w(20),
+                        ),
+                        decoration: BoxDecoration(
+                          color:
+                              isSelected
+                                  ? const Color(0xFF2E7D32)
+                                  : Colors.white,
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveSize.w(25),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: ResponsiveSize.w(5),
+                              offset: Offset(0, ResponsiveSize.h(2)),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              type['icon'],
+                              color: isSelected ? Colors.white : Colors.black87,
+                              size: ResponsiveSize.w(20),
+                            ),
+                            SizedBox(width: ResponsiveSize.w(8)),
+                            Text(
+                              type['name'],
+                              style: TextStyle(
+                                color:
+                                    isSelected ? Colors.white : Colors.black87,
+                                fontSize: ResponsiveSize.sp(25),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+
+              // Main content - use Expanded to take remaining space
+              Expanded(
+                child: Center(
+                  child: Container(
+                    width: MediaQuery.of(context).size.width * 0.95,
+                    // Remove fixed height and use all available space
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(ResponsiveSize.w(12)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: ResponsiveSize.w(4),
+                          offset: Offset(0, ResponsiveSize.h(2)),
+                        ),
+                      ],
                     ),
-                    itemCount: _getFilteredHomeworkList().length,
-                    itemBuilder: (context, index) {
-                      return _buildHomeworkCard(_getFilteredHomeworkList()[index]);
-                    },
+                    // Use ClipRRect to ensure content respects border radius
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(ResponsiveSize.w(12)),
+                      child: GridView.builder(
+                        padding: EdgeInsets.all(ResponsiveSize.w(16)),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 4,
+                          childAspectRatio: 0.85,
+                          crossAxisSpacing: ResponsiveSize.w(16),
+                          mainAxisSpacing: ResponsiveSize.h(16),
+                        ),
+                        itemCount: _getFilteredHomeworkList().length,
+                        itemBuilder: (context, index) {
+                          return _buildHomeworkCard(
+                            _getFilteredHomeworkList()[index],
+                          );
+                        },
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -305,57 +342,59 @@ final List<Map<String, dynamic>> homeworkList = [
   List<Map<String, dynamic>> _getFilteredHomeworkList() {
     return homeworkList.where((homework) {
       bool typeMatch = currentType == '全部' || homework['type'] == currentType;
-      bool statusMatch = currentStatus == '全部' || homework['status'] == currentStatus;
+      bool statusMatch =
+          currentStatus == '全部' || homework['status'] == currentStatus;
       return typeMatch && statusMatch;
     }).toList();
   }
 
   Widget _buildHomeworkCard(Map<String, dynamic> homework) {
-  return GestureDetector(
-    onTap: () {
-      // 创建一个新的 Map 来传递数据
-      final Map<String, dynamic> homeworkData = Map<String, dynamic>.from(homework);
-      
-      Widget page;
-      switch (homework['type']) {
-        case '听力理解':
-          page = ListeningHomeworkPage(homework: homeworkData);
-          break;
-        case '口语表达':
-          page = SpeakingHomeworkPage(homework: homeworkData);
-          break;
-        case '自读闯关':
-          page = ReadingHomeworkPage(homework: homeworkData);
-          break;
-        case '书写听写':
-          page = WritingHomeworkPage(homework: homeworkData);
-          break;
-        default:
-          return;
-      }
-      
-      // 添加调试打印
-      print('Homework data being passed: $homeworkData');
-      
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => page,
-        ),
-      ).then((updatedHomework) {
-        if (updatedHomework != null) {
-          setState(() {
-            final index = homeworkList.indexWhere((h) => 
-              h['title'] == updatedHomework['title'] && 
-              h['type'] == updatedHomework['type']
-            );
-            if (index != -1) {
-              homeworkList[index] = updatedHomework;
-            }
-          });
+    return GestureDetector(
+      onTap: () {
+        // 创建一个新的 Map 来传递数据
+        final Map<String, dynamic> homeworkData = Map<String, dynamic>.from(
+          homework,
+        );
+
+        Widget page;
+        switch (homework['type']) {
+          case '听力理解':
+            page = ListeningHomeworkPage(homework: homeworkData);
+            break;
+          case '口语表达':
+            page = SpeakingHomeworkPage(homework: homeworkData);
+            break;
+          case '自读闯关':
+            page = ReadingHomeworkPage(homework: homeworkData);
+            break;
+          case '书写听写':
+            page = WritingHomeworkPage(homework: homeworkData);
+            break;
+          default:
+            return;
         }
-      });
-    },
+
+        // 添加调试打印
+        print('Homework data being passed: $homeworkData');
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => page),
+        ).then((updatedHomework) {
+          if (updatedHomework != null) {
+            setState(() {
+              final index = homeworkList.indexWhere(
+                (h) =>
+                    h['title'] == updatedHomework['title'] &&
+                    h['type'] == updatedHomework['type'],
+              );
+              if (index != -1) {
+                homeworkList[index] = updatedHomework;
+              }
+            });
+          }
+        });
+      },
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -374,15 +413,12 @@ final List<Map<String, dynamic>> homeworkList = [
               flex: 3,
               child: ClipRRect(
                 borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(ResponsiveSize.w(12))
+                  top: Radius.circular(ResponsiveSize.w(12)),
                 ),
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    Image.asset(
-                      homework['cover'],
-                      fit: BoxFit.cover,
-                    ),
+                    Image.asset(homework['cover'], fit: BoxFit.cover),
                     Positioned(
                       top: ResponsiveSize.h(8),
                       left: ResponsiveSize.w(8),
@@ -393,7 +429,9 @@ final List<Map<String, dynamic>> homeworkList = [
                         ),
                         decoration: BoxDecoration(
                           color: _getTypeColor(homework['type']),
-                          borderRadius: BorderRadius.circular(ResponsiveSize.w(12)),
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveSize.w(12),
+                          ),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -487,15 +525,31 @@ final List<Map<String, dynamic>> homeworkList = [
   Icon _getTypeIcon(String type) {
     switch (type) {
       case '听力理解':
-        return Icon(Icons.headphones, color: Colors.white, size: ResponsiveSize.w(16));
+        return Icon(
+          Icons.headphones,
+          color: Colors.white,
+          size: ResponsiveSize.w(16),
+        );
       case '口语表达':
         return Icon(Icons.mic, color: Colors.white, size: ResponsiveSize.w(16));
       case '自读闯关':
-        return Icon(Icons.menu_book, color: Colors.white, size: ResponsiveSize.w(16));
+        return Icon(
+          Icons.menu_book,
+          color: Colors.white,
+          size: ResponsiveSize.w(16),
+        );
       case '书写听写':
-        return Icon(Icons.edit, color: Colors.white, size: ResponsiveSize.w(16));
+        return Icon(
+          Icons.edit,
+          color: Colors.white,
+          size: ResponsiveSize.w(16),
+        );
       default:
-        return Icon(Icons.assignment, color: Colors.white, size: ResponsiveSize.w(16));
+        return Icon(
+          Icons.assignment,
+          color: Colors.white,
+          size: ResponsiveSize.w(16),
+        );
     }
   }
 
@@ -518,7 +572,7 @@ final List<Map<String, dynamic>> homeworkList = [
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: ResponsiveSize.w(8),
-        vertical: ResponsiveSize.h(4)
+        vertical: ResponsiveSize.h(4),
       ),
       decoration: BoxDecoration(
         color: tagColor.withOpacity(0.1),
