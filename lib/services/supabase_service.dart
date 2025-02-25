@@ -20,34 +20,34 @@ class SupabaseService {
     await client.auth.signOut();
   }
 
-  Future<String?> getUserRole() async {
-    final user = Supabase.instance.client.auth.currentUser;
+  static Future<String?> getUserRole() async {
+    final user = client.auth.currentUser;
     if (user == null) return null;
 
-    final response =
-        await Supabase.instance.client
-            .from('profiles')
-            .select('role')
-            .eq('id', user.id)
-            .single();
+    try {
+      final data =
+          await client
+              .from('profiles')
+              .select('role')
+              .eq('id', user.id)
+              .single();
 
-    if (response.error != null) {
-      print('获取用户角色失败: ${response.error!.message}');
+      return data['role'] as String?;
+    } catch (e) {
+      print('获取用户角色失败: $e');
       return null;
     }
-    return response.data['role'];
   }
 
-  Future<void> updateUserRole(String userId, String newRole) async {
-    final response = await Supabase.instance.client
-        .from('profiles')
-        .update({'role': newRole})
-        .eq('id', userId);
+  static Future<bool> updateUserRole(String userId, String newRole) async {
+    try {
+      await client.from('profiles').update({'role': newRole}).eq('id', userId);
 
-    if (response.error == null) {
       print('用户权限已修改为: $newRole');
-    } else {
-      print('修改失败: ${response.error!.message}');
+      return true;
+    } catch (e) {
+      print('修改失败: $e');
+      return false;
     }
   }
 }
