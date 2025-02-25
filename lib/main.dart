@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:camera/camera.dart'; // 添加相机导入
-import 'package:supabase_flutter/supabase_flutter.dart';
+//import 'package:supabase_flutter/supabase_flutter.dart';
+import 'services/supabase_service.dart';
 import 'utils/responsive_size.dart';
 import 'login/login_page.dart';
 
 void main() async {
-  // 添加 async
   WidgetsFlutterBinding.ensureInitialized();
 
   try {
@@ -21,11 +21,9 @@ void main() async {
     DeviceOrientation.landscapeRight,
   ]);
 
-  await Supabase.initialize(
-    url: 'https://reecurbemkhjmectdkyp.supabase.co',
-    anonKey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJlZWN1cmJlbWtoam1lY3Rka3lwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzU5NzEwMjEsImV4cCI6MjA1MTU0NzAyMX0.-u1TMMGBbJQ8_Eqk0Z4LzkA06OaTs7josfi8AAbX-Dw',
-  );
+  // Initialize Supabase
+  await SupabaseService.initialize();
+
   runApp(const MyApp());
 }
 
@@ -37,9 +35,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: '鹅爸爸登录',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData(primarySwatch: Colors.blue),
       builder: (context, child) {
         // 先获取 MediaQuery
         final mediaQuery = MediaQuery.of(context);
