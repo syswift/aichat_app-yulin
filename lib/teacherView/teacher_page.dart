@@ -51,7 +51,7 @@ class TeacherPage extends StatelessWidget {
             children: [
               _buildTeacherInfo(),
               SizedBox(width: ResponsiveSize.w(20)),
-              _buildRoleSwitch(context),
+              //_buildRoleSwitch(context),
             ],
           ),
           Row(

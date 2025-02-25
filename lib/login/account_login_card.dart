@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import '../studentView/student_page.dart';
+import '../teacherView/teacher_page.dart';
+import '../adminView/admin_page.dart';
 import '../../../utils/responsive_size.dart';
+import '../services/supabase_service.dart';
 
 class AccountLoginCard extends StatefulWidget {
   const AccountLoginCard({super.key});
@@ -10,12 +13,17 @@ class AccountLoginCard extends StatefulWidget {
 }
 
 class _AccountLoginCardState extends State<AccountLoginCard> {
-  final TextEditingController _usernameController = TextEditingController(text: 'admin');
-  final TextEditingController _passwordController = TextEditingController(text: '1234');
+  final TextEditingController _usernameController = TextEditingController(
+    text: 'test1@test.com',
+  );
+  final TextEditingController _passwordController = TextEditingController(
+    text: '123456',
+  );
   final Color _themeColor = const Color(0xFFF6BA66);
   bool _rememberPassword = false;
   bool _autoLogin = false;
   bool _obscureText = true;
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +39,7 @@ class _AccountLoginCardState extends State<AccountLoginCard> {
         ResponsiveSize.w(20),
         ResponsiveSize.h(20),
         ResponsiveSize.w(20),
-        ResponsiveSize.h(0)
+        ResponsiveSize.h(0),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -77,9 +85,9 @@ class _AccountLoginCardState extends State<AccountLoginCard> {
         filled: true,
         fillColor: _themeColor.withOpacity(0.1),
         prefixIcon: Icon(
-          Icons.person_outline, 
-          color: _themeColor, 
-          size: ResponsiveSize.w(24)
+          Icons.person_outline,
+          color: _themeColor,
+          size: ResponsiveSize.w(24),
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(ResponsiveSize.w(15)),
@@ -91,11 +99,14 @@ class _AccountLoginCardState extends State<AccountLoginCard> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(ResponsiveSize.w(15)),
-          borderSide: BorderSide(color: _themeColor, width: ResponsiveSize.w(2)),
+          borderSide: BorderSide(
+            color: _themeColor,
+            width: ResponsiveSize.w(2),
+          ),
         ),
         contentPadding: EdgeInsets.symmetric(
           horizontal: ResponsiveSize.w(20),
-          vertical: ResponsiveSize.h(16)
+          vertical: ResponsiveSize.h(16),
         ),
       ),
     );
@@ -115,9 +126,9 @@ class _AccountLoginCardState extends State<AccountLoginCard> {
         filled: true,
         fillColor: _themeColor.withOpacity(0.1),
         prefixIcon: Icon(
-          Icons.lock_outline, 
-          color: _themeColor, 
-          size: ResponsiveSize.w(24)
+          Icons.lock_outline,
+          color: _themeColor,
+          size: ResponsiveSize.w(24),
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(ResponsiveSize.w(15)),
@@ -129,7 +140,10 @@ class _AccountLoginCardState extends State<AccountLoginCard> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(ResponsiveSize.w(15)),
-          borderSide: BorderSide(color: _themeColor, width: ResponsiveSize.w(2)),
+          borderSide: BorderSide(
+            color: _themeColor,
+            width: ResponsiveSize.w(2),
+          ),
         ),
         suffixIcon: IconButton(
           icon: Icon(
@@ -145,7 +159,7 @@ class _AccountLoginCardState extends State<AccountLoginCard> {
         ),
         contentPadding: EdgeInsets.symmetric(
           horizontal: ResponsiveSize.w(20),
-          vertical: ResponsiveSize.h(16)
+          vertical: ResponsiveSize.h(16),
         ),
       ),
     );
@@ -169,7 +183,11 @@ class _AccountLoginCardState extends State<AccountLoginCard> {
     );
   }
 
-  Widget _buildCustomCheckbox(String label, bool value, ValueChanged<bool?> onChanged) {
+  Widget _buildCustomCheckbox(
+    String label,
+    bool value,
+    ValueChanged<bool?> onChanged,
+  ) {
     return Row(
       children: [
         Transform.scale(
@@ -212,7 +230,7 @@ class _AccountLoginCardState extends State<AccountLoginCard> {
         ],
       ),
       child: ElevatedButton(
-        onPressed: _onLoginButtonPressed,
+        onPressed: _isLoading ? null : _onLoginButtonPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.transparent,
           shadowColor: Colors.transparent,
@@ -221,22 +239,90 @@ class _AccountLoginCardState extends State<AccountLoginCard> {
           ),
           padding: EdgeInsets.zero,
         ),
-        child: Text(
-          '登录',
-          style: TextStyle(
-            fontSize: ResponsiveSize.sp(20),
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
-        ),
+        child:
+            _isLoading
+                ? SizedBox(
+                  width: ResponsiveSize.w(20),
+                  height: ResponsiveSize.h(20),
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: ResponsiveSize.w(2),
+                  ),
+                )
+                : Text(
+                  '登录',
+                  style: TextStyle(
+                    fontSize: ResponsiveSize.sp(20),
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
       ),
     );
   }
 
-  void _onLoginButtonPressed() {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => const StudentPage()),
-    );
+  Future<void> _onLoginButtonPressed() async {
+    if (_usernameController.text.isEmpty || _passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('请输入用户名和密码')));
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // Authenticate user with Supabase
+      final response = await SupabaseService.client.auth.signInWithPassword(
+        email: _usernameController.text.trim(),
+        password: _passwordController.text,
+      );
+
+      if (response.user == null) {
+        throw Exception('登录失败，请检查用户名和密码');
+      }
+
+      // Get user role
+      final role = await SupabaseService.getUserRole();
+
+      // Navigate based on role
+      if (!mounted) return;
+
+      Widget targetPage;
+      switch (role) {
+        case 'student':
+          targetPage = const StudentPage();
+          break;
+        case 'teacher':
+          targetPage = const TeacherPage();
+          break;
+        case 'admin':
+          targetPage = const AdminPage();
+          break;
+        default:
+          // Default to student page if role is not recognized
+          targetPage = const StudentPage();
+          break;
+      }
+
+      Navigator.of(
+        context,
+      ).pushReplacement(MaterialPageRoute(builder: (context) => targetPage));
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('登录失败: ${e.toString()}')));
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override

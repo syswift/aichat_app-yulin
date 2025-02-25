@@ -47,7 +47,7 @@ class AdminPage extends StatelessWidget {
             children: [
               _buildAdminInfo(),
               SizedBox(width: ResponsiveSize.w(20)),
-              _buildRoleSwitch(context),
+              //_buildRoleSwitch(context),
             ],
           ),
           _buildActionButton('assets/tv.png', '投屏功能'),

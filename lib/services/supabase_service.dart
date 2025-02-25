@@ -25,17 +25,26 @@ class SupabaseService {
     if (user == null) return null;
 
     try {
+      // Try the direct query approach first since the RPC function seems to be missing
       final data =
           await client
               .from('profiles')
               .select('role')
               .eq('id', user.id)
-              .single();
+              .maybeSingle();
 
-      return data['role'] as String?;
+      if (data != null && data['role'] != null) {
+        return data['role'] as String;
+      }
+
+      // If we got here without a result, return default role
+      return 'student';
     } catch (e) {
       print('获取用户角色失败: $e');
-      return null;
+
+      // Simple fallback that doesn't rely on additional API calls
+      print('使用默认角色: student');
+      return 'student';
     }
   }
 

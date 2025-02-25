@@ -63,7 +63,7 @@ class StudentPage extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildRoleSwitch(context),
+              //_buildRoleSwitch(context),
               SizedBox(
                 width: ResponsiveSize.w(40),
               ), // Add spacing between elements
