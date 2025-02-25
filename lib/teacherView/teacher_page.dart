@@ -317,81 +317,56 @@ class TeacherPage extends StatelessWidget {
   }
 
   Widget _buildMainContent(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(top: ResponsiveSize.h(20)),
+    return Center(
       child: SingleChildScrollView(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(width: ResponsiveSize.w(320)),
-            Expanded(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            vertical: ResponsiveSize.h(30),
+            horizontal: ResponsiveSize.w(20),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        _buildContentCard(
-                          context,
-                          '布置作业',
-                          'assets/homework_assign.png',
-                        ),
-                        SizedBox(height: ResponsiveSize.h(20)),
-                        _buildContentCard(
-                          context,
-                          '管理班级',
-                          'assets/class_manage.png',
-                        ),
-                      ],
-                    ),
+                  _buildContentCard(
+                    context,
+                    '布置作业',
+                    'assets/homework_assign.png',
                   ),
-                  SizedBox(width: ResponsiveSize.w(20)),
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        _buildContentCard(
-                          context,
-                          '积分管理',
-                          'assets/points_manage.png',
-                        ),
-                        SizedBox(height: ResponsiveSize.h(20)),
-                        _buildContentCard(
-                          context,
-                          '作品秀场',
-                          'assets/show_manage.png',
-                        ),
-                      ],
-                    ),
+                  SizedBox(width: ResponsiveSize.w(60)),
+                  _buildContentCard(
+                    context,
+                    '积分管理',
+                    'assets/points_manage.png',
                   ),
-                  SizedBox(width: ResponsiveSize.w(20)),
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        _buildContentCard(
-                          context,
-                          '题库管理',
-                          'assets/question_bank.png',
-                        ),
-                        SizedBox(height: ResponsiveSize.h(20)),
-                        _buildContentCard(
-                          context,
-                          '教材管理',
-                          'assets/textbook_manage.png',
-                        ),
-                      ],
-                    ),
+                  SizedBox(width: ResponsiveSize.w(60)),
+                  _buildContentCard(
+                    context,
+                    '题库管理',
+                    'assets/question_bank.png',
                   ),
                 ],
               ),
-            ),
-            SizedBox(width: ResponsiveSize.w(20)),
-          ],
+              SizedBox(height: ResponsiveSize.h(30)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _buildContentCard(context, '管理班级', 'assets/class_manage.png'),
+                  SizedBox(width: ResponsiveSize.w(60)),
+                  _buildContentCard(context, '作品秀场', 'assets/show_manage.png'),
+                  SizedBox(width: ResponsiveSize.w(60)),
+                  _buildContentCard(
+                    context,
+                    '教材管理',
+                    'assets/textbook_manage.png',
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
