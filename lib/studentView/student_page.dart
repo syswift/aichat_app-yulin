@@ -14,6 +14,7 @@ import 'messageReceive/message_receive_page.dart';
 import './studentSchoolnews/student_school_news.dart';
 import '../utils/responsive_size.dart';
 import './freeStudyView/happyListen/happy_listen_chapters.dart';
+import '../common/widgets/logout_button.dart';
 
 class StudentPage extends StatelessWidget {
   const StudentPage({super.key});
@@ -24,28 +25,34 @@ class StudentPage extends StatelessWidget {
   Widget build(BuildContext context) {
     ResponsiveSize.init(context);
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/background.jpg'),
-            fit: BoxFit.cover,
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              _buildTopBar(context),
-              Expanded(
-                child: Stack(
-                  children: [
-                    _buildStudentInfo(context),
-                    _buildMainContent(context),
-                  ],
-                ),
+      body: Stack(
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/background.jpg'),
+                fit: BoxFit.cover,
               ),
-            ],
+            ),
+            child: SafeArea(
+              child: Column(
+                children: [
+                  _buildTopBar(context),
+                  Expanded(
+                    child: Stack(
+                      children: [
+                        _buildStudentInfo(context),
+                        _buildMainContent(context),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
-        ),
+          // Logout button in bottom-right corner
+          Positioned(right: 20, bottom: 20, child: const LogoutButton()),
+        ],
       ),
     );
   }
@@ -75,6 +82,7 @@ class StudentPage extends StatelessWidget {
     );
   }
 
+  // ignore: unused_element
   Widget _buildRoleSwitch(BuildContext context) {
     return PopupMenuButton<String>(
       offset: Offset(0, ResponsiveSize.h(40)),

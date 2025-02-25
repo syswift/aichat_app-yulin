@@ -6,6 +6,7 @@ import 'classesManage/classes_manage.dart';
 import 'staffManage/staff_manage_page.dart';
 import 'pointsShop/points_shop_manage_page.dart';
 import '../../../utils/responsive_size.dart';
+import '../common/widgets/logout_button.dart';
 
 class AdminPage extends StatelessWidget {
   const AdminPage({super.key});
@@ -15,21 +16,26 @@ class AdminPage extends StatelessWidget {
     ResponsiveSize.init(context);
 
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/background.jpg'),
-            fit: BoxFit.cover,
+      body: Stack(
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/background.jpg'),
+                fit: BoxFit.cover,
+              ),
+            ),
+            child: SafeArea(
+              child: Column(
+                children: [
+                  _buildTopBar(context),
+                  Expanded(child: _buildMainContent(context)),
+                ],
+              ),
+            ),
           ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              _buildTopBar(context),
-              Expanded(child: _buildMainContent(context)),
-            ],
-          ),
-        ),
+          Positioned(right: 20, bottom: 20, child: const LogoutButton()),
+        ],
       ),
     );
   }
@@ -160,6 +166,7 @@ class AdminPage extends StatelessWidget {
     );
   }
 
+  // ignore: unused_element
   Widget _buildRoleSwitch(BuildContext context) {
     return PopupMenuButton<String>(
       offset: Offset(0, ResponsiveSize.h(40)),
