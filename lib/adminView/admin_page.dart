@@ -26,9 +26,7 @@ class AdminPage extends StatelessWidget {
           child: Column(
             children: [
               _buildTopBar(context),
-              Expanded(
-                child: _buildMainContent(context),
-              ),
+              Expanded(child: _buildMainContent(context)),
             ],
           ),
         ),
@@ -39,7 +37,9 @@ class AdminPage extends StatelessWidget {
   Widget _buildTopBar(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(
-          horizontal: ResponsiveSize.w(20), vertical: ResponsiveSize.h(10)),
+        horizontal: ResponsiveSize.w(20),
+        vertical: ResponsiveSize.h(10),
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -135,8 +135,9 @@ class AdminPage extends StatelessWidget {
                           ),
                           decoration: BoxDecoration(
                             color: const Color(0xFF4A6FA5).withOpacity(0.1),
-                            borderRadius:
-                                BorderRadius.circular(ResponsiveSize.w(10)),
+                            borderRadius: BorderRadius.circular(
+                              ResponsiveSize.w(10),
+                            ),
                           ),
                           child: Text(
                             '系统管理员',
@@ -167,15 +168,14 @@ class AdminPage extends StatelessWidget {
       ),
       child: Container(
         padding: EdgeInsets.symmetric(
-            horizontal: ResponsiveSize.w(16), vertical: ResponsiveSize.h(10)),
+          horizontal: ResponsiveSize.w(16),
+          vertical: ResponsiveSize.h(10),
+        ),
         decoration: BoxDecoration(
           gradient: const LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF4A6FA5),
-              Color(0xFF2B4C80),
-            ],
+            colors: [Color(0xFF4A6FA5), Color(0xFF2B4C80)],
           ),
           borderRadius: BorderRadius.circular(ResponsiveSize.w(20)),
           boxShadow: [
@@ -217,50 +217,47 @@ class AdminPage extends StatelessWidget {
           case 'student':
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(
-                builder: (context) => const StudentPage(),
-              ),
+              MaterialPageRoute(builder: (context) => const StudentPage()),
             );
             break;
           case 'teacher':
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(
-                builder: (context) => const TeacherPage(),
-              ),
+              MaterialPageRoute(builder: (context) => const TeacherPage()),
             );
             break;
         }
       },
-      itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-        PopupMenuItem<String>(
-          value: 'student',
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: ResponsiveSize.w(8)),
-            child: Text(
-              '学生端',
-              style: TextStyle(
-                fontSize: ResponsiveSize.sp(16),
-                fontWeight: FontWeight.w500,
+      itemBuilder:
+          (BuildContext context) => <PopupMenuEntry<String>>[
+            PopupMenuItem<String>(
+              value: 'student',
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: ResponsiveSize.w(8)),
+                child: Text(
+                  '学生端',
+                  style: TextStyle(
+                    fontSize: ResponsiveSize.sp(16),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
-        const PopupMenuDivider(),
-        PopupMenuItem<String>(
-          value: 'teacher',
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: ResponsiveSize.w(8)),
-            child: Text(
-              '教师端',
-              style: TextStyle(
-                fontSize: ResponsiveSize.sp(16),
-                fontWeight: FontWeight.w500,
+            const PopupMenuDivider(),
+            PopupMenuItem<String>(
+              value: 'teacher',
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: ResponsiveSize.w(8)),
+                child: Text(
+                  '教师端',
+                  style: TextStyle(
+                    fontSize: ResponsiveSize.sp(16),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
-      ],
+          ],
     );
   }
 
@@ -306,7 +303,10 @@ class AdminPage extends StatelessWidget {
   }
 
   Widget _buildContentCard(
-      BuildContext context, String title, String imageAsset) {
+    BuildContext context,
+    String title,
+    String imageAsset,
+  ) {
     return GestureDetector(
       onTap: () {
         switch (title) {
@@ -321,17 +321,13 @@ class AdminPage extends StatelessWidget {
           case '班级管理':
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => const ClassManagePage(),
-              ),
+              MaterialPageRoute(builder: (context) => const ClassManagePage()),
             );
             break;
           case '员工管理':
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => const StaffManagePage(),
-              ),
+              MaterialPageRoute(builder: (context) => const StaffManagePage()),
             );
             break;
           case '积分商城':
@@ -345,16 +341,16 @@ class AdminPage extends StatelessWidget {
         }
       },
       child: Container(
-        width: ResponsiveSize.w(240),
-        height: ResponsiveSize.h(280),
+        width: ResponsiveSize.w(180),
+        height: ResponsiveSize.h(220),
         decoration: BoxDecoration(
           color: Colors.white.withOpacity(0.3),
           borderRadius: BorderRadius.circular(ResponsiveSize.w(20)),
         ),
         child: Center(
           child: Container(
-            width: ResponsiveSize.w(200),
-            height: ResponsiveSize.h(240),
+            width: ResponsiveSize.w(160),
+            height: ResponsiveSize.h(200),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(ResponsiveSize.w(15)),
