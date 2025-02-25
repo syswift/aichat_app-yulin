@@ -12,10 +12,7 @@ class PointsExchangePage extends StatefulWidget {
 
 class _PointsExchangePageState extends State<PointsExchangePage> {
   String _selectedButton = '已上架奖品';
-  Map<String, int> prizeStock = {
-    '测试奖品1': 50,
-    '测试奖品2': 30,
-  };
+  Map<String, int> prizeStock = {'测试奖品1': 50, '测试奖品2': 30};
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +32,7 @@ class _PointsExchangePageState extends State<PointsExchangePage> {
               Padding(
                 padding: EdgeInsets.only(
                   left: ResponsiveSize.w(20),
-                  top: ResponsiveSize.h(10)
+                  top: ResponsiveSize.h(10),
                 ),
                 child: Row(
                   children: [
@@ -50,7 +47,7 @@ class _PointsExchangePageState extends State<PointsExchangePage> {
                   ],
                 ),
               ),
-              
+
               // 主要内容区域
               Container(
                 height: MediaQuery.of(context).size.height * 0.65,
@@ -58,7 +55,7 @@ class _PointsExchangePageState extends State<PointsExchangePage> {
                   ResponsiveSize.w(40),
                   ResponsiveSize.h(20),
                   ResponsiveSize.w(40),
-                  ResponsiveSize.h(40)
+                  ResponsiveSize.h(40),
                 ),
                 decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.9),
@@ -75,7 +72,7 @@ class _PointsExchangePageState extends State<PointsExchangePage> {
                     ),
                   ],
                 ),
-                                child: ClipRRect(
+                child: ClipRRect(
                   borderRadius: BorderRadius.circular(ResponsiveSize.w(27)),
                   child: Column(
                     children: [
@@ -91,14 +88,26 @@ class _PointsExchangePageState extends State<PointsExchangePage> {
                           ),
                         ),
                         child: Row(
-                          children: [
-                            _buildTabButton('已上架奖品', 'assets/rewardedprize.png'),
-                            _buildTabButton('学员积分', 'assets/studentpointslogo.png'),
-                            _buildTabButton('兑奖记录', 'assets/recordedgift.png'),
-                          ].map((widget) => Expanded(child: widget)).toList(),
+                          children:
+                              [
+                                    _buildTabButton(
+                                      '已上架奖品',
+                                      'assets/rewardedprize.png',
+                                    ),
+                                    _buildTabButton(
+                                      '学员积分',
+                                      'assets/studentpointslogo.png',
+                                    ),
+                                    _buildTabButton(
+                                      '兑奖记录',
+                                      'assets/recordedgift.png',
+                                    ),
+                                  ]
+                                  .map((widget) => Expanded(child: widget))
+                                  .toList(),
                         ),
                       ),
-                      
+
                       // 下部分：内容展示区
                       Expanded(
                         child: Container(
@@ -119,7 +128,7 @@ class _PointsExchangePageState extends State<PointsExchangePage> {
 
   Widget _buildTabButton(String text, String iconPath) {
     bool isSelected = _selectedButton == text;
-    
+
     return Material(
       color: isSelected ? const Color(0xFFFFE4B5) : Colors.white,
       child: InkWell(
@@ -167,7 +176,8 @@ class _PointsExchangePageState extends State<PointsExchangePage> {
         return const SizedBox.shrink();
     }
   }
-    Widget _buildPrizesContent() {
+
+  Widget _buildPrizesContent() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -176,7 +186,7 @@ class _PointsExchangePageState extends State<PointsExchangePage> {
             ResponsiveSize.w(24),
             ResponsiveSize.h(20),
             ResponsiveSize.w(24),
-            ResponsiveSize.h(16)
+            ResponsiveSize.h(16),
           ),
           child: Text(
             '可兑换奖品',
@@ -193,12 +203,14 @@ class _PointsExchangePageState extends State<PointsExchangePage> {
               ResponsiveSize.w(35),
               0,
               ResponsiveSize.w(35),
-              ResponsiveSize.h(35)
+              ResponsiveSize.h(35),
             ),
             crossAxisCount: 4,
-            mainAxisSpacing: ResponsiveSize.h(30),
+            mainAxisSpacing: ResponsiveSize.h(20), // Reduced from 30
             crossAxisSpacing: ResponsiveSize.w(30),
-            childAspectRatio: ResponsiveSize.w(0.7),
+            childAspectRatio: ResponsiveSize.w(
+              0.9,
+            ), // Increased from 0.7 to make cards shorter
             children: [
               _buildPrizeCard(
                 image: 'assets/prize1.png',
@@ -244,10 +256,10 @@ class _PointsExchangePageState extends State<PointsExchangePage> {
       child: Column(
         children: [
           Expanded(
-            flex: 2,
+            flex: 3, // Increased from 2 to give more space to image
             child: ClipRRect(
               borderRadius: BorderRadius.vertical(
-                top: Radius.circular(ResponsiveSize.w(13))
+                top: Radius.circular(ResponsiveSize.w(13)),
               ),
               child: Image.asset(
                 image,
@@ -257,9 +269,13 @@ class _PointsExchangePageState extends State<PointsExchangePage> {
             ),
           ),
           Expanded(
-            flex: 1,
+            flex: 2, // Increased from 1 to maintain proportion
             child: Padding(
-              padding: EdgeInsets.all(ResponsiveSize.w(12)),
+              padding: EdgeInsets.symmetric(
+                // Reduced padding
+                horizontal: ResponsiveSize.w(12),
+                vertical: ResponsiveSize.h(8),
+              ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -267,7 +283,7 @@ class _PointsExchangePageState extends State<PointsExchangePage> {
                   Text(
                     name,
                     style: TextStyle(
-                      fontSize: ResponsiveSize.sp(20),
+                      fontSize: ResponsiveSize.sp(18), // Reduced from 20
                       fontWeight: FontWeight.bold,
                       color: const Color(0xFF5C3D2E),
                     ),
@@ -276,8 +292,8 @@ class _PointsExchangePageState extends State<PointsExchangePage> {
                     children: [
                       Image.asset(
                         'assets/star.png',
-                        width: ResponsiveSize.w(24),
-                        height: ResponsiveSize.h(24),
+                        width: ResponsiveSize.w(20), // Reduced from 24
+                        height: ResponsiveSize.h(20), // Reduced from 24
                       ),
                       SizedBox(width: ResponsiveSize.w(8)),
                       Text(
@@ -297,15 +313,22 @@ class _PointsExchangePageState extends State<PointsExchangePage> {
                       ),
                     ],
                   ),
-                                    SizedBox(
+                  SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: stock > 0 ? () => _showExchangeDialog(name, points, stock) : null,
+                      onPressed:
+                          stock > 0
+                              ? () => _showExchangeDialog(name, points, stock)
+                              : null,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFFFE4B5),
-                        padding: EdgeInsets.symmetric(vertical: ResponsiveSize.h(12)),
+                        padding: EdgeInsets.symmetric(
+                          vertical: ResponsiveSize.h(8),
+                        ), // Reduced from 12
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(ResponsiveSize.w(8)),
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveSize.w(8),
+                          ),
                         ),
                       ),
                       child: Text(
@@ -327,7 +350,11 @@ class _PointsExchangePageState extends State<PointsExchangePage> {
     );
   }
 
-  Future<void> _showExchangeDialog(String prizeName, int points, int stock) async {
+  Future<void> _showExchangeDialog(
+    String prizeName,
+    int points,
+    int stock,
+  ) async {
     int exchangeCount = 1;
 
     return showDialog(
@@ -365,9 +392,10 @@ class _PointsExchangePageState extends State<PointsExchangePage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       IconButton(
-                        onPressed: exchangeCount > 1
-                            ? () => setState(() => exchangeCount--)
-                            : null,
+                        onPressed:
+                            exchangeCount > 1
+                                ? () => setState(() => exchangeCount--)
+                                : null,
                         icon: Icon(
                           Icons.remove_circle_outline,
                           size: ResponsiveSize.w(24),
@@ -384,9 +412,10 @@ class _PointsExchangePageState extends State<PointsExchangePage> {
                       ),
                       SizedBox(width: ResponsiveSize.w(20)),
                       IconButton(
-                        onPressed: exchangeCount < stock
-                            ? () => setState(() => exchangeCount++)
-                            : null,
+                        onPressed:
+                            exchangeCount < stock
+                                ? () => setState(() => exchangeCount++)
+                                : null,
                         icon: Icon(
                           Icons.add_circle_outline,
                           size: ResponsiveSize.w(24),
