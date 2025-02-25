@@ -17,7 +17,7 @@ class TeacherPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ResponsiveSize.init(context);
-    
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -30,16 +30,15 @@ class TeacherPage extends StatelessWidget {
           child: Column(
             children: [
               _buildTopBar(context),
-              Expanded(
-                child: _buildMainContent(context),
-              ),
+              Expanded(child: _buildMainContent(context)),
             ],
           ),
         ),
       ),
     );
   }
-    Widget _buildTopBar(BuildContext context) {
+
+  Widget _buildTopBar(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: ResponsiveSize.w(20),
@@ -150,7 +149,9 @@ class TeacherPage extends StatelessWidget {
                           ),
                           decoration: BoxDecoration(
                             color: const Color(0xFF4A6FA5).withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(ResponsiveSize.w(10)),
+                            borderRadius: BorderRadius.circular(
+                              ResponsiveSize.w(10),
+                            ),
                           ),
                           child: Text(
                             '教师',
@@ -172,7 +173,8 @@ class TeacherPage extends StatelessWidget {
       ),
     );
   }
-    Widget _buildRoleSwitch(BuildContext context) {
+
+  Widget _buildRoleSwitch(BuildContext context) {
     return PopupMenuButton<String>(
       offset: Offset(0, ResponsiveSize.h(40)),
       shape: RoundedRectangleBorder(
@@ -187,10 +189,7 @@ class TeacherPage extends StatelessWidget {
           gradient: const LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF4A6FA5),
-              Color(0xFF2B4C80),
-            ],
+            colors: [Color(0xFF4A6FA5), Color(0xFF2B4C80)],
           ),
           borderRadius: BorderRadius.circular(ResponsiveSize.w(20)),
           boxShadow: [
@@ -232,54 +231,55 @@ class TeacherPage extends StatelessWidget {
           case 'student':
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(
-                builder: (context) => const StudentPage(),
-              ),
+              MaterialPageRoute(builder: (context) => const StudentPage()),
             );
             break;
           case 'admin':
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(
-                builder: (context) => const AdminPage(),
-              ),
+              MaterialPageRoute(builder: (context) => const AdminPage()),
             );
             break;
         }
       },
-      itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-        PopupMenuItem<String>(
-          value: 'student',
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: ResponsiveSize.w(8)),
-            child: Text(
-              '学生端',
-              style: TextStyle(
-                fontSize: ResponsiveSize.sp(16),
-                fontWeight: FontWeight.w500,
+      itemBuilder:
+          (BuildContext context) => <PopupMenuEntry<String>>[
+            PopupMenuItem<String>(
+              value: 'student',
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: ResponsiveSize.w(8)),
+                child: Text(
+                  '学生端',
+                  style: TextStyle(
+                    fontSize: ResponsiveSize.sp(16),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
-        const PopupMenuDivider(),
-        PopupMenuItem<String>(
-          value: 'admin',
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: ResponsiveSize.w(8)),
-            child: Text(
-              '管理端',
-              style: TextStyle(
-                fontSize: ResponsiveSize.sp(16),
-                fontWeight: FontWeight.w500,
+            const PopupMenuDivider(),
+            PopupMenuItem<String>(
+              value: 'admin',
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: ResponsiveSize.w(8)),
+                child: Text(
+                  '管理端',
+                  style: TextStyle(
+                    fontSize: ResponsiveSize.sp(16),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
-      ],
+          ],
     );
   }
 
-  Widget _buildActionButton(BuildContext context, String imageAsset, String label) {
+  Widget _buildActionButton(
+    BuildContext context,
+    String imageAsset,
+    String label,
+  ) {
     return GestureDetector(
       onTap: () {
         if (label == '消息') {
@@ -315,50 +315,93 @@ class TeacherPage extends StatelessWidget {
       ),
     );
   }
-    Widget _buildMainContent(BuildContext context) {
+
+  Widget _buildMainContent(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(top: ResponsiveSize.h(20)),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(width: ResponsiveSize.w(320)),
-          Expanded(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Column(
-                  children: [
-                    _buildContentCard(context, '布置作业', 'assets/homework_assign.png'),
-                    SizedBox(height: ResponsiveSize.h(20)),
-                    _buildContentCard(context, '管理班级', 'assets/class_manage.png'),
-                  ],
-                ),
-                SizedBox(width: ResponsiveSize.w(20)),
-                Column(
-                  children: [
-                    _buildContentCard(context, '积分管理', 'assets/points_manage.png'),
-                    SizedBox(height: ResponsiveSize.h(20)),
-                    _buildContentCard(context, '作品秀场', 'assets/show_manage.png'),
-                  ],
-                ),
-                SizedBox(width: ResponsiveSize.w(20)),
-                Column(
-                  children: [
-                    _buildContentCard(context, '题库管理', 'assets/question_bank.png'),
-                    SizedBox(height: ResponsiveSize.h(20)),
-                    _buildContentCard(context, '教材管理', 'assets/textbook_manage.png'),
-                  ],
-                ),
-              ],
+      child: SingleChildScrollView(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(width: ResponsiveSize.w(320)),
+            Expanded(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        _buildContentCard(
+                          context,
+                          '布置作业',
+                          'assets/homework_assign.png',
+                        ),
+                        SizedBox(height: ResponsiveSize.h(20)),
+                        _buildContentCard(
+                          context,
+                          '管理班级',
+                          'assets/class_manage.png',
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: ResponsiveSize.w(20)),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        _buildContentCard(
+                          context,
+                          '积分管理',
+                          'assets/points_manage.png',
+                        ),
+                        SizedBox(height: ResponsiveSize.h(20)),
+                        _buildContentCard(
+                          context,
+                          '作品秀场',
+                          'assets/show_manage.png',
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: ResponsiveSize.w(20)),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        _buildContentCard(
+                          context,
+                          '题库管理',
+                          'assets/question_bank.png',
+                        ),
+                        SizedBox(height: ResponsiveSize.h(20)),
+                        _buildContentCard(
+                          context,
+                          '教材管理',
+                          'assets/textbook_manage.png',
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          SizedBox(width: ResponsiveSize.w(20)),
-        ],
+            SizedBox(width: ResponsiveSize.w(20)),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildContentCard(BuildContext context, String title, String imageAsset) {
+  Widget _buildContentCard(
+    BuildContext context,
+    String title,
+    String imageAsset,
+  ) {
     return GestureDetector(
       onTap: () {
         if (title == '布置作业') {
@@ -374,7 +417,9 @@ class TeacherPage extends StatelessWidget {
         } else if (title == '题库管理') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const QuestionBankManagePage()),
+            MaterialPageRoute(
+              builder: (context) => const QuestionBankManagePage(),
+            ),
           );
         } else if (title == '管理班级') {
           Navigator.push(
@@ -396,16 +441,16 @@ class TeacherPage extends StatelessWidget {
         }
       },
       child: Container(
-        width: ResponsiveSize.w(240),
-        height: ResponsiveSize.h(280),
+        width: ResponsiveSize.w(180),
+        height: ResponsiveSize.h(220),
         decoration: BoxDecoration(
           color: Colors.white.withOpacity(0.3),
           borderRadius: BorderRadius.circular(ResponsiveSize.w(20)),
         ),
         child: Center(
           child: Container(
-            width: ResponsiveSize.w(200),
-            height: ResponsiveSize.h(240),
+            width: ResponsiveSize.w(160),
+            height: ResponsiveSize.h(200),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(ResponsiveSize.w(15)),
