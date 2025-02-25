@@ -10,7 +10,7 @@ class FreeStudyPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ResponsiveSize.init(context);
-    
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -23,9 +23,7 @@ class FreeStudyPage extends StatelessWidget {
           child: Column(
             children: [
               _buildTopBar(context),
-              Expanded(
-                child: _buildMainContent(),
-              ),
+              Expanded(child: _buildMainContent()),
             ],
           ),
         ),
@@ -50,54 +48,66 @@ class FreeStudyPage extends StatelessWidget {
       ),
     );
   }
-    Widget _buildMainContent() {
+
+  Widget _buildMainContent() {
     return Builder(
-      builder: (context) => Center(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const CartoonVideoPage(),
+      builder:
+          (context) => Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const CartoonVideoPage(),
+                      ),
+                    );
+                  },
+                  child: _buildEmptyCard(),
+                ),
+                SizedBox(width: ResponsiveSize.w(40)),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const GradedReadingPage(),
+                      ),
+                    );
+                  },
+                  child: _buildContentCard(
+                    '分级阅读',
+                    'assets/reading.png',
+                    isIcon: false,
                   ),
-                );
-              },
-              child: _buildEmptyCard(),
-            ),
-            SizedBox(width: ResponsiveSize.w(40)),
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const GradedReadingPage(),
+                ),
+                SizedBox(width: ResponsiveSize.w(40)),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const HappyListenPage(),
+                      ),
+                    );
+                  },
+                  child: _buildContentCard(
+                    '快乐听',
+                    'assets/happylisten.png',
+                    isIcon: true,
                   ),
-                );
-              },
-              child: _buildContentCard('分级阅读', 'assets/reading.png', isIcon: false),
+                ),
+              ],
             ),
-            SizedBox(width: ResponsiveSize.w(40)),
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const HappyListenPage(),
-                  ),
-                );
-              },
-              child: _buildContentCard('快乐听', 'assets/happylisten.png', isIcon: true),
-            ),
-          ],
-        ),
-      ),
+          ),
     );
   }
 
-  Widget _buildContentCard(String title, String imageAsset, {
+  Widget _buildContentCard(
+    String title,
+    String imageAsset, {
     bool isIcon = false,
   }) {
     String englishTitle = '';
@@ -105,7 +115,7 @@ class FreeStudyPage extends StatelessWidget {
     String backgroundImage = '';
     Color boxColor = Colors.transparent;
     Color borderColor = Colors.transparent;
-    
+
     if (title == '分级阅读') {
       englishTitle = 'GRADED\nREADING';
       logoAsset = 'assets/gradedreadinglogo.png';
@@ -122,7 +132,7 @@ class FreeStudyPage extends StatelessWidget {
 
     return Container(
       width: ResponsiveSize.w(300),
-      height: ResponsiveSize.h(655),
+      height: ResponsiveSize.h(600),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(ResponsiveSize.w(20)),
         boxShadow: [
@@ -134,14 +144,14 @@ class FreeStudyPage extends StatelessWidget {
           ),
         ],
       ),
-            child: Stack(
+      child: Stack(
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(ResponsiveSize.w(20)),
             child: Image.asset(
               backgroundImage,
               width: ResponsiveSize.w(300),
-              height: ResponsiveSize.h(655),
+              height: ResponsiveSize.h(600),
               fit: BoxFit.cover,
             ),
           ),
@@ -151,22 +161,24 @@ class FreeStudyPage extends StatelessWidget {
             right: 0,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: englishTitle.split('\n').map((text) {
-                return Padding(
-                  padding: EdgeInsets.only(bottom: ResponsiveSize.h(5)),
-                  child: Text(
-                    text,
-                    style: TextStyle(
-                      fontSize: ResponsiveSize.sp(32),
-                      fontWeight: text == englishTitle.split('\n').first 
-                          ? FontWeight.bold 
-                          : FontWeight.normal,
-                      color: const Color(0xFF333333),
-                      letterSpacing: 1.2,
-                    ),
-                  ),
-                );
-              }).toList(),
+              children:
+                  englishTitle.split('\n').map((text) {
+                    return Padding(
+                      padding: EdgeInsets.only(bottom: ResponsiveSize.h(5)),
+                      child: Text(
+                        text,
+                        style: TextStyle(
+                          fontSize: ResponsiveSize.sp(32),
+                          fontWeight:
+                              text == englishTitle.split('\n').first
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
+                          color: const Color(0xFF333333),
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                    );
+                  }).toList(),
             ),
           ),
           Positioned(
@@ -187,7 +199,7 @@ class FreeStudyPage extends StatelessWidget {
             child: Center(
               child: Container(
                 width: ResponsiveSize.w(220),
-                height: ResponsiveSize.h(150),
+                height: ResponsiveSize.h(100),
                 decoration: BoxDecoration(
                   color: boxColor,
                   borderRadius: BorderRadius.circular(ResponsiveSize.w(20)),
@@ -213,10 +225,11 @@ class FreeStudyPage extends StatelessWidget {
       ),
     );
   }
-    Widget _buildEmptyCard() {
+
+  Widget _buildEmptyCard() {
     return Container(
       width: ResponsiveSize.w(300),
-      height: ResponsiveSize.h(655),
+      height: ResponsiveSize.h(600),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(ResponsiveSize.w(20)),
         boxShadow: [
@@ -235,7 +248,7 @@ class FreeStudyPage extends StatelessWidget {
             child: Image.asset(
               'assets/nullyellow.png',
               width: ResponsiveSize.w(300),
-              height: ResponsiveSize.h(655),
+              height: ResponsiveSize.h(600),
               fit: BoxFit.cover,
             ),
           ),
@@ -286,7 +299,7 @@ class FreeStudyPage extends StatelessWidget {
             child: Center(
               child: Container(
                 width: ResponsiveSize.w(220),
-                height: ResponsiveSize.h(150),
+                height: ResponsiveSize.h(100),
                 decoration: BoxDecoration(
                   color: const Color.fromARGB(255, 207, 93, 67),
                   borderRadius: BorderRadius.circular(ResponsiveSize.w(20)),
