@@ -51,60 +51,25 @@ class StudentPage extends StatelessWidget {
   }
 
   Widget _buildTopBar(BuildContext context) {
-    return Padding(
+    return Container(
+      width: double.infinity,
       padding: EdgeInsets.symmetric(
-          horizontal: ResponsiveSize.w(20), vertical: ResponsiveSize.h(10)),
+        horizontal: ResponsiveSize.w(20),
+        vertical: ResponsiveSize.h(10),
+      ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.center, // Center the entire row
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Stack(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const PersonalInfoPage(),
-                        ),
-                      );
-                    },
-                    child: Image.asset(
-                      'assets/rabbit.png',
-                      width: ResponsiveSize.w(300),
-                      height: ResponsiveSize.h(200),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: ResponsiveSize.h(60),
-                    left: ResponsiveSize.w(120),
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const PersonalInfoPage(),
-                          ),
-                        );
-                      },
-                      child: Text(
-                        '陈超学员',
-                        style: TextStyle(
-                          fontSize: ResponsiveSize.sp(28),
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(width: ResponsiveSize.w(20)),
               _buildRoleSwitch(context),
+              SizedBox(
+                width: ResponsiveSize.w(40),
+              ), // Add spacing between elements
+              _buildTopRightButtons(context),
             ],
           ),
-          _buildTopRightButtons(context),
         ],
       ),
     );
@@ -118,15 +83,14 @@ class StudentPage extends StatelessWidget {
       ),
       child: Container(
         padding: EdgeInsets.symmetric(
-            horizontal: ResponsiveSize.w(16), vertical: ResponsiveSize.h(10)),
+          horizontal: ResponsiveSize.w(16),
+          vertical: ResponsiveSize.h(10),
+        ),
         decoration: BoxDecoration(
           gradient: const LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF4A6FA5),
-              Color(0xFF2B4C80),
-            ],
+            colors: [Color(0xFF4A6FA5), Color(0xFF2B4C80)],
           ),
           borderRadius: BorderRadius.circular(ResponsiveSize.w(20)),
           boxShadow: [
@@ -168,50 +132,47 @@ class StudentPage extends StatelessWidget {
           case 'teacher':
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(
-                builder: (context) => const TeacherPage(),
-              ),
+              MaterialPageRoute(builder: (context) => const TeacherPage()),
             );
             break;
           case 'admin':
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(
-                builder: (context) => const AdminPage(),
-              ),
+              MaterialPageRoute(builder: (context) => const AdminPage()),
             );
             break;
         }
       },
-      itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-        PopupMenuItem<String>(
-          value: 'teacher',
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: ResponsiveSize.w(8)),
-            child: Text(
-              '教师端',
-              style: TextStyle(
-                fontSize: ResponsiveSize.sp(16),
-                fontWeight: FontWeight.w500,
+      itemBuilder:
+          (BuildContext context) => <PopupMenuEntry<String>>[
+            PopupMenuItem<String>(
+              value: 'teacher',
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: ResponsiveSize.w(8)),
+                child: Text(
+                  '教师端',
+                  style: TextStyle(
+                    fontSize: ResponsiveSize.sp(16),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
-        const PopupMenuDivider(),
-        PopupMenuItem<String>(
-          value: 'admin',
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: ResponsiveSize.w(8)),
-            child: Text(
-              '管理端',
-              style: TextStyle(
-                fontSize: ResponsiveSize.sp(16),
-                fontWeight: FontWeight.w500,
+            const PopupMenuDivider(),
+            PopupMenuItem<String>(
+              value: 'admin',
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: ResponsiveSize.w(8)),
+                child: Text(
+                  '管理端',
+                  style: TextStyle(
+                    fontSize: ResponsiveSize.sp(16),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
-      ],
+          ],
     );
   }
 
@@ -238,9 +199,7 @@ class StudentPage extends StatelessWidget {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => const ShowRoom(),
-              ),
+              MaterialPageRoute(builder: (context) => const ShowRoom()),
             );
           },
         ),
@@ -259,9 +218,7 @@ class StudentPage extends StatelessWidget {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => const ParentAuthPage(),
-              ),
+              MaterialPageRoute(builder: (context) => const ParentAuthPage()),
             );
           },
         ),
@@ -299,20 +256,21 @@ class StudentPage extends StatelessWidget {
   }
 
   Widget _buildStudentInfo(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     return Positioned(
-      left: ResponsiveSize.px(20),
-      top: ResponsiveSize.py(20),
+      left: (screenWidth - ResponsiveSize.w(920)) / 2, // Center horizontally
+      bottom: ResponsiveSize.py(20), // Changed from top to bottom
       child: Container(
-        width: ResponsiveSize.w(280),
-        height: ResponsiveSize.h(580),
+        width: ResponsiveSize.w(920), // Increased width
+        height: ResponsiveSize.h(180), // Reduced height
         decoration: BoxDecoration(
           color: Colors.white.withOpacity(0.3),
           borderRadius: BorderRadius.circular(ResponsiveSize.w(20)),
         ),
         child: Center(
           child: Container(
-            width: ResponsiveSize.w(240),
-            height: ResponsiveSize.h(550),
+            width: ResponsiveSize.w(880), // Adjusted width
+            height: ResponsiveSize.h(150), // Adjusted height
             margin: EdgeInsets.all(ResponsiveSize.w(10)),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -325,46 +283,90 @@ class StudentPage extends StatelessWidget {
                 ),
               ],
             ),
-            child: Column(
+            child: Row(
+              mainAxisAlignment:
+                  MainAxisAlignment.center, // Center row contents
+              crossAxisAlignment:
+                  CrossAxisAlignment.center, // Center vertically
               children: [
                 Container(
-                  width: double.infinity,
-                  height: ResponsiveSize.h(200),
-                  decoration: BoxDecoration(
-                    image: const DecorationImage(
-                      image: AssetImage('assets/container.png'),
-                      fit: BoxFit.cover,
-                    ),
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(ResponsiveSize.w(15)),
-                      topRight: Radius.circular(ResponsiveSize.w(15)),
-                    ),
+                  width: ResponsiveSize.w(170), // Further reduced from 180
+                  padding: EdgeInsets.symmetric(
+                    // Changed to symmetric padding
+                    horizontal: ResponsiveSize.w(10),
+                    vertical: ResponsiveSize.h(15),
                   ),
-                  padding: EdgeInsets.all(ResponsiveSize.w(20)),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min, // Added to prevent overflow
                     children: [
                       CircleAvatar(
-                        radius: ResponsiveSize.w(45),
+                        radius: ResponsiveSize.w(25), // Further reduced from 30
                         backgroundImage: const AssetImage('assets/AIStudy.png'),
                       ),
-                      SizedBox(height: ResponsiveSize.h(15)),
-                      Text(
-                        '示例学生',
-                        style: TextStyle(
-                          fontSize: ResponsiveSize.sp(24),
-                          fontWeight: FontWeight.bold,
+                      SizedBox(
+                        width: ResponsiveSize.w(8),
+                      ), // Further reduced from 10
+                      Flexible(
+                        // Wrapped with Flexible to allow text to squeeze if needed
+                        child: Text(
+                          '示例学生',
+                          style: TextStyle(
+                            fontSize: ResponsiveSize.sp(
+                              20,
+                            ), // Further reduced from 22
+                            fontWeight: FontWeight.bold,
+                          ),
+                          overflow:
+                              TextOverflow
+                                  .ellipsis, // Added to handle long text
                         ),
                       ),
                     ],
                   ),
                 ),
-                SizedBox(height: ResponsiveSize.h(30)),
-                _buildInfoRow(Icons.star, '20', '0', '0'),
-                const Spacer(),
-                Padding(
-                  padding: EdgeInsets.all(ResponsiveSize.w(20)),
-                  child: _buildActionButtons(context),
+                Container(
+                  width: ResponsiveSize.w(280), // Reduced from 300
+                  child: _buildInfoRow(Icons.star, '20', '0', '0'),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: ResponsiveSize.w(15), // Reduced from 20
+                    ),
+                    child: Row(
+                      // Changed from Column to Row
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const MessagePage(),
+                              ),
+                            );
+                          },
+                          child: _buildActionButton('assets/message.png', '消息'),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (context) => const StudentSchoolNewsPage(),
+                              ),
+                            );
+                          },
+                          child: _buildActionButton(
+                            'assets/school.png',
+                            '学校动态',
+                          ),
+                        ),
+                        _buildActionButton('assets/setting.png', '设置'),
+                      ],
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -374,8 +376,60 @@ class StudentPage extends StatelessWidget {
     );
   }
 
+  // Modify the action button to be more compact
+  Widget _buildActionButton(String imageAsset, String label) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Image.asset(
+          imageAsset,
+          width: ResponsiveSize.w(28),
+          height: ResponsiveSize.w(28),
+        ),
+        SizedBox(width: ResponsiveSize.w(10)),
+        Row(
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: ResponsiveSize.sp(18),
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+            if ((label == '消息' && unreadCount > 0) ||
+                (label == '学校动态' && unreadNewsCount > 0))
+              Container(
+                margin: EdgeInsets.only(left: ResponsiveSize.w(8)),
+                padding: EdgeInsets.symmetric(
+                  horizontal: ResponsiveSize.w(6),
+                  vertical: ResponsiveSize.h(2),
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.red,
+                  borderRadius: BorderRadius.circular(ResponsiveSize.w(10)),
+                ),
+                child: Text(
+                  '${label == '消息' ? unreadCount : unreadNewsCount}条',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: ResponsiveSize.sp(12),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ],
+    );
+  }
+
   Widget _buildInfoRow(
-      IconData icon, String stars, String medals, String cups) {
+    IconData icon,
+    String stars,
+    String medals,
+    String cups,
+  ) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
@@ -434,110 +488,31 @@ class StudentPage extends StatelessWidget {
     );
   }
 
-  Widget _buildActionButtons(BuildContext context) {
-    return Column(
-      children: [
-        GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const MessagePage(),
-              ),
-            );
-          },
-          child: _buildActionButton('assets/message.png', '消息'),
-        ),
-        SizedBox(height: ResponsiveSize.h(20)),
-        GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const StudentSchoolNewsPage(),
-              ),
-            );
-          },
-          child: _buildActionButton('assets/school.png', '学校动态'),
-        ),
-        SizedBox(height: ResponsiveSize.h(20)),
-        _buildActionButton('assets/setting.png', '设置'),
-      ],
-    );
-  }
-
-  Widget _buildActionButton(String imageAsset, String label) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: ResponsiveSize.h(10)),
-      child: Row(
-        children: [
-          Image.asset(
-            imageAsset,
-            width: ResponsiveSize.w(32),
-            height: ResponsiveSize.w(32),
-          ),
-          SizedBox(width: ResponsiveSize.w(20)),
-          Row(
-            children: [
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: ResponsiveSize.sp(20),
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-              ),
-              if ((label == '消息' && unreadCount > 0) ||
-                  (label == '学校动态' && unreadNewsCount > 0))
-                Container(
-                  margin: EdgeInsets.only(left: ResponsiveSize.w(8)),
-                  padding: EdgeInsets.symmetric(
-                      horizontal: ResponsiveSize.w(8),
-                      vertical: ResponsiveSize.h(3)),
-                  decoration: BoxDecoration(
-                    color: Colors.red,
-                    borderRadius: BorderRadius.circular(ResponsiveSize.w(10)),
-                  ),
-                  child: Text(
-                    '${label == '消息' ? unreadCount : unreadNewsCount}条',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: ResponsiveSize.sp(12),
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildMainContent(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double contentWidth = ResponsiveSize.w(
+      180 * 3 + 35 * 2,
+    ); // Calculate total width of content
+
     return Positioned(
-      left: ResponsiveSize.px(320),
-      top: ResponsiveSize.py(20),
-      right: ResponsiveSize.px(20),
+      left: (screenWidth - contentWidth) / 2, // Center horizontally
+      top: ResponsiveSize.py(110),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.center, // Center the cards
             children: [
-              // 阶段闯关（原固定学）
               GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const FixedStudyPage(),
+                onTap:
+                    () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const FixedStudyPage(),
+                      ),
                     ),
-                  );
-                },
                 child: _buildContentCard('阶段闯关', 'assets/fixstudy.png'),
               ),
-              SizedBox(width: ResponsiveSize.w(20)),
-              // 自由学
+              SizedBox(width: ResponsiveSize.w(35)),
               GestureDetector(
                 onTap: () {
                   Navigator.push(
@@ -549,9 +524,7 @@ class StudentPage extends StatelessWidget {
                 },
                 child: _buildContentCard('自由学', 'assets/freestudy.png'),
               ),
-              SizedBox(width: ResponsiveSize.w(20)),
-
-              // 每日作业
+              SizedBox(width: ResponsiveSize.w(35)), // Reduced from 40
               GestureDetector(
                 onTap: () {
                   Navigator.push(
@@ -565,21 +538,21 @@ class StudentPage extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: ResponsiveSize.h(20)),
+          SizedBox(height: ResponsiveSize.h(8)), // Reduced from 10
           Row(
+            mainAxisAlignment: MainAxisAlignment.center, // Center the cards
             children: [
               GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const ReadingHistoryPage(),
+                onTap:
+                    () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ReadingHistoryPage(),
+                      ),
                     ),
-                  );
-                },
                 child: _buildContentCard('最近学习', 'assets/readinghistory.png'),
               ),
-              SizedBox(width: ResponsiveSize.w(20)),
+              SizedBox(width: ResponsiveSize.w(35)),
               GestureDetector(
                 onTap: () {
                   Navigator.push(
@@ -591,7 +564,7 @@ class StudentPage extends StatelessWidget {
                 },
                 child: _buildContentCard('AI对练', 'assets/AIStudy.png'),
               ),
-              SizedBox(width: ResponsiveSize.w(20)),
+              SizedBox(width: ResponsiveSize.w(35)), // Reduced from 40
               GestureDetector(
                 onTap: () {
                   Navigator.push(
@@ -612,16 +585,16 @@ class StudentPage extends StatelessWidget {
 
   Widget _buildContentCard(String title, String imageAsset) {
     return Container(
-      width: ResponsiveSize.w(240),
-      height: ResponsiveSize.h(280),
+      width: ResponsiveSize.w(180), // Reduced from 200
+      height: ResponsiveSize.h(220), // Reduced from 240
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.3),
         borderRadius: BorderRadius.circular(ResponsiveSize.w(20)),
       ),
       child: Center(
         child: Container(
-          width: ResponsiveSize.w(210),
-          height: ResponsiveSize.h(250),
+          width: ResponsiveSize.w(160), // Reduced from 180
+          height: ResponsiveSize.h(200), // Reduced from 220
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(ResponsiveSize.w(15)),
@@ -656,7 +629,7 @@ class StudentPage extends StatelessWidget {
                   child: Text(
                     title,
                     style: TextStyle(
-                      fontSize: ResponsiveSize.sp(28),
+                      fontSize: ResponsiveSize.sp(22), // Reduced from 24
                       fontWeight: FontWeight.bold,
                     ),
                   ),
