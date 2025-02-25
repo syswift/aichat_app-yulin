@@ -259,18 +259,18 @@ class StudentPage extends StatelessWidget {
     double screenWidth = MediaQuery.of(context).size.width;
     return Positioned(
       left: (screenWidth - ResponsiveSize.w(920)) / 2, // Center horizontally
-      bottom: ResponsiveSize.py(20), // Changed from top to bottom
+      bottom: ResponsiveSize.py(120), // Changed from top to bottom
       child: Container(
         width: ResponsiveSize.w(920), // Increased width
-        height: ResponsiveSize.h(180), // Reduced height
+        height: ResponsiveSize.h(120), // Reduced height
         decoration: BoxDecoration(
           color: Colors.white.withOpacity(0.3),
           borderRadius: BorderRadius.circular(ResponsiveSize.w(20)),
         ),
         child: Center(
           child: Container(
-            width: ResponsiveSize.w(880), // Adjusted width
-            height: ResponsiveSize.h(150), // Adjusted height
+            width: ResponsiveSize.w(900), // Adjusted width
+            height: ResponsiveSize.h(100), // Adjusted height
             margin: EdgeInsets.all(ResponsiveSize.w(10)),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -326,6 +326,8 @@ class StudentPage extends StatelessWidget {
                 ),
                 Container(
                   width: ResponsiveSize.w(280), // Reduced from 300
+                  height: double.infinity, // Take full height of parent
+                  alignment: Alignment.center, // Center content
                   child: _buildInfoRow(Icons.star, '20', '0', '0'),
                 ),
                 Expanded(
@@ -432,59 +434,38 @@ class StudentPage extends StatelessWidget {
   ) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisSize: MainAxisSize.min, // Added to take only necessary space
+      crossAxisAlignment: CrossAxisAlignment.center, // Center items vertically
       children: [
-        Column(
-          children: [
-            Image.asset(
-              'assets/star.png',
-              width: ResponsiveSize.w(35),
-              height: ResponsiveSize.w(35),
-            ),
-            SizedBox(height: ResponsiveSize.h(8)),
-            Text(
-              stars,
-              style: TextStyle(
-                fontSize: ResponsiveSize.sp(22),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-        Column(
-          children: [
-            Image.asset(
-              'assets/flower.png',
-              width: ResponsiveSize.w(35),
-              height: ResponsiveSize.w(35),
-            ),
-            SizedBox(height: ResponsiveSize.h(8)),
-            Text(
-              medals,
-              style: TextStyle(
-                fontSize: ResponsiveSize.sp(22),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-        Column(
-          children: [
-            Image.asset(
-              'assets/medal.png',
-              width: ResponsiveSize.w(35),
-              height: ResponsiveSize.w(35),
-            ),
-            SizedBox(height: ResponsiveSize.h(8)),
-            Text(
-              cups,
-              style: TextStyle(
-                fontSize: ResponsiveSize.sp(22),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
+        _buildInfoItem('assets/star.png', stars),
+        _buildInfoItem('assets/flower.png', medals),
+        _buildInfoItem('assets/medal.png', cups),
       ],
+    );
+  }
+
+  Widget _buildInfoItem(String imageAsset, String count) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: ResponsiveSize.w(10)),
+      child: Row(
+        // Changed to Row for horizontal layout
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Image.asset(
+            imageAsset,
+            width: ResponsiveSize.w(30),
+            height: ResponsiveSize.w(30),
+          ),
+          SizedBox(width: ResponsiveSize.w(5)),
+          Text(
+            count,
+            style: TextStyle(
+              fontSize: ResponsiveSize.sp(20),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -496,7 +477,7 @@ class StudentPage extends StatelessWidget {
 
     return Positioned(
       left: (screenWidth - contentWidth) / 2, // Center horizontally
-      top: ResponsiveSize.py(110),
+      top: ResponsiveSize.py(120),
       child: Column(
         children: [
           Row(
