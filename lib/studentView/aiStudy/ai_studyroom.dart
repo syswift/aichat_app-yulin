@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../utils/responsive_size.dart';
-import '../../../services/livekit_test_util.dart';
 import '../../../services/token_service.dart';
+import 'ai_conversation_page.dart';
 
 class AIStudyRoom extends StatelessWidget {
   const AIStudyRoom({super.key});
@@ -73,7 +73,7 @@ class AIStudyRoom extends StatelessWidget {
 
     // 获取令牌
     final token = await TokenService.getLiveKitToken(
-      room: 'test-room', // 可以根据实际需求自定义房间名
+      room: 'ai-conversation-room', // 可以根据实际需求自定义房间名
       identity: 'student-${DateTime.now().millisecondsSinceEpoch}', // 生成唯一ID
     );
 
@@ -99,8 +99,15 @@ class AIStudyRoom extends StatelessWidget {
       return;
     }
 
-    // 使用令牌测试连接
-    LiveKitTester.testConnection(context, _liveKitServerUrl, token);
+    // 导航到AI对话页面
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder:
+            (context) =>
+                AIConversationPage(serverUrl: _liveKitServerUrl, token: token),
+      ),
+    );
   }
 
   Widget _buildCustomButton({
