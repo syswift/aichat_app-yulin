@@ -10,6 +10,7 @@ import '../../../utils/responsive_size.dart';
 import '../common/widgets/logout_button.dart';
 import '../common/widgets/profile_username_widget.dart';
 import 'huibenManage/huiben_manage_page.dart';
+import 'systemSettings/system_settings_page.dart'; // Add this import
 
 class AdminPage extends StatefulWidget {
   const AdminPage({super.key});
@@ -396,8 +397,12 @@ class _AdminPageState extends State<AdminPage> {
             );
             break;
           case '系统设置':
-            // TODO: Create SystemSettingsPage and update navigation
-            _showComingSoonDialog(context, '系统设置');
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const SystemSettingsPage(),
+              ),
+            );
             break;
           case '数据统计':
             // TODO: Create StatisticsPage and update navigation
