@@ -6,6 +6,7 @@ import 'organizationTemplates/organization_templates_page.dart';
 import './homeworkSet/homework_set_page.dart';
 import './systemHomework/system_homework_page.dart';
 import '../../../utils/responsive_size.dart';
+import '../../services/background_service.dart';
 
 enum TaskStatus {
   all('全部', Color(0xFFF5F5F5), Color(0xFF757575)),
@@ -40,12 +41,9 @@ class HeaderItem {
   final int flex;
   final double leftPadding;
 
-  HeaderItem({
-    required this.title, 
-    required this.flex, 
-    this.leftPadding = 20,
-  });
+  HeaderItem({required this.title, required this.flex, this.leftPadding = 20});
 }
+
 class AssignTaskPage extends StatefulWidget {
   const AssignTaskPage({super.key});
 
@@ -56,6 +54,7 @@ class AssignTaskPage extends StatefulWidget {
 class _AssignTaskPageState extends State<AssignTaskPage> {
   String selectedMenu = '已布置任务';
   TaskStatus selectedStatus = TaskStatus.all;
+  final BackgroundService _backgroundService = BackgroundService();
 
   final List<TaskItem> taskList = [
     TaskItem(
@@ -102,34 +101,37 @@ class _AssignTaskPageState extends State<AssignTaskPage> {
   @override
   Widget build(BuildContext context) {
     ResponsiveSize.init(context);
-    
+
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/background.jpg'),
-            fit: BoxFit.cover,
-          ),
-        ),
-        child: Row(
-          children: [
-            _buildSideMenu(),
-            Container(
-              width: ResponsiveSize.w(1),
-              color: Colors.grey[300],
+      body: FutureBuilder<ImageProvider>(
+        future: _backgroundService.getBackgroundImage(),
+        builder: (context, snapshot) {
+          final backgroundImage =
+              snapshot.data ?? const AssetImage('assets/background.jpg');
+
+          return Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(image: backgroundImage, fit: BoxFit.cover),
             ),
-            Expanded(
-              child: Container(
-                color: const Color(0xFFFDF5E6),
-                child: _buildContent(),
-              ),
+            child: Row(
+              children: [
+                _buildSideMenu(),
+                Container(width: ResponsiveSize.w(1), color: Colors.grey[300]),
+                Expanded(
+                  child: Container(
+                    color: const Color(0xFFFDF5E6),
+                    child: _buildContent(),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
-    Widget _buildSideMenu() {
+
+  Widget _buildSideMenu() {
     return Container(
       width: ResponsiveSize.w(200),
       color: Colors.white,
@@ -179,7 +181,8 @@ class _AssignTaskPageState extends State<AssignTaskPage> {
             borderRadius: BorderRadius.circular(ResponsiveSize.w(12)),
             border: Border(
               left: BorderSide(
-                color: isSelected ? const Color(0xFFDEB887) : Colors.transparent,
+                color:
+                    isSelected ? const Color(0xFFDEB887) : Colors.transparent,
                 width: ResponsiveSize.w(4),
               ),
             ),
@@ -219,7 +222,8 @@ class _AssignTaskPageState extends State<AssignTaskPage> {
         return const SizedBox.shrink();
     }
   }
-    Widget _buildHeader(HeaderItem header) {
+
+  Widget _buildHeader(HeaderItem header) {
     if (header.title == '状态') {
       return Expanded(
         flex: header.flex,
@@ -227,9 +231,7 @@ class _AssignTaskPageState extends State<AssignTaskPage> {
           child: PopupMenuButton<TaskStatus>(
             offset: Offset(ResponsiveSize.w(20), ResponsiveSize.h(20)),
             position: PopupMenuPosition.under,
-            constraints: BoxConstraints(
-              minWidth: ResponsiveSize.w(120),
-            ),
+            constraints: BoxConstraints(minWidth: ResponsiveSize.w(120)),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(ResponsiveSize.w(8)),
             ),
@@ -261,32 +263,37 @@ class _AssignTaskPageState extends State<AssignTaskPage> {
                 ],
               ),
             ),
-            itemBuilder: (context) => TaskStatus.values.map((status) {
-              return PopupMenuItem<TaskStatus>(
-                value: status,
-                height: ResponsiveSize.h(45),
-                padding: EdgeInsets.symmetric(horizontal: ResponsiveSize.w(16)),
-                child: Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: ResponsiveSize.w(12),
-                    vertical: ResponsiveSize.h(8),
-                  ),
-                  child: Center(
-                    child: Text(
-                      status.label,
-                      style: TextStyle(
-                        fontSize: ResponsiveSize.sp(22),
-                        color: status == selectedStatus
-                            ? const Color(0xFF1E88E5)
-                            : const Color(0xFF333333),
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            }).toList(),
+            itemBuilder:
+                (context) =>
+                    TaskStatus.values.map((status) {
+                      return PopupMenuItem<TaskStatus>(
+                        value: status,
+                        height: ResponsiveSize.h(45),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: ResponsiveSize.w(16),
+                        ),
+                        child: Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: ResponsiveSize.w(12),
+                            vertical: ResponsiveSize.h(8),
+                          ),
+                          child: Center(
+                            child: Text(
+                              status.label,
+                              style: TextStyle(
+                                fontSize: ResponsiveSize.sp(22),
+                                color:
+                                    status == selectedStatus
+                                        ? const Color(0xFF1E88E5)
+                                        : const Color(0xFF333333),
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
             onSelected: (TaskStatus status) {
               setState(() {
                 selectedStatus = status;
@@ -296,7 +303,7 @@ class _AssignTaskPageState extends State<AssignTaskPage> {
         ),
       );
     }
-    
+
     return Expanded(
       flex: header.flex,
       child: Center(
@@ -311,7 +318,8 @@ class _AssignTaskPageState extends State<AssignTaskPage> {
       ),
     );
   }
-    Widget _buildAssignedTasks() {
+
+  Widget _buildAssignedTasks() {
     return Column(
       children: [
         Container(
@@ -433,7 +441,9 @@ class _AssignTaskPageState extends State<AssignTaskPage> {
                             ),
                             decoration: BoxDecoration(
                               color: task.status.bgColor,
-                              borderRadius: BorderRadius.circular(ResponsiveSize.w(20)),
+                              borderRadius: BorderRadius.circular(
+                                ResponsiveSize.w(20),
+                              ),
                             ),
                             child: Text(
                               task.status.label,
@@ -455,33 +465,43 @@ class _AssignTaskPageState extends State<AssignTaskPage> {
                               size: ResponsiveSize.w(28),
                               color: const Color(0xFF666666),
                             ),
-                            offset: Offset(ResponsiveSize.w(35), ResponsiveSize.h(40)),
+                            offset: Offset(
+                              ResponsiveSize.w(35),
+                              ResponsiveSize.h(40),
+                            ),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(ResponsiveSize.w(8)),
+                              borderRadius: BorderRadius.circular(
+                                ResponsiveSize.w(8),
+                              ),
                             ),
                             color: Colors.white,
                             elevation: 3,
-                            itemBuilder: (context) => [
-                              PopupMenuItem(
-                                height: ResponsiveSize.h(36),
-                                padding: EdgeInsets.symmetric(horizontal: ResponsiveSize.w(12)),
-                                child: Center(
-                                  child: Text(
-                                    '删除',
-                                    style: TextStyle(
-                                      fontSize: ResponsiveSize.sp(22),
-                                      color: Colors.grey[800],
-                                      fontWeight: FontWeight.w500,
+                            itemBuilder:
+                                (context) => [
+                                  PopupMenuItem(
+                                    height: ResponsiveSize.h(36),
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: ResponsiveSize.w(12),
                                     ),
+                                    child: Center(
+                                      child: Text(
+                                        '删除',
+                                        style: TextStyle(
+                                          fontSize: ResponsiveSize.sp(22),
+                                          color: Colors.grey[800],
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                    onTap: () {
+                                      setState(() {
+                                        taskList.removeAt(
+                                          taskList.indexOf(task),
+                                        );
+                                      });
+                                    },
                                   ),
-                                ),
-                                onTap: () {
-                                  setState(() {
-                                    taskList.removeAt(taskList.indexOf(task));
-                                  });
-                                },
-                              ),
-                            ],
+                                ],
                           ),
                         ),
                       ),

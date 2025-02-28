@@ -17,6 +17,7 @@ import './freeStudyView/happyListen/happy_listen_chapters.dart';
 import '../common/widgets/logout_button.dart';
 import '../common/widgets/profile_username_widget.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../services/background_service.dart';
 
 // Get Supabase client instance
 final supabase = Supabase.instance.client;
@@ -31,6 +32,7 @@ class StudentPage extends StatefulWidget {
 class _StudentPageState extends State<StudentPage> {
   final int unreadCount = 2;
   final int unreadNewsCount = 3;
+  final BackgroundService _backgroundService = BackgroundService();
 
   @override
   void initState() {
@@ -44,28 +46,36 @@ class _StudentPageState extends State<StudentPage> {
     return Scaffold(
       body: Stack(
         children: [
-          Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/background.jpg'),
-                fit: BoxFit.cover,
-              ),
-            ),
-            child: SafeArea(
-              child: Column(
-                children: [
-                  _buildTopBar(context),
-                  Expanded(
-                    child: Stack(
-                      children: [
-                        _buildStudentInfo(context),
-                        _buildMainContent(context),
-                      ],
-                    ),
+          FutureBuilder<ImageProvider>(
+            future: _backgroundService.getBackgroundImage(),
+            builder: (context, snapshot) {
+              final backgroundImage =
+                  snapshot.data ?? const AssetImage('assets/background.jpg');
+
+              return Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: backgroundImage,
+                    fit: BoxFit.cover,
                   ),
-                ],
-              ),
-            ),
+                ),
+                child: SafeArea(
+                  child: Column(
+                    children: [
+                      _buildTopBar(context),
+                      Expanded(
+                        child: Stack(
+                          children: [
+                            _buildStudentInfo(context),
+                            _buildMainContent(context),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
           ),
           // Logout button in bottom-right corner
           Positioned(right: 20, bottom: 20, child: const LogoutButton()),
