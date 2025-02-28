@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'parent_dashboard_page.dart';
 import '../../utils/responsive_size.dart';
+import 'dart:math' as math;
 
 class ParentAuthPage extends StatefulWidget {
   const ParentAuthPage({super.key});
@@ -20,12 +21,11 @@ class _ParentAuthPageState extends State<ParentAuthPage> {
   }
 
   void _verifyPassword() {
-    if (_passwordController.text == '123456') { // 示例密码
+    if (_passwordController.text == '123456') {
+      // 示例密码
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (context) => const ParentDashboardPage(),
-        ),
+        MaterialPageRoute(builder: (context) => const ParentDashboardPage()),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -42,7 +42,7 @@ class _ParentAuthPageState extends State<ParentAuthPage> {
   @override
   Widget build(BuildContext context) {
     ResponsiveSize.init(context); // 确保在build开始时初始化
-    
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Container(
@@ -66,14 +66,16 @@ class _ParentAuthPageState extends State<ParentAuthPage> {
                     child: Center(
                       child: Container(
                         margin: EdgeInsets.only(
-                          bottom: ResponsiveSize.py(100),
-                          top: ResponsiveSize.py(50),
+                          bottom: math.max(0, ResponsiveSize.py(100)),
+                          top: math.max(0, ResponsiveSize.py(50)),
                         ),
                         child: Stack(
                           alignment: Alignment.center,
                           children: [
                             ClipRRect(
-                              borderRadius: BorderRadius.circular(ResponsiveSize.w(20)),
+                              borderRadius: BorderRadius.circular(
+                                ResponsiveSize.w(20),
+                              ),
                               child: Image.asset(
                                 'assets/settingbg.png',
                                 width: ResponsiveSize.w(823),
@@ -86,7 +88,9 @@ class _ParentAuthPageState extends State<ParentAuthPage> {
                               height: ResponsiveSize.h(617),
                               decoration: BoxDecoration(
                                 color: Colors.transparent,
-                                borderRadius: BorderRadius.circular(ResponsiveSize.w(20)),
+                                borderRadius: BorderRadius.circular(
+                                  ResponsiveSize.w(20),
+                                ),
                               ),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -105,7 +109,9 @@ class _ParentAuthPageState extends State<ParentAuthPage> {
                                     child: Container(
                                       decoration: BoxDecoration(
                                         color: Colors.white.withOpacity(0.5),
-                                        borderRadius: BorderRadius.circular(ResponsiveSize.w(10)),
+                                        borderRadius: BorderRadius.circular(
+                                          ResponsiveSize.w(10),
+                                        ),
                                         border: Border.all(
                                           color: const Color(0xFF88c5fd),
                                           width: ResponsiveSize.w(1),
@@ -139,7 +145,8 @@ class _ParentAuthPageState extends State<ParentAuthPage> {
                                             ),
                                             onPressed: () {
                                               setState(() {
-                                                _isPasswordVisible = !_isPasswordVisible;
+                                                _isPasswordVisible =
+                                                    !_isPasswordVisible;
                                               });
                                             },
                                           ),
@@ -159,12 +166,19 @@ class _ParentAuthPageState extends State<ParentAuthPage> {
                                             Color(0xFF6baafd),
                                           ],
                                         ),
-                                        borderRadius: BorderRadius.circular(ResponsiveSize.w(25)),
+                                        borderRadius: BorderRadius.circular(
+                                          ResponsiveSize.w(25),
+                                        ),
                                         boxShadow: [
                                           BoxShadow(
-                                            color: const Color(0xFF88c5fd).withOpacity(0.3),
+                                            color: const Color(
+                                              0xFF88c5fd,
+                                            ).withOpacity(0.3),
                                             blurRadius: ResponsiveSize.w(8),
-                                            offset: Offset(0, ResponsiveSize.h(4)),
+                                            offset: Offset(
+                                              0,
+                                              ResponsiveSize.h(4),
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -174,7 +188,9 @@ class _ParentAuthPageState extends State<ParentAuthPage> {
                                           backgroundColor: Colors.transparent,
                                           shadowColor: Colors.transparent,
                                           shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(ResponsiveSize.w(25)),
+                                            borderRadius: BorderRadius.circular(
+                                              ResponsiveSize.w(25),
+                                            ),
                                           ),
                                           padding: EdgeInsets.symmetric(
                                             horizontal: ResponsiveSize.w(20),
