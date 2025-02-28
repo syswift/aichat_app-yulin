@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_sound/flutter_sound.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'dart:io';
+import 'dart:async';
 
 // Picture Book model
 class PictureBook {
@@ -29,6 +34,16 @@ class _HuibenManagePageState extends State<HuibenManagePage> {
   PictureBook? _selectedBook;
   int _currentPage = 0;
 
+  // Audio recording and playback
+  FlutterSoundPlayer? _player;
+  FlutterSoundRecorder? _recorder;
+  bool _isRecorderInitialized = false;
+  bool _isPlayerInitialized = false;
+  bool _isRecording = false;
+  bool _isPlaying = false;
+  String? _currentAudioPath;
+  String? _currentPlayingAudioId;
+
   // Sample books data
   final List<PictureBook> _books = [
     PictureBook(
@@ -53,6 +68,171 @@ class _HuibenManagePageState extends State<HuibenManagePage> {
       customContent: [[], [], []],
     ),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _initAudio();
+  }
+
+  Future<void> _initAudio() async {
+    // Initialize the recorder
+    _recorder = FlutterSoundRecorder();
+
+    // Initialize the player
+    _player = FlutterSoundPlayer();
+
+    try {
+      await _initRecorder();
+      await _initPlayer();
+    } catch (e) {
+      print('Error initializing audio: $e');
+      // Show an error message to the user
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('音频功能初始化失败: $e')));
+    }
+  }
+
+  @override
+  void dispose() {
+    _disposeAudio();
+    super.dispose();
+  }
+
+  Future<void> _disposeAudio() async {
+    try {
+      if (_recorder != null) {
+        if (_isRecording) {
+          await _recorder!.stopRecorder();
+        }
+        await _recorder!.closeRecorder();
+        _recorder = null;
+      }
+
+      if (_player != null) {
+        if (_isPlaying) {
+          await _player!.stopPlayer();
+        }
+        await _player!.closePlayer();
+        _player = null;
+      }
+    } catch (e) {
+      print('Error disposing audio: $e');
+    }
+  }
+
+  Future<void> _initRecorder() async {
+    final status = await Permission.microphone.request();
+    if (status != PermissionStatus.granted) {
+      throw RecordingPermissionException('Microphone permission not granted');
+    }
+
+    try {
+      await _recorder!.openRecorder();
+      _isRecorderInitialized = true;
+    } catch (e) {
+      print('Error initializing recorder: $e');
+      _isRecorderInitialized = false;
+      rethrow;
+    }
+  }
+
+  Future<void> _initPlayer() async {
+    try {
+      await _player!.openPlayer();
+      _isPlayerInitialized = true;
+    } catch (e) {
+      print('Error initializing player: $e');
+      _isPlayerInitialized = false;
+      rethrow;
+    }
+  }
+
+  Future<void> _startRecording() async {
+    if (!_isRecorderInitialized || _recorder == null) {
+      print('Recorder not initialized');
+      return;
+    }
+
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      final timestamp = DateTime.now().millisecondsSinceEpoch.toString();
+      _currentAudioPath = '${directory.path}/audio_$timestamp.aac';
+
+      await _recorder!.startRecorder(
+        toFile: _currentAudioPath,
+        codec: Codec.aacADTS,
+      );
+
+      setState(() {
+        _isRecording = true;
+      });
+    } catch (e) {
+      print('Error starting recording: $e');
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('录音失败: $e')));
+    }
+  }
+
+  Future<void> _stopRecording() async {
+    if (!_isRecorderInitialized || !_isRecording || _recorder == null) return;
+
+    try {
+      await _recorder!.stopRecorder();
+      setState(() {
+        _isRecording = false;
+      });
+    } catch (e) {
+      print('Error stopping recording: $e');
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('停止录音失败: $e')));
+    }
+  }
+
+  Future<void> _playAudio(String audioPath, String contentId) async {
+    if (!_isPlayerInitialized || _player == null) {
+      print('Player not initialized');
+      return;
+    }
+
+    try {
+      if (_isPlaying && _currentPlayingAudioId == contentId) {
+        await _player!.stopPlayer();
+        setState(() {
+          _isPlaying = false;
+          _currentPlayingAudioId = null;
+        });
+        return;
+      }
+
+      if (_isPlaying) {
+        await _player!.stopPlayer();
+      }
+
+      await _player!.startPlayer(
+        fromURI: audioPath,
+        whenFinished: () {
+          setState(() {
+            _isPlaying = false;
+            _currentPlayingAudioId = null;
+          });
+        },
+      );
+
+      setState(() {
+        _isPlaying = true;
+        _currentPlayingAudioId = contentId;
+      });
+    } catch (e) {
+      print('Error playing audio: $e');
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('播放录音失败: $e')));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -248,6 +428,7 @@ class _HuibenManagePageState extends State<HuibenManagePage> {
                       ..._selectedBook!.customContent[_currentPage].map((
                         content,
                       ) {
+                        final contentId = content['id'] ?? 'unknown';
                         return Positioned(
                           left: content['position'].dx,
                           top: content['position'].dy,
@@ -266,13 +447,41 @@ class _HuibenManagePageState extends State<HuibenManagePage> {
                                   ),
                                 ],
                               ),
-                              child: Text(
-                                content['text'],
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
+                              child:
+                                  content['type'] == 'audio'
+                                      ? Row(
+                                        children: [
+                                          IconButton(
+                                            icon: Icon(
+                                              _isPlaying &&
+                                                      _currentPlayingAudioId ==
+                                                          contentId
+                                                  ? Icons.stop
+                                                  : Icons.play_arrow,
+                                            ),
+                                            onPressed:
+                                                () => _playAudio(
+                                                  content['audioPath'],
+                                                  contentId,
+                                                ),
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            '音频内容',
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                      : Text(
+                                        content['text'],
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
                             ),
                           ),
                         );
@@ -346,101 +555,313 @@ class _HuibenManagePageState extends State<HuibenManagePage> {
 
   void _showAddContentDialog(BuildContext context, Offset position) {
     final textController = TextEditingController();
+    bool isAudioMode = false;
 
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: const Text('添加自定义内容'),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          content: TextField(
-            controller: textController,
-            decoration: const InputDecoration(
-              hintText: '输入内容',
-              border: OutlineInputBorder(),
-            ),
-            maxLines: 3,
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('取消'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  _selectedBook!.customContent[_currentPage].add({
-                    'position': position,
-                    'text': textController.text,
-                  });
-                });
-                Navigator.of(context).pop();
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              title: Text(isAudioMode ? '添加音频内容' : '添加自定义内容'),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
               ),
-              child: const Text('添加'),
-            ),
-          ],
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ChoiceChip(
+                        label: Text('文字'),
+                        selected: !isAudioMode,
+                        onSelected: (selected) {
+                          if (selected) {
+                            setDialogState(() {
+                              isAudioMode = false;
+                            });
+                          }
+                        },
+                      ),
+                      const SizedBox(width: 16),
+                      ChoiceChip(
+                        label: Text('录音'),
+                        selected: isAudioMode,
+                        onSelected: (selected) {
+                          if (selected) {
+                            if (!_isRecorderInitialized) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('录音功能未初始化，请检查麦克风权限'),
+                                ),
+                              );
+                              return;
+                            }
+                            setDialogState(() {
+                              isAudioMode = true;
+                            });
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  isAudioMode
+                      ? Column(
+                        children: [
+                          ElevatedButton(
+                            onPressed:
+                                _isRecording
+                                    ? () {
+                                      _stopRecording().then((_) {
+                                        setDialogState(() {});
+                                      });
+                                    }
+                                    : () {
+                                      _startRecording().then((_) {
+                                        setDialogState(() {});
+                                      });
+                                    },
+                            style: ElevatedButton.styleFrom(
+                              shape: const CircleBorder(),
+                              padding: const EdgeInsets.all(16),
+                              backgroundColor:
+                                  _isRecording ? Colors.red : Colors.blue,
+                            ),
+                            child: Icon(
+                              _isRecording ? Icons.stop : Icons.mic,
+                              color: Colors.white,
+                              size: 30,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            _isRecording
+                                ? '正在录音...'
+                                : _currentAudioPath != null
+                                ? '录音完成'
+                                : '点击开始录音',
+                            style: TextStyle(
+                              color: _isRecording ? Colors.red : Colors.black54,
+                            ),
+                          ),
+                          if (_currentAudioPath != null && !_isRecording)
+                            TextButton.icon(
+                              icon: Icon(
+                                _isPlaying ? Icons.stop : Icons.play_arrow,
+                              ),
+                              label: Text(_isPlaying ? '停止播放' : '预览录音'),
+                              onPressed: () {
+                                if (_isPlaying) {
+                                  _player?.stopPlayer().then((_) {
+                                    setDialogState(() {
+                                      _isPlaying = false;
+                                    });
+                                  });
+                                } else {
+                                  final uniqueId =
+                                      DateTime.now().millisecondsSinceEpoch
+                                          .toString();
+                                  _playAudio(_currentAudioPath!, uniqueId).then(
+                                    (_) {
+                                      setDialogState(() {});
+                                    },
+                                  );
+                                }
+                              },
+                            ),
+                        ],
+                      )
+                      : TextField(
+                        controller: textController,
+                        decoration: const InputDecoration(
+                          hintText: '输入内容',
+                          border: OutlineInputBorder(),
+                        ),
+                        maxLines: 3,
+                      ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    if (_isRecording) {
+                      _stopRecording();
+                    }
+                    if (_isPlaying) {
+                      _player?.stopPlayer();
+                    }
+                    _currentAudioPath = null;
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('取消'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    if (isAudioMode && _currentAudioPath == null) {
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(const SnackBar(content: Text('请先录制音频')));
+                      return;
+                    }
+
+                    if (!isAudioMode && textController.text.isEmpty) {
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(const SnackBar(content: Text('请输入文字内容')));
+                      return;
+                    }
+
+                    final timestamp =
+                        DateTime.now().millisecondsSinceEpoch.toString();
+                    setState(() {
+                      _selectedBook!.customContent[_currentPage].add(
+                        isAudioMode
+                            ? {
+                              'id': timestamp,
+                              'position': position,
+                              'type': 'audio',
+                              'audioPath': _currentAudioPath,
+                            }
+                            : {
+                              'id': timestamp,
+                              'position': position,
+                              'type': 'text',
+                              'text': textController.text,
+                            },
+                      );
+                    });
+                    _currentAudioPath = null;
+                    Navigator.of(context).pop();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: const Text('添加'),
+                ),
+              ],
+            );
+          },
         );
       },
     );
   }
 
   void _editContentDialog(BuildContext context, Map<String, dynamic> content) {
-    final textController = TextEditingController(text: content['text']);
+    final textController = TextEditingController(
+      text: content['type'] == 'text' ? content['text'] : '',
+    );
+    final contentType = content['type'] ?? 'text';
+    final audioPath = contentType == 'audio' ? content['audioPath'] : null;
+    final contentId = content['id'] ?? 'unknown';
 
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: const Text('编辑内容'),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          content: TextField(
-            controller: textController,
-            decoration: const InputDecoration(
-              hintText: '输入内容',
-              border: OutlineInputBorder(),
-            ),
-            maxLines: 3,
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('取消'),
-            ),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  _selectedBook!.customContent[_currentPage].remove(content);
-                });
-                Navigator.of(context).pop();
-              },
-              child: const Text('删除', style: TextStyle(color: Colors.red)),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  content['text'] = textController.text;
-                });
-                Navigator.of(context).pop();
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              title: Text(contentType == 'audio' ? '编辑音频内容' : '编辑内容'),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
               ),
-              child: const Text('更新'),
-            ),
-          ],
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  contentType == 'audio'
+                      ? Column(
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              if (_isPlaying &&
+                                  _currentPlayingAudioId == contentId) {
+                                _player?.stopPlayer().then((_) {
+                                  setDialogState(() {
+                                    _isPlaying = false;
+                                    _currentPlayingAudioId = null;
+                                  });
+                                });
+                              } else {
+                                _playAudio(audioPath!, contentId).then((_) {
+                                  setDialogState(() {});
+                                });
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              shape: const CircleBorder(),
+                              padding: const EdgeInsets.all(16),
+                              backgroundColor: Colors.blue,
+                            ),
+                            child: Icon(
+                              _isPlaying && _currentPlayingAudioId == contentId
+                                  ? Icons.stop
+                                  : Icons.play_arrow,
+                              color: Colors.white,
+                              size: 30,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            _isPlaying && _currentPlayingAudioId == contentId
+                                ? '正在播放...'
+                                : '点击播放录音',
+                          ),
+                        ],
+                      )
+                      : TextField(
+                        controller: textController,
+                        decoration: const InputDecoration(
+                          hintText: '输入内容',
+                          border: OutlineInputBorder(),
+                        ),
+                        maxLines: 3,
+                      ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    if (_isPlaying) {
+                      _player?.stopPlayer();
+                    }
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('取消'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _selectedBook!.customContent[_currentPage].remove(
+                        content,
+                      );
+                    });
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('删除', style: TextStyle(color: Colors.red)),
+                ),
+                if (contentType == 'text')
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        content['text'] = textController.text;
+                      });
+                      Navigator.of(context).pop();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: const Text('更新'),
+                  ),
+              ],
+            );
+          },
         );
       },
     );
