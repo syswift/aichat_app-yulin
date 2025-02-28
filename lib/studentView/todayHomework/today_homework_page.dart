@@ -5,6 +5,7 @@ import 'writing_homework_page.dart';
 import 'listening_homework_page.dart';
 import 'speaking_homework_page.dart';
 import 'reading_homework_page.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class TodayHomeworkPage extends StatefulWidget {
   const TodayHomeworkPage({super.key});
@@ -25,50 +26,40 @@ class _TodayHomeworkPageState extends State<TodayHomeworkPage> {
     {'name': '书写听写', 'icon': Icons.edit},
   ];
 
-  // 示例作业数据
-  // 在 homeworkList 中添加 content 字段
-  final List<Map<String, dynamic>> homeworkList = [
-    {
-      'title': 'Unit 1 - Animals',
-      'type': '听力理解',
-      'status': '未完成',
-      'cover': 'assets/cartoon.png',
-      'publishDate': '2024-03-15',
-      'dueDate': '2024-11-28',
-      'content':
-          '请听录音，回答以下问题：\n1. What animals are mentioned in the recording?\n2. What do they eat?',
-    },
-    {
-      'title': 'Unit 2 - Daily Life',
-      'type': '口语表达',
-      'status': '有点评',
-      'cover': 'assets/cartoon.png',
-      'publishDate': '2024-03-16',
-      'dueDate': '2024-11-29',
-      'content': '请录制一段口语，描述你的日常生活：\n1. 描述你的早晨routine\n2. 描述你最喜欢的课程',
-    },
-    {
-      'title': 'Unit 3 - Stories',
-      'type': '自读闯关',
-      'status': '已完成',
-      'cover': 'assets/cartoon.png',
-      'publishDate': '2024-03-14',
-      'dueDate': '2024-11-30',
-      'content':
-          '请朗读以下段落：\nOnce upon a time, there was a little girl who loved to read books...',
-    },
-    // 保持原有的书写听写作业不变
-    {
-      'title': 'Unit 4 - Writing Practice',
-      'type': '书写听写',
-      'status': '未完成',
-      'cover': 'assets/cartoon.png',
-      'publishDate': '2024-03-17',
-      'dueDate': '2024-11-30',
-      'content':
-          '请完成以下单词的书写练习：\n1. beautiful\n2. wonderful\n3. happiness\n4. sunshine\n5. rainbow',
-    },
-  ];
+  // Replace hardcoded data with state variables
+  List<Map<String, dynamic>> homeworkList = [];
+  bool isLoading = true;
+  String? errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchHomeworkData();
+  }
+
+  Future<void> _fetchHomeworkData() async {
+    try {
+      setState(() {
+        isLoading = true;
+        errorMessage = null;
+      });
+
+      final supabase = Supabase.instance.client;
+      // Changed from 'homework' to 'homeworks'
+      final response = await supabase.from('homeworks').select();
+
+      setState(() {
+        homeworkList = List<Map<String, dynamic>>.from(response);
+        isLoading = false;
+      });
+    } catch (error) {
+      setState(() {
+        errorMessage = '加载作业失败: $error';
+        isLoading = false;
+      });
+      print('Error fetching homework data: $error');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -313,21 +304,54 @@ class _TodayHomeworkPageState extends State<TodayHomeworkPage> {
                     // Use ClipRRect to ensure content respects border radius
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(ResponsiveSize.w(12)),
-                      child: GridView.builder(
-                        padding: EdgeInsets.all(ResponsiveSize.w(16)),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 4,
-                          childAspectRatio: 0.85,
-                          crossAxisSpacing: ResponsiveSize.w(16),
-                          mainAxisSpacing: ResponsiveSize.h(16),
-                        ),
-                        itemCount: _getFilteredHomeworkList().length,
-                        itemBuilder: (context, index) {
-                          return _buildHomeworkCard(
-                            _getFilteredHomeworkList()[index],
-                          );
-                        },
-                      ),
+                      child:
+                          isLoading
+                              ? const Center(child: CircularProgressIndicator())
+                              : errorMessage != null
+                              ? Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      errorMessage!,
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: ResponsiveSize.sp(22),
+                                      ),
+                                    ),
+                                    SizedBox(height: ResponsiveSize.h(20)),
+                                    ElevatedButton(
+                                      onPressed: _fetchHomeworkData,
+                                      child: const Text('重试'),
+                                    ),
+                                  ],
+                                ),
+                              )
+                              : homeworkList.isEmpty
+                              ? Center(
+                                child: Text(
+                                  '暂无作业数据',
+                                  style: TextStyle(
+                                    fontSize: ResponsiveSize.sp(24),
+                                  ),
+                                ),
+                              )
+                              : GridView.builder(
+                                padding: EdgeInsets.all(ResponsiveSize.w(16)),
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 4,
+                                      childAspectRatio: 0.85,
+                                      crossAxisSpacing: ResponsiveSize.w(16),
+                                      mainAxisSpacing: ResponsiveSize.h(16),
+                                    ),
+                                itemCount: _getFilteredHomeworkList().length,
+                                itemBuilder: (context, index) {
+                                  return _buildHomeworkCard(
+                                    _getFilteredHomeworkList()[index],
+                                  );
+                                },
+                              ),
                     ),
                   ),
                 ),
