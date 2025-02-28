@@ -1,8 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:path/path.dart' as path;
+import 'package:uuid/uuid.dart';
 import '../../../utils/responsive_size.dart';
+import '../../services/background_service.dart';
 
 class SystemSettingsPage extends StatefulWidget {
   const SystemSettingsPage({super.key});
@@ -12,17 +15,18 @@ class SystemSettingsPage extends StatefulWidget {
 }
 
 class _SystemSettingsPageState extends State<SystemSettingsPage> {
-  final List<String> _defaultBackgrounds = [
-    'assets/background.jpg',
-    'assets/background2.jpg',
-    'assets/background3.jpg',
-  ];
-  String _currentBackground = 'assets/background.jpg';
+  // Supabase client
+  final _supabase = Supabase.instance.client;
+  // Storage bucket name
+  final String _storageBucket = 'background';
+
+  String _currentBackground = '';
   File? _customBackgroundImage;
   bool _isPreviewMode = false;
   final ImagePicker _picker = ImagePicker();
-  bool _isImagePickerActive = false; // Add flag to track image picker state
-  String _selectedBackgroundForPreview = 'assets/background.jpg';
+  bool _isImagePickerActive = false;
+  bool _isUploading = false;
+  String _selectedBackgroundForPreview = '';
 
   // 定义页面主题色
   final Color _primaryColor = const Color(0xFF3A5F8E); // 深蓝色主题
@@ -36,50 +40,98 @@ class _SystemSettingsPageState extends State<SystemSettingsPage> {
   @override
   void initState() {
     super.initState();
-    _loadCurrentBackground();
+    _initializeDefaults();
   }
 
-  Future<void> _loadCurrentBackground() async {
-    final prefs = await SharedPreferences.getInstance();
-    final savedBackground = prefs.getString('background_image');
-    final customPath = prefs.getString('custom_background_path');
-
+  // Initialize default values without loading from database
+  void _initializeDefaults() {
     setState(() {
-      if (customPath != null && File(customPath).existsSync()) {
-        _customBackgroundImage = File(customPath);
-      }
-      if (savedBackground != null) {
-        _currentBackground = savedBackground;
-        _selectedBackgroundForPreview = savedBackground;
-      }
+      _currentBackground = '';
+      _selectedBackgroundForPreview = '';
     });
   }
 
-  Future<void> _saveBackground(
-    String backgroundPath, {
-    bool isCustom = false,
-  }) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('background_image', backgroundPath);
+  // Upload image to Supabase storage and return the filename
+  Future<String?> _uploadImageToSupabase(File imageFile) async {
+    setState(() {
+      _isUploading = true;
+    });
 
-    if (isCustom && _customBackgroundImage != null) {
-      await prefs.setString(
-        'custom_background_path',
-        _customBackgroundImage!.path,
+    try {
+      final fileExtension = path.extension(imageFile.path).replaceAll('.', '');
+      final fileName = '${const Uuid().v4()}.$fileExtension';
+
+      await _supabase.storage.from(_storageBucket).upload(fileName, imageFile);
+
+      return fileName;
+    } catch (e) {
+      debugPrint('Error uploading image: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('上传图片时出错: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
       );
+      return null;
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isUploading = false;
+        });
+      }
     }
+  }
 
-    setState(() {
-      _currentBackground = backgroundPath;
-    });
+  // Update the background setting in system_settings table
+  Future<bool> _updateBackgroundSetting(String fileName) async {
+    try {
+      await _supabase
+          .from('system_settings')
+          .update({'setting_value': fileName})
+          .eq('setting_name', 'background');
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('背景已更新'),
-        backgroundColor: Colors.green,
-        duration: const Duration(seconds: 2),
-      ),
-    );
+      return true;
+    } catch (e) {
+      debugPrint('Error updating background setting: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('更新设置时出错: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return false;
+    }
+  }
+
+  Future<void> _saveBackground() async {
+    // Only handle new uploads
+    if (_customBackgroundImage != null) {
+      final uploadedFileName = await _uploadImageToSupabase(
+        _customBackgroundImage!,
+      );
+
+      if (uploadedFileName != null) {
+        // Update the system_settings table with the new background
+        final updated = await _updateBackgroundSetting(uploadedFileName);
+
+        if (updated) {
+          setState(() {
+            _currentBackground = uploadedFileName;
+            _customBackgroundImage = null;
+            // Clear the background cache so the new background will be loaded
+            BackgroundService().clearCache();
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('背景已更新'),
+              backgroundColor: Colors.green,
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
+      }
+    }
   }
 
   Future<void> _pickImage() async {
@@ -95,15 +147,19 @@ class _SystemSettingsPageState extends State<SystemSettingsPage> {
     }
 
     setState(() {
-      _isImagePickerActive = true; // Set flag to true at start of operation
+      _isImagePickerActive = true;
     });
 
     try {
       final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
       if (image != null) {
+        final imageFile = File(image.path);
+
         setState(() {
-          _customBackgroundImage = File(image.path);
-          _currentBackground = 'custom';
+          _customBackgroundImage = imageFile;
+          _selectedBackgroundForPreview =
+              'temp_preview'; // Use a temp identifier for preview
+          _isPreviewMode = true;
         });
       }
     } catch (e) {
@@ -114,12 +170,25 @@ class _SystemSettingsPageState extends State<SystemSettingsPage> {
         ),
       );
     } finally {
-      // Always reset the flag when operation completes or fails
       if (mounted) {
         setState(() {
           _isImagePickerActive = false;
         });
       }
+    }
+  }
+
+  // Get image provider based on path type
+  ImageProvider _getImageProvider(String imagePath) {
+    if (imagePath == 'temp_preview' && _customBackgroundImage != null) {
+      // Use local file for temporary preview
+      return FileImage(_customBackgroundImage!);
+    } else {
+      // For all other backgrounds, get from Supabase storage
+      final publicUrl = _supabase.storage
+          .from(_storageBucket)
+          .getPublicUrl(imagePath);
+      return NetworkImage(publicUrl);
     }
   }
 
@@ -213,10 +282,7 @@ class _SystemSettingsPageState extends State<SystemSettingsPage> {
         Container(
           decoration: BoxDecoration(
             image: DecorationImage(
-              image:
-                  _selectedBackgroundForPreview == 'custom'
-                      ? FileImage(_customBackgroundImage!) as ImageProvider
-                      : AssetImage(_selectedBackgroundForPreview),
+              image: _getImageProvider(_selectedBackgroundForPreview),
               fit: BoxFit.cover,
             ),
           ),
@@ -240,42 +306,55 @@ class _SystemSettingsPageState extends State<SystemSettingsPage> {
                   ),
                 ),
                 SizedBox(height: ResponsiveSize.h(20)),
-                ElevatedButton(
-                  onPressed: () async {
-                    await _saveBackground(
-                      _selectedBackgroundForPreview,
-                      isCustom: _selectedBackgroundForPreview == 'custom',
-                    );
-                    setState(() {
-                      _isPreviewMode = false;
-                    });
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: _successColor,
-                    foregroundColor: _buttonTextColor,
-                    elevation: 5,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: ResponsiveSize.w(30),
-                      vertical: ResponsiveSize.h(15),
+                if (_isUploading)
+                  Column(
+                    children: [
+                      CircularProgressIndicator(color: Colors.white),
+                      SizedBox(height: ResponsiveSize.h(10)),
+                      Text(
+                        '正在上传图片...',
+                        style: TextStyle(
+                          fontSize: ResponsiveSize.sp(18),
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  )
+                else
+                  ElevatedButton(
+                    onPressed: () async {
+                      await _saveBackground();
+                      setState(() {
+                        _isPreviewMode = false;
+                      });
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _successColor,
+                      foregroundColor: _buttonTextColor,
+                      elevation: 5,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: ResponsiveSize.w(30),
+                        vertical: ResponsiveSize.h(15),
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                          ResponsiveSize.w(30),
+                        ),
+                      ),
                     ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(ResponsiveSize.w(30)),
+                    child: Text(
+                      '应用此背景',
+                      style: TextStyle(
+                        fontSize: ResponsiveSize.sp(18),
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                  child: Text(
-                    '应用此背景',
-                    style: TextStyle(
-                      fontSize: ResponsiveSize.sp(18),
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
                 SizedBox(height: ResponsiveSize.h(10)),
                 TextButton(
                   onPressed: () {
                     setState(() {
                       _isPreviewMode = false;
-                      _selectedBackgroundForPreview = _currentBackground;
                     });
                   },
                   child: Text(
@@ -363,8 +442,8 @@ class _SystemSettingsPageState extends State<SystemSettingsPage> {
                         (context) => AlertDialog(
                           title: const Text('背景图片设置帮助'),
                           content: const Text(
-                            '您可以选择系统提供的背景图片，或者上传自定义图片作为系统背景。\n\n'
-                            '点击任意背景图片可以预览效果，满意后点击"应用此背景"即可保存。',
+                            '您可以上传自定义图片作为系统背景。\n\n'
+                            '上传图片后可以预览效果，满意后点击"应用此背景"即可保存。',
                           ),
                           actions: [
                             TextButton(
@@ -381,77 +460,7 @@ class _SystemSettingsPageState extends State<SystemSettingsPage> {
           Divider(thickness: ResponsiveSize.h(1)),
           SizedBox(height: ResponsiveSize.h(10)),
           Text(
-            '系统背景',
-            style: TextStyle(
-              fontSize: ResponsiveSize.sp(18),
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          SizedBox(height: ResponsiveSize.h(15)),
-          SizedBox(
-            height: ResponsiveSize.h(120),
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: _defaultBackgrounds.length,
-              itemBuilder: (context, index) {
-                final background = _defaultBackgrounds[index];
-                return Padding(
-                  padding: EdgeInsets.only(right: ResponsiveSize.w(15)),
-                  child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _selectedBackgroundForPreview = background;
-                        _isPreviewMode = true;
-                      });
-                    },
-                    child: Stack(
-                      children: [
-                        Container(
-                          width: ResponsiveSize.w(200),
-                          height: ResponsiveSize.h(120),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(
-                              ResponsiveSize.w(10),
-                            ),
-                            image: DecorationImage(
-                              image: AssetImage(background),
-                              fit: BoxFit.cover,
-                            ),
-                            border:
-                                _currentBackground == background
-                                    ? Border.all(
-                                      color: Colors.blue,
-                                      width: ResponsiveSize.w(3),
-                                    )
-                                    : null,
-                          ),
-                        ),
-                        if (_currentBackground == background)
-                          Positioned(
-                            right: ResponsiveSize.w(5),
-                            top: ResponsiveSize.h(5),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.blue,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                Icons.check,
-                                color: Colors.white,
-                                size: ResponsiveSize.w(20),
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-          SizedBox(height: ResponsiveSize.h(25)),
-          Text(
-            '自定义背景',
+            '上传背景',
             style: TextStyle(
               fontSize: ResponsiveSize.sp(18),
               fontWeight: FontWeight.w500,
@@ -465,98 +474,69 @@ class _SystemSettingsPageState extends State<SystemSettingsPage> {
                     _customBackgroundImage != null
                         ? () {
                           setState(() {
-                            _selectedBackgroundForPreview = 'custom';
+                            _selectedBackgroundForPreview = 'temp_preview';
                             _isPreviewMode = true;
                           });
                         }
                         : _pickImage,
-                child: Stack(
-                  children: [
-                    Container(
-                      width: ResponsiveSize.w(200),
-                      height: ResponsiveSize.h(120),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(
-                          ResponsiveSize.w(10),
-                        ),
-                        color: Colors.grey[200],
-                        image:
-                            _customBackgroundImage != null
-                                ? DecorationImage(
-                                  image: FileImage(_customBackgroundImage!),
-                                  fit: BoxFit.cover,
-                                )
-                                : null,
-                        border:
-                            _currentBackground == 'custom'
-                                ? Border.all(
-                                  color: Colors.blue,
-                                  width: ResponsiveSize.w(3),
-                                )
-                                : null,
-                      ),
-                      child:
-                          _customBackgroundImage == null
-                              ? Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.add_photo_alternate,
-                                    size: ResponsiveSize.w(40),
-                                    color: _primaryColor.withOpacity(0.7),
-                                  ),
-                                  SizedBox(height: ResponsiveSize.h(8)),
-                                  Text(
-                                    '点击上传图片',
-                                    style: TextStyle(
-                                      fontSize: ResponsiveSize.sp(14),
-                                      color: _primaryColor,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ],
-                              )
-                              : Column(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Container(
-                                    width: double.infinity,
-                                    padding: EdgeInsets.symmetric(
-                                      vertical: ResponsiveSize.h(6),
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.black.withOpacity(0.4),
-                                    ),
-                                    child: Text(
-                                      '点击预览 / 长按更换',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontSize: ResponsiveSize.sp(12),
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                child: Container(
+                  width: ResponsiveSize.w(200),
+                  height: ResponsiveSize.h(120),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(ResponsiveSize.w(10)),
+                    color: Colors.grey[200],
+                    image:
+                        _customBackgroundImage != null
+                            ? DecorationImage(
+                              image: FileImage(_customBackgroundImage!),
+                              fit: BoxFit.cover,
+                            )
+                            : null,
+                  ),
+                  child:
+                      _customBackgroundImage == null
+                          ? Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.add_photo_alternate,
+                                size: ResponsiveSize.w(40),
+                                color: _primaryColor.withOpacity(0.7),
                               ),
-                    ),
-                    if (_currentBackground == 'custom')
-                      Positioned(
-                        right: ResponsiveSize.w(5),
-                        top: ResponsiveSize.h(5),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.blue,
-                            shape: BoxShape.circle,
+                              SizedBox(height: ResponsiveSize.h(8)),
+                              Text(
+                                '点击上传图片',
+                                style: TextStyle(
+                                  fontSize: ResponsiveSize.sp(14),
+                                  color: _primaryColor,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          )
+                          : Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Container(
+                                width: double.infinity,
+                                padding: EdgeInsets.symmetric(
+                                  vertical: ResponsiveSize.h(6),
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.4),
+                                ),
+                                child: Text(
+                                  '点击预览',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: ResponsiveSize.sp(12),
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                          child: Icon(
-                            Icons.check,
-                            color: Colors.white,
-                            size: ResponsiveSize.w(20),
-                          ),
-                        ),
-                      ),
-                  ],
                 ),
               ),
               SizedBox(width: ResponsiveSize.w(15)),
@@ -598,9 +578,6 @@ class _SystemSettingsPageState extends State<SystemSettingsPage> {
                       onPressed: () {
                         setState(() {
                           _customBackgroundImage = null;
-                          if (_currentBackground == 'custom') {
-                            _currentBackground = _defaultBackgrounds[0];
-                          }
                         });
                       },
                     ),
@@ -609,36 +586,37 @@ class _SystemSettingsPageState extends State<SystemSettingsPage> {
             ],
           ),
           SizedBox(height: ResponsiveSize.h(20)),
-          Center(
-            child: ElevatedButton.icon(
-              icon: Icon(Icons.visibility),
-              label: Text(
-                '预览当前选择的背景',
-                style: TextStyle(
-                  fontSize: ResponsiveSize.sp(16),
-                  fontWeight: FontWeight.w500,
+          if (_customBackgroundImage != null)
+            Center(
+              child: ElevatedButton.icon(
+                icon: Icon(Icons.visibility),
+                label: Text(
+                  '预览上传的背景',
+                  style: TextStyle(
+                    fontSize: ResponsiveSize.sp(16),
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: _accentColor,
+                  foregroundColor: _buttonTextColor,
+                  elevation: 4,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: ResponsiveSize.w(30),
+                    vertical: ResponsiveSize.h(15),
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(ResponsiveSize.w(30)),
+                  ),
+                ),
+                onPressed: () {
+                  setState(() {
+                    _selectedBackgroundForPreview = 'temp_preview';
+                    _isPreviewMode = true;
+                  });
+                },
               ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: _accentColor,
-                foregroundColor: _buttonTextColor,
-                elevation: 4,
-                padding: EdgeInsets.symmetric(
-                  horizontal: ResponsiveSize.w(30),
-                  vertical: ResponsiveSize.h(15),
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(ResponsiveSize.w(30)),
-                ),
-              ),
-              onPressed: () {
-                setState(() {
-                  _selectedBackgroundForPreview = _currentBackground;
-                  _isPreviewMode = true;
-                });
-              },
             ),
-          ),
         ],
       ),
     );

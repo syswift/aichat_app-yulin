@@ -10,7 +10,8 @@ import '../../../utils/responsive_size.dart';
 import '../common/widgets/logout_button.dart';
 import '../common/widgets/profile_username_widget.dart';
 import 'huibenManage/huiben_manage_page.dart';
-import 'systemSettings/system_settings_page.dart'; // Add this import
+import 'systemSettings/system_settings_page.dart';
+import '../../services/background_service.dart';
 
 class AdminPage extends StatefulWidget {
   const AdminPage({super.key});
@@ -20,6 +21,8 @@ class AdminPage extends StatefulWidget {
 }
 
 class _AdminPageState extends State<AdminPage> {
+  final BackgroundService _backgroundService = BackgroundService();
+
   @override
   void initState() {
     super.initState();
@@ -30,26 +33,33 @@ class _AdminPageState extends State<AdminPage> {
     ResponsiveSize.init(context);
 
     return Scaffold(
-      body: Stack(
-        children: [
-          Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/background.jpg'),
-                fit: BoxFit.cover,
+      body: FutureBuilder<ImageProvider>(
+        future: _backgroundService.getBackgroundImage(),
+        builder: (context, snapshot) {
+          return Stack(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image:
+                        snapshot.data ??
+                        const AssetImage('assets/background.jpg'),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                child: SafeArea(
+                  child: Column(
+                    children: [
+                      _buildTopBar(context),
+                      Expanded(child: _buildMainContent(context)),
+                    ],
+                  ),
+                ),
               ),
-            ),
-            child: SafeArea(
-              child: Column(
-                children: [
-                  _buildTopBar(context),
-                  Expanded(child: _buildMainContent(context)),
-                ],
-              ),
-            ),
-          ),
-          Positioned(right: 20, bottom: 20, child: const LogoutButton()),
-        ],
+              Positioned(right: 20, bottom: 20, child: const LogoutButton()),
+            ],
+          );
+        },
       ),
     );
   }
