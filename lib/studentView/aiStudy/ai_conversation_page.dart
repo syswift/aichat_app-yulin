@@ -467,7 +467,7 @@ class _AIConversationPageState extends State<AIConversationPage>
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "AI 语音助手",
+          "AI 对话练习",
           style: TextStyle(
             fontSize: ResponsiveSize.sp(45),
             fontWeight: FontWeight.bold,

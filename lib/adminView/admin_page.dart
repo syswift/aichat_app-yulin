@@ -9,6 +9,7 @@ import 'pointsShop/points_shop_manage_page.dart';
 import '../../../utils/responsive_size.dart';
 import '../common/widgets/logout_button.dart';
 import '../common/widgets/profile_username_widget.dart';
+import 'huibenManage/huiben_manage_page.dart';
 
 class AdminPage extends StatefulWidget {
   const AdminPage({super.key});
@@ -389,8 +390,10 @@ class _AdminPageState extends State<AdminPage> {
 
           // New cases - Add placeholder logic for new destinations
           case '绘本编辑':
-            // TODO: Create TextbookReviewPage and update navigation
-            _showComingSoonDialog(context, '绘本编辑');
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const HuibenManagePage()),
+            );
             break;
           case '系统设置':
             // TODO: Create SystemSettingsPage and update navigation
