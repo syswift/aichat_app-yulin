@@ -6,6 +6,7 @@ import 'listening_homework_page.dart';
 import 'speaking_homework_page.dart';
 import 'reading_homework_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:intl/intl.dart'; // Add this import for date formatting
 
 class TodayHomeworkPage extends StatefulWidget {
   const TodayHomeworkPage({super.key});
@@ -58,6 +59,40 @@ class _TodayHomeworkPageState extends State<TodayHomeworkPage> {
         isLoading = false;
       });
       print('Error fetching homework data: $error');
+    }
+  }
+
+  // Add a helper method to format dates
+  String _formatDate(dynamic dateValue) {
+    if (dateValue == null) return '未设置';
+
+    try {
+      // Handle String format from database
+      if (dateValue is String) {
+        final parsedDate = DateTime.parse(dateValue);
+        return DateFormat('yyyy-MM-dd').format(parsedDate);
+      }
+
+      // Handle DateTime objects
+      if (dateValue is DateTime) {
+        return DateFormat('yyyy-MM-dd').format(dateValue);
+      }
+
+      // Handle timestamp format
+      if (dateValue is Map) {
+        if (dateValue.containsKey('date')) {
+          return dateValue['date'].toString().substring(
+            0,
+            10,
+          ); // Extract YYYY-MM-DD
+        }
+      }
+
+      // Return as is if it's already formatted or we can't parse it
+      return dateValue.toString();
+    } catch (e) {
+      print('Error formatting date: $e for value $dateValue');
+      return '格式错误';
     }
   }
 
@@ -442,7 +477,34 @@ class _TodayHomeworkPageState extends State<TodayHomeworkPage> {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    Image.asset(homework['cover'], fit: BoxFit.cover),
+                    // Use Supabase Storage URL instead of local asset
+                    Image.network(
+                      _getCoverImageUrl(homework['cover']),
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: Colors.grey[300],
+                          child: Center(
+                            child: Icon(
+                              Icons.image_not_supported,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        );
+                      },
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Center(
+                          child: CircularProgressIndicator(
+                            value:
+                                loadingProgress.expectedTotalBytes != null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes!
+                                    : null,
+                          ),
+                        );
+                      },
+                    ),
                     Positioned(
                       top: ResponsiveSize.h(8),
                       left: ResponsiveSize.w(8),
@@ -499,7 +561,7 @@ class _TodayHomeworkPageState extends State<TodayHomeworkPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '发布日期：${homework['publishDate']}',
+                          '发布日期：${_formatDate(homework['publish_date'])}',
                           style: TextStyle(
                             fontSize: ResponsiveSize.sp(18),
                             color: Colors.grey[600],
@@ -510,7 +572,7 @@ class _TodayHomeworkPageState extends State<TodayHomeworkPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              '截止日期：${homework['dueDate']}',
+                              '截止日期：${_formatDate(homework['due_date'])}',
                               style: TextStyle(
                                 fontSize: ResponsiveSize.sp(18),
                                 color: Colors.grey[600],
@@ -615,5 +677,18 @@ class _TodayHomeworkPageState extends State<TodayHomeworkPage> {
         ),
       ),
     );
+  }
+
+  // Add a helper method to get the Supabase Storage URL for cover images
+  String _getCoverImageUrl(String coverPath) {
+    final supabase = Supabase.instance.client;
+    // If coverPath is already a full URL, return it as is
+    if (coverPath.startsWith('http')) {
+      return coverPath;
+    }
+    // Remove 'assets/' prefix if exists
+    String filename = coverPath.replaceFirst('assets/', '');
+    // Get public URL from Supabase storage
+    return supabase.storage.from('cover').getPublicUrl(filename);
   }
 }
