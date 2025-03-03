@@ -70,13 +70,11 @@ class WorkItem {
     );
   }
 }
+
 class ShowRoom extends StatefulWidget {
   final bool isTeacherView;
 
-  const ShowRoom({
-    super.key,
-    this.isTeacherView = false,
-  });
+  const ShowRoom({super.key, this.isTeacherView = false});
 
   @override
   State<ShowRoom> createState() => _ShowRoomState();
@@ -98,7 +96,12 @@ class _ShowRoomState extends State<ShowRoom> {
     });
   }
 
-  void _addNewWork(String title, String audioPath, String imagePath, String? videoPath) {
+  void _addNewWork(
+    String title,
+    String audioPath,
+    String imagePath,
+    String? videoPath,
+  ) {
     final newWork = WorkItem(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       title: title,
@@ -118,7 +121,12 @@ class _ShowRoomState extends State<ShowRoom> {
     workItemsNotifier.value = currentWorks;
   }
 
-  void _addNewVideoWork(String title, String videoPath, String imagePath, String? audioPath) {
+  void _addNewVideoWork(
+    String title,
+    String videoPath,
+    String imagePath,
+    String? audioPath,
+  ) {
     final newWork = WorkItem(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       title: title,
@@ -159,107 +167,111 @@ class _ShowRoomState extends State<ShowRoom> {
     currentWorks.insert(0, newWork);
     workItemsNotifier.value = currentWorks;
   }
-    final ValueNotifier<Set<String>> likedWorkIds = ValueNotifier<Set<String>>({});
-  final ValueNotifier<List<WorkItem>> workItemsNotifier = ValueNotifier<List<WorkItem>>([
-    WorkItem(
-      id: '1',
-      title: 'The Baby Animals',
-      author: '安诺',
-      points: 1319,
-      type: '录音',
-      createTime: DateTime.now().subtract(const Duration(days: 30)),
-      teacherComment: '发音准确，语调自然，表现力很强！',
-      commentTime: DateTime.now().subtract(const Duration(days: 25)),
-      audioPath: 'assets/test_audio.mp3',
-      imagePath: 'assets/cartoon.png',
-      hasNewComment: true,
-      hasComment: true,
-    ),
-    WorkItem(
-      id: '2',
-      title: 'My Baby Sister',
-      author: 'Tiffany',
-      points: 2070,
-      type: '创作',
-      createTime: DateTime.now().subtract(const Duration(days: 45)),
-      teacherComment: '创意十足，画面构图合理，色彩搭配协调！',
-      commentTime: DateTime.now().subtract(const Duration(days: 40)),
-      videoPath: 'assets/test_video.mp4',
-      imagePath: 'assets/cartoon.png',
-      hasNewComment: true,
-      hasComment: true,
-    ),
-    WorkItem(
-      id: '4',
-      title: 'At The Market',
-      author: 'Ella',
-      points: 1515,
-      type: '录音',
-      createTime: DateTime.now().subtract(const Duration(days: 60)),
-      teacherComment: '朗读流畅，重音准确，感情充沛！',
-      commentTime: DateTime.now().subtract(const Duration(days: 55)),
-      audioPath: 'assets/test_audio.mp3',
-      imagePath: 'assets/cartoon.png',
-      hasNewComment: false,
-      hasComment: true,
-    ),
-    WorkItem(
-      id: '5',
-      title: 'Waking Up',
-      author: 'Amy诗悦',
-      points: 1445,
-      type: '创作',
-      createTime: DateTime.now().subtract(const Duration(days: 20)),
-      teacherComment: '画面生动有趣，故事情节完整！',
-      commentTime: DateTime.now().subtract(const Duration(days: 15)),
-      videoPath: 'assets/test_video.mp4',
-      imagePath: 'assets/cartoon.png',
-      hasNewComment: true,
-      hasComment: true,
-    ),
-    WorkItem(
-      id: '7',
-      title: 'Drawing',
-      author: '朱卉恩',
-      points: 1270,
-      type: '录音',
-      createTime: DateTime.now().subtract(const Duration(days: 15)),
-      teacherComment: '发音标准，语速适中，表达清晰！',
-      commentTime: DateTime.now().subtract(const Duration(days: 10)),
-      audioPath: 'assets/test_audio.mp3',
-      imagePath: 'assets/cartoon.png',
-      hasNewComment: false,
-      hasComment: true,
-    ),
-    WorkItem(
-      id: '8',
-      title: 'Ten Fat Sausages',
-      author: '小鱼',
-      points: 385,
-      type: '创作',
-      createTime: DateTime.now().subtract(const Duration(days: 10)),
-      teacherComment: '想象力丰富，画面细节丰富！',
-      commentTime: DateTime.now().subtract(const Duration(days: 5)),
-      videoPath: 'assets/test_video.mp4',
-      imagePath: 'assets/cartoon.png',
-      hasNewComment: true,
-      hasComment: true,
-    ),
-    WorkItem(
-      id: '9',
-      title: 'My First Recording',
-      author: '小明',
-      points: 1500,
-      type: '录音',
-      createTime: DateTime.now().subtract(const Duration(days: 5)),
-      teacherComment: '很棒的首次尝试，继续加油！',
-      commentTime: DateTime.now().subtract(const Duration(days: 2)),
-      audioPath: 'assets/test_audio.mp3',
-      imagePath: 'assets/cartoon.png',
-      hasNewComment: true,
-      hasComment: true,
-    ),
-  ]);
+
+  final ValueNotifier<Set<String>> likedWorkIds = ValueNotifier<Set<String>>(
+    {},
+  );
+  final ValueNotifier<List<WorkItem>> workItemsNotifier =
+      ValueNotifier<List<WorkItem>>([
+        WorkItem(
+          id: '1',
+          title: 'The Baby Animals',
+          author: '安诺',
+          points: 1319,
+          type: '录音',
+          createTime: DateTime.now().subtract(const Duration(days: 30)),
+          teacherComment: '发音准确，语调自然，表现力很强！',
+          commentTime: DateTime.now().subtract(const Duration(days: 25)),
+          audioPath: 'assets/test_audio.mp3',
+          imagePath: 'assets/cartoon.png',
+          hasNewComment: true,
+          hasComment: true,
+        ),
+        WorkItem(
+          id: '2',
+          title: 'My Baby Sister',
+          author: 'Tiffany',
+          points: 2070,
+          type: '创作',
+          createTime: DateTime.now().subtract(const Duration(days: 45)),
+          teacherComment: '创意十足，画面构图合理，色彩搭配协调！',
+          commentTime: DateTime.now().subtract(const Duration(days: 40)),
+          videoPath: 'assets/test_video.mp4',
+          imagePath: 'assets/cartoon.png',
+          hasNewComment: true,
+          hasComment: true,
+        ),
+        WorkItem(
+          id: '4',
+          title: 'At The Market',
+          author: 'Ella',
+          points: 1515,
+          type: '录音',
+          createTime: DateTime.now().subtract(const Duration(days: 60)),
+          teacherComment: '朗读流畅，重音准确，感情充沛！',
+          commentTime: DateTime.now().subtract(const Duration(days: 55)),
+          audioPath: 'assets/test_audio.mp3',
+          imagePath: 'assets/cartoon.png',
+          hasNewComment: false,
+          hasComment: true,
+        ),
+        WorkItem(
+          id: '5',
+          title: 'Waking Up',
+          author: 'Amy诗悦',
+          points: 1445,
+          type: '创作',
+          createTime: DateTime.now().subtract(const Duration(days: 20)),
+          teacherComment: '画面生动有趣，故事情节完整！',
+          commentTime: DateTime.now().subtract(const Duration(days: 15)),
+          videoPath: 'assets/test_video.mp4',
+          imagePath: 'assets/cartoon.png',
+          hasNewComment: true,
+          hasComment: true,
+        ),
+        WorkItem(
+          id: '7',
+          title: 'Drawing',
+          author: '朱卉恩',
+          points: 1270,
+          type: '录音',
+          createTime: DateTime.now().subtract(const Duration(days: 15)),
+          teacherComment: '发音标准，语速适中，表达清晰！',
+          commentTime: DateTime.now().subtract(const Duration(days: 10)),
+          audioPath: 'assets/test_audio.mp3',
+          imagePath: 'assets/cartoon.png',
+          hasNewComment: false,
+          hasComment: true,
+        ),
+        WorkItem(
+          id: '8',
+          title: 'Ten Fat Sausages',
+          author: '小鱼',
+          points: 385,
+          type: '创作',
+          createTime: DateTime.now().subtract(const Duration(days: 10)),
+          teacherComment: '想象力丰富，画面细节丰富！',
+          commentTime: DateTime.now().subtract(const Duration(days: 5)),
+          videoPath: 'assets/test_video.mp4',
+          imagePath: 'assets/cartoon.png',
+          hasNewComment: true,
+          hasComment: true,
+        ),
+        WorkItem(
+          id: '9',
+          title: 'My First Recording',
+          author: '小明',
+          points: 1500,
+          type: '录音',
+          createTime: DateTime.now().subtract(const Duration(days: 5)),
+          teacherComment: '很棒的首次尝试，继续加油！',
+          commentTime: DateTime.now().subtract(const Duration(days: 2)),
+          audioPath: 'assets/test_audio.mp3',
+          imagePath: 'assets/cartoon.png',
+          hasNewComment: true,
+          hasComment: true,
+        ),
+      ]);
 
   void _markCommentAsViewed(String workId) {
     if (!_viewedComments.contains(workId)) {
@@ -277,22 +289,23 @@ class _ShowRoomState extends State<ShowRoom> {
       });
     }
   }
-    void toggleLike(String workId) {
+
+  void toggleLike(String workId) {
     final currentLikes = likedWorkIds.value;
     final currentWorks = List<WorkItem>.from(workItemsNotifier.value);
     final workIndex = currentWorks.indexWhere((work) => work.id == workId);
-    
+
     if (workIndex == -1) return;
 
     if (currentLikes.contains(workId)) {
       currentLikes.remove(workId);
       currentWorks[workIndex] = currentWorks[workIndex].copyWith(
-        points: currentWorks[workIndex].points - 1
+        points: currentWorks[workIndex].points - 1,
       );
     } else {
       currentLikes.add(workId);
       currentWorks[workIndex] = currentWorks[workIndex].copyWith(
-        points: currentWorks[workIndex].points + 1
+        points: currentWorks[workIndex].points + 1,
       );
     }
 
@@ -305,7 +318,7 @@ class _ShowRoomState extends State<ShowRoom> {
       final currentWorks = List<WorkItem>.from(workItemsNotifier.value);
       currentWorks.removeWhere((item) => item.id == work.id);
       workItemsNotifier.value = currentWorks;
-      
+
       setState(() {
         showDeleteButtons = false;
       });
@@ -314,14 +327,17 @@ class _ShowRoomState extends State<ShowRoom> {
 
   List<WorkItem> get filteredWorks {
     final works = workItemsNotifier.value;
-    
+
     if (searchQuery.isNotEmpty) {
-      return works.where((work) =>
-        work.title.toLowerCase().contains(searchQuery.toLowerCase()) ||
-        work.author.toLowerCase().contains(searchQuery.toLowerCase())
-      ).toList();
+      return works
+          .where(
+            (work) =>
+                work.title.toLowerCase().contains(searchQuery.toLowerCase()) ||
+                work.author.toLowerCase().contains(searchQuery.toLowerCase()),
+          )
+          .toList();
     }
-    
+
     List<WorkItem> sectionFiltered = works;
     switch (currentSection) {
       case '明星作品':
@@ -337,9 +353,11 @@ class _ShowRoomState extends State<ShowRoom> {
         sectionFiltered = works;
         break;
     }
-    
+
     if (currentTab == '全部作品') return sectionFiltered;
-    return sectionFiltered.where((work) => '${work.type}作品' == currentTab).toList();
+    return sectionFiltered
+        .where((work) => '${work.type}作品' == currentTab)
+        .toList();
   }
 
   @override
@@ -390,10 +408,7 @@ class _ShowRoomState extends State<ShowRoom> {
                 ),
                 Expanded(
                   child: Stack(
-                    children: [
-                      _buildMainContent(),
-                      _buildSideBar(),
-                    ],
+                    children: [_buildMainContent(), _buildSideBar()],
                   ),
                 ),
               ],
@@ -403,7 +418,8 @@ class _ShowRoomState extends State<ShowRoom> {
       ),
     );
   }
-    Widget _buildSideBar() {
+
+  Widget _buildSideBar() {
     return Positioned(
       left: ResponsiveSize.px(50),
       top: ResponsiveSize.py(120),
@@ -412,29 +428,22 @@ class _ShowRoomState extends State<ShowRoom> {
         height: ResponsiveSize.h(650),
         child: Column(
           children: [
-            Expanded(
-              child: _buildSideBarItem('明星作品', 'assets/superstar.png'),
-            ),
-            Expanded(
-              child: _buildSideBarItem('全校作品', 'assets/schoolstar.png'),
-            ),
-            Expanded(
-              child: _buildSideBarItem('班级作品', 'assets/classstar.png'),
-            ),
+            Expanded(child: _buildSideBarItem('明星作品', 'assets/superstar.png')),
+            Expanded(child: _buildSideBarItem('全校作品', 'assets/schoolstar.png')),
+            Expanded(child: _buildSideBarItem('班级作品', 'assets/classstar.png')),
             if (!widget.isTeacherView)
-              Expanded(
-                child: _buildSideBarItem('我的作品', 'assets/mystar.png'),
-              ),
+              Expanded(child: _buildSideBarItem('我的作品', 'assets/mystar.png')),
           ],
         ),
       ),
     );
   }
-    Widget _buildSideBarItem(String title, String iconPath) {
+
+  Widget _buildSideBarItem(String title, String iconPath) {
     bool isSelected = currentSection == title;
     bool isFirst = title == '明星作品';
     bool isLast = title == '我的作品';
-    
+
     return GestureDetector(
       onTap: () => _changeSection(title),
       child: Container(
@@ -442,14 +451,19 @@ class _ShowRoomState extends State<ShowRoom> {
         height: double.infinity,
         padding: EdgeInsets.symmetric(horizontal: ResponsiveSize.w(20)),
         decoration: BoxDecoration(
-          color: isSelected 
-              ? const Color(0xFFFBE5C9)  
-              : Colors.white.withOpacity(0.85),
+          color:
+              isSelected
+                  ? const Color(0xFFFBE5C9)
+                  : Colors.white.withOpacity(0.85),
           borderRadius: BorderRadius.only(
-            topLeft: isFirst ? Radius.circular(ResponsiveSize.w(35)) : Radius.zero,
-            topRight: isFirst ? Radius.circular(ResponsiveSize.w(35)) : Radius.zero,
-            bottomLeft: isLast ? Radius.circular(ResponsiveSize.w(35)) : Radius.zero,
-            bottomRight: isLast ? Radius.circular(ResponsiveSize.w(35)) : Radius.zero,
+            topLeft:
+                isFirst ? Radius.circular(ResponsiveSize.w(35)) : Radius.zero,
+            topRight:
+                isFirst ? Radius.circular(ResponsiveSize.w(35)) : Radius.zero,
+            bottomLeft:
+                isLast ? Radius.circular(ResponsiveSize.w(35)) : Radius.zero,
+            bottomRight:
+                isLast ? Radius.circular(ResponsiveSize.w(35)) : Radius.zero,
           ),
           boxShadow: [
             BoxShadow(
@@ -461,7 +475,7 @@ class _ShowRoomState extends State<ShowRoom> {
         ),
         margin: EdgeInsets.symmetric(
           horizontal: ResponsiveSize.w(10),
-          vertical: 0
+          vertical: 0,
         ),
         child: Row(
           children: [
@@ -502,7 +516,8 @@ class _ShowRoomState extends State<ShowRoom> {
       ),
     );
   }
-    Widget _buildTabBarWithSearch() {
+
+  Widget _buildTabBarWithSearch() {
     return Container(
       padding: EdgeInsets.only(
         left: ResponsiveSize.w(20),
@@ -512,15 +527,28 @@ class _ShowRoomState extends State<ShowRoom> {
       ),
       child: Row(
         children: [
-          _buildTab('全部作品', currentTab == '全部作品'),
-          SizedBox(width: ResponsiveSize.w(20)),
-          _buildTab('录音作品', currentTab == '录音作品'),
-          SizedBox(width: ResponsiveSize.w(20)),
-          _buildTab('创作作品', currentTab == '创作作品'),
-          SizedBox(width: ResponsiveSize.w(20)),
-          _buildTab('图片作品', currentTab == '图片作品'),
-          const Spacer(),
+          // Make the tabs scrollable
           Expanded(
+            flex: 5,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  _buildTab('全部作品', currentTab == '全部作品'),
+                  SizedBox(width: ResponsiveSize.w(20)),
+                  _buildTab('录音作品', currentTab == '录音作品'),
+                  SizedBox(width: ResponsiveSize.w(20)),
+                  _buildTab('创作作品', currentTab == '创作作品'),
+                  SizedBox(width: ResponsiveSize.w(20)),
+                  _buildTab('图片作品', currentTab == '图片作品'),
+                ],
+              ),
+            ),
+          ),
+          // Reduced width search bar
+          SizedBox(width: ResponsiveSize.w(15)),
+          SizedBox(
+            width: ResponsiveSize.w(150), // Fixed width instead of Expanded
             child: _buildSearchBar(),
           ),
           if (!widget.isTeacherView) ...[
@@ -548,15 +576,16 @@ class _ShowRoomState extends State<ShowRoom> {
         decoration: BoxDecoration(
           color: isSelected ? Colors.white : Colors.transparent,
           borderRadius: BorderRadius.circular(ResponsiveSize.w(20)),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: ResponsiveSize.w(4),
-                    offset: Offset(0, ResponsiveSize.h(2)),
-                  ),
-                ]
-              : null,
+          boxShadow:
+              isSelected
+                  ? [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: ResponsiveSize.w(4),
+                      offset: Offset(0, ResponsiveSize.h(2)),
+                    ),
+                  ]
+                  : null,
         ),
         child: Text(
           title,
@@ -588,19 +617,19 @@ class _ShowRoomState extends State<ShowRoom> {
           },
           style: TextStyle(fontSize: ResponsiveSize.sp(23)),
           decoration: InputDecoration(
-            hintText: '搜索作品或作者',
+            hintText: '搜索',
             hintStyle: TextStyle(fontSize: ResponsiveSize.sp(23)),
             prefixIcon: Padding(
               padding: EdgeInsets.symmetric(
                 vertical: ResponsiveSize.h(12),
-                horizontal: ResponsiveSize.w(8)
+                horizontal: ResponsiveSize.w(8),
               ),
               child: Icon(Icons.search, size: ResponsiveSize.w(30)),
             ),
             border: InputBorder.none,
             contentPadding: EdgeInsets.symmetric(
               horizontal: ResponsiveSize.w(20),
-              vertical: ResponsiveSize.h(15)
+              vertical: ResponsiveSize.h(15),
             ),
           ),
         ),
@@ -616,36 +645,49 @@ class _ShowRoomState extends State<ShowRoom> {
             showDialog(
               context: context,
               barrierDismissible: true,
-              builder: (context) => AddWorkDialog(
-                onRecordPressed: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => AudioRecordPage(
-                        onSaveWork: (title, audioPath, imagePath, videoPath) {
-                          _addNewWork(title, audioPath, imagePath, videoPath);
-                        },
-                      ),
-                    ),
-                  );
-                },
-                onSaveWork: (title, path, imagePath) {
-                  if (path.endsWith('.mp4')) {
-                    _addNewVideoWork(title, path, imagePath, null);
-                  } else if (path.endsWith('.jpg') || path.endsWith('.png')) {
-                    _addNewImageWork(title, path);
-                  } else {
-                    _addNewWork(title, path, imagePath, null);
-                  }
-                },
-              ),
+              builder:
+                  (context) => AddWorkDialog(
+                    onRecordPressed: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (context) => AudioRecordPage(
+                                onSaveWork: (
+                                  title,
+                                  audioPath,
+                                  imagePath,
+                                  videoPath,
+                                ) {
+                                  _addNewWork(
+                                    title,
+                                    audioPath,
+                                    imagePath,
+                                    videoPath,
+                                  );
+                                },
+                              ),
+                        ),
+                      );
+                    },
+                    onSaveWork: (title, path, imagePath) {
+                      if (path.endsWith('.mp4')) {
+                        _addNewVideoWork(title, path, imagePath, null);
+                      } else if (path.endsWith('.jpg') ||
+                          path.endsWith('.png')) {
+                        _addNewImageWork(title, path);
+                      } else {
+                        _addNewWork(title, path, imagePath, null);
+                      }
+                    },
+                  ),
             );
           },
           child: Container(
             padding: EdgeInsets.symmetric(
               horizontal: ResponsiveSize.w(20),
-              vertical: ResponsiveSize.h(10)
+              vertical: ResponsiveSize.h(10),
             ),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -672,7 +714,7 @@ class _ShowRoomState extends State<ShowRoom> {
             child: Container(
               padding: EdgeInsets.symmetric(
                 horizontal: ResponsiveSize.w(20),
-                vertical: ResponsiveSize.h(10)
+                vertical: ResponsiveSize.h(10),
               ),
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -696,7 +738,8 @@ class _ShowRoomState extends State<ShowRoom> {
   Widget _buildMainContent() {
     return Positioned(
       right: ResponsiveSize.px(50),
-      top: ResponsiveSize.py(70),
+      top: ResponsiveSize.py(100),
+      bottom: ResponsiveSize.py(100),
       child: SizedBox(
         width: ResponsiveSize.w(900),
         height: ResponsiveSize.h(700),
@@ -717,7 +760,8 @@ class _ShowRoomState extends State<ShowRoom> {
                       mainAxisSpacing: ResponsiveSize.h(20),
                     ),
                     itemCount: works.length,
-                    itemBuilder: (context, index) => _buildWorkItem(works[index]),
+                    itemBuilder:
+                        (context, index) => _buildWorkItem(works[index]),
                   );
                 },
               ),
@@ -728,9 +772,9 @@ class _ShowRoomState extends State<ShowRoom> {
     );
   }
 
-    Widget _buildWorkItem(WorkItem work) {
+  Widget _buildWorkItem(WorkItem work) {
     bool isMyWork = work.author == '小明';
-    
+
     return GestureDetector(
       onTap: () {
         // 立即更新点评状态
@@ -742,41 +786,44 @@ class _ShowRoomState extends State<ShowRoom> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => VideoPlayerPage(
-                title: work.title,
-                videoPath: work.videoPath!,
-                imagePath: work.imagePath,
-                createTime: work.createTime,
-                teacherComment: work.teacherComment,
-                commentTime: work.commentTime,
-              ),
+              builder:
+                  (context) => VideoPlayerPage(
+                    title: work.title,
+                    videoPath: work.videoPath!,
+                    imagePath: work.imagePath,
+                    createTime: work.createTime,
+                    teacherComment: work.teacherComment,
+                    commentTime: work.commentTime,
+                  ),
             ),
           );
         } else if (work.audioPath != null) {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => AudioPlayerPage(
-                title: work.title,
-                audioPath: work.audioPath!,
-                imagePath: work.imagePath ?? '',
-                createTime: work.createTime ?? DateTime.now(),
-                teacherComment: work.teacherComment ?? '',
-                commentTime: work.commentTime,
-              ),
+              builder:
+                  (context) => AudioPlayerPage(
+                    title: work.title,
+                    audioPath: work.audioPath!,
+                    imagePath: work.imagePath ?? '',
+                    createTime: work.createTime ?? DateTime.now(),
+                    teacherComment: work.teacherComment ?? '',
+                    commentTime: work.commentTime,
+                  ),
             ),
           );
         } else if (work.imagePath != null) {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => ImageViewPage(
-                title: work.title,
-                imagePath: work.imagePath!,
-                createTime: work.createTime ?? DateTime.now(),
-                teacherComment: work.teacherComment ?? '',
-                commentTime: work.commentTime,
-              ),
+              builder:
+                  (context) => ImageViewPage(
+                    title: work.title,
+                    imagePath: work.imagePath!,
+                    createTime: work.createTime ?? DateTime.now(),
+                    teacherComment: work.teacherComment ?? '',
+                    commentTime: work.commentTime,
+                  ),
             ),
           );
         }
@@ -805,26 +852,27 @@ class _ShowRoomState extends State<ShowRoom> {
                         topLeft: Radius.circular(ResponsiveSize.w(15)),
                         topRight: Radius.circular(ResponsiveSize.w(15)),
                       ),
-                      child: work.imagePath != null
-                          ? work.imagePath!.startsWith('assets/')
-                              ? Image.asset(
-                                  work.imagePath!,
-                                  fit: BoxFit.cover,
-                                  width: double.infinity,
-                                  height: ResponsiveSize.h(220),
-                                )
-                              : Image.file(
-                                  File(work.imagePath!),
-                                  fit: BoxFit.cover,
-                                  width: double.infinity,
-                                  height: ResponsiveSize.h(220),
-                                )
-                          : Image.asset(
-                              'assets/cartoon.png',
-                              fit: BoxFit.cover,
-                              width: double.infinity,
-                              height: ResponsiveSize.h(220),
-                            ),
+                      child:
+                          work.imagePath != null
+                              ? work.imagePath!.startsWith('assets/')
+                                  ? Image.asset(
+                                    work.imagePath!,
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    height: ResponsiveSize.h(220),
+                                  )
+                                  : Image.file(
+                                    File(work.imagePath!),
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    height: ResponsiveSize.h(220),
+                                  )
+                              : Image.asset(
+                                'assets/cartoon.png',
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                                height: ResponsiveSize.h(220),
+                              ),
                     ),
                     // 作品类型标签
                     Positioned(
@@ -837,7 +885,9 @@ class _ShowRoomState extends State<ShowRoom> {
                         ),
                         decoration: BoxDecoration(
                           color: _getTagColor(work.type),
-                          borderRadius: BorderRadius.circular(ResponsiveSize.w(12)),
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveSize.w(12),
+                          ),
                         ),
                         child: Text(
                           work.type,
@@ -849,54 +899,61 @@ class _ShowRoomState extends State<ShowRoom> {
                         ),
                       ),
                     ),
-                   // 在 Stack 的 children 中，替换原来的点评标记代码
-// 新设计的点评标记
-if (work.hasNewComment || work.hasComment)
-  Positioned(
-    top: ResponsiveSize.h(10),
-    right: ResponsiveSize.w(10),
-    child: Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: ResponsiveSize.w(16),
-        vertical: ResponsiveSize.h(8),
-      ),
-      decoration: BoxDecoration(
-        color: work.hasNewComment 
-            ? const Color(0xFFFF6B6B).withOpacity(0.95)  // 柔和的红色
-            : const Color(0xFF4CAF50).withOpacity(0.95),  // 柔和的绿色
-        borderRadius: BorderRadius.circular(ResponsiveSize.w(25)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.15),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            work.hasNewComment 
-                ? Icons.star_rounded
-                : Icons.check_circle,
-            color: Colors.white,
-            size: ResponsiveSize.w(20),
-          ),
-          SizedBox(width: ResponsiveSize.w(4)),
-          Text(
-            work.hasNewComment ? '新点评' : '已点评',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: ResponsiveSize.sp(16),
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.5,
-            ),
-          ),
-        ],
-      ),
-    ),
-  ),
+                    // 在 Stack 的 children 中，替换原来的点评标记代码
+                    // 新设计的点评标记
+                    if (work.hasNewComment || work.hasComment)
+                      Positioned(
+                        top: ResponsiveSize.h(10),
+                        right: ResponsiveSize.w(10),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: ResponsiveSize.w(16),
+                            vertical: ResponsiveSize.h(8),
+                          ),
+                          decoration: BoxDecoration(
+                            color:
+                                work.hasNewComment
+                                    ? const Color(0xFFFF6B6B).withOpacity(
+                                      0.95,
+                                    ) // 柔和的红色
+                                    : const Color(
+                                      0xFF4CAF50,
+                                    ).withOpacity(0.95), // 柔和的绿色
+                            borderRadius: BorderRadius.circular(
+                              ResponsiveSize.w(25),
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.15),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                work.hasNewComment
+                                    ? Icons.star_rounded
+                                    : Icons.check_circle,
+                                color: Colors.white,
+                                size: ResponsiveSize.w(20),
+                              ),
+                              SizedBox(width: ResponsiveSize.w(4)),
+                              Text(
+                                work.hasNewComment ? '新点评' : '已点评',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: ResponsiveSize.sp(16),
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                   ],
                 ),
                 Padding(
@@ -973,28 +1030,29 @@ if (work.hasNewComment || work.hasComment)
                     showDialog(
                       context: context,
                       barrierDismissible: true,
-                      builder: (context) => AlertDialog(
-                        title: const Text('确认删除'),
-                        content: const Text('确定要删除这个作品吗？'),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              setState(() {
-                                showDeleteButtons = false;
-                              });
-                              Navigator.of(context).pop();
-                            },
-                            child: const Text('取消'),
+                      builder:
+                          (context) => AlertDialog(
+                            title: const Text('确认删除'),
+                            content: const Text('确定要删除这个作品吗？'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  setState(() {
+                                    showDeleteButtons = false;
+                                  });
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('取消'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  deleteWork(work);
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('确定'),
+                              ),
+                            ],
                           ),
-                          TextButton(
-                            onPressed: () {
-                              deleteWork(work);
-                              Navigator.of(context).pop();
-                            },
-                            child: const Text('确定'),
-                          ),
-                        ],
-                      ),
                     );
                   },
                   child: Container(
@@ -1016,14 +1074,15 @@ if (work.hasNewComment || work.hasComment)
       ),
     );
   }
+
   Color _getTagColor(String type) {
     switch (type) {
       case '录音':
-        return const Color(0xFF5B7FFF);  // 靛蓝色
+        return const Color(0xFF5B7FFF); // 靛蓝色
       case '创作':
-        return const Color(0xFFFF9B3F);  // 橙色
+        return const Color(0xFFFF9B3F); // 橙色
       case '图片':
-        return const Color(0xFFB86EFF);  // 紫色
+        return const Color(0xFFB86EFF); // 紫色
       default:
         return Colors.grey;
     }

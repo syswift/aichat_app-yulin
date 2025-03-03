@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../utils/responsive_size.dart';  // 添加响应式工具类
+import '../../../utils/responsive_size.dart'; // 添加响应式工具类
 
 // 数据模型部分保持不变，只需添加到文件顶部
 class StudentPoints {
@@ -30,10 +30,7 @@ class PointActivity {
   });
 }
 
-enum ActivityType {
-  reward,
-  exchange,
-}
+enum ActivityType { reward, exchange }
 
 class Prize {
   final String name;
@@ -69,11 +66,8 @@ class ExchangeRecord {
   });
 }
 
-enum ExchangeStatus {
-  pending,
-  shipping,
-  delivered,
-}
+enum ExchangeStatus { pending, shipping, delivered }
+
 class PointsManagePage extends StatefulWidget {
   const PointsManagePage({super.key});
 
@@ -89,13 +83,7 @@ class _PointsManagePageState extends State<PointsManagePage> {
   final bool _isDeleteMode = false;
 
   // 模拟班级数据
-  final List<String> _classes = [
-    '全部班级',
-    '一年级一班',
-    '一年级二班',
-    '二年级一班',
-    '二年级二班',
-  ];
+  final List<String> _classes = ['全部班级', '一年级一班', '一年级二班', '二年级一班', '二年级二班'];
 
   // 模拟学生积分数据
   final List<StudentPoints> _students = [
@@ -252,13 +240,15 @@ class _PointsManagePageState extends State<PointsManagePage> {
     if (_selectedClass == '全部班级') {
       return _students;
     }
-    return _students.where((student) => student.className == _selectedClass).toList();
+    return _students
+        .where((student) => student.className == _selectedClass)
+        .toList();
   }
 
   @override
   Widget build(BuildContext context) {
     ResponsiveSize.init(context);
-    
+
     return Scaffold(
       backgroundColor: const Color(0xFFFDF5E6),
       body: Padding(
@@ -270,15 +260,14 @@ class _PointsManagePageState extends State<PointsManagePage> {
             SizedBox(height: ResponsiveSize.h(32)),
             _buildTabs(),
             SizedBox(height: ResponsiveSize.h(24)),
-            Expanded(
-              child: _buildMainContent(),
-            ),
+            Expanded(child: _buildMainContent()),
           ],
         ),
       ),
     );
   }
-    Widget _buildHeader() {
+
+  Widget _buildHeader() {
     return Row(
       children: [
         GestureDetector(
@@ -349,7 +338,9 @@ class _PointsManagePageState extends State<PointsManagePage> {
             size: ResponsiveSize.w(20),
           ),
           border: InputBorder.none,
-          contentPadding: EdgeInsets.symmetric(horizontal: ResponsiveSize.w(16)),
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: ResponsiveSize.w(16),
+          ),
           isCollapsed: true,
         ),
       ),
@@ -383,7 +374,7 @@ class _PointsManagePageState extends State<PointsManagePage> {
       child: Container(
         padding: EdgeInsets.symmetric(
           horizontal: ResponsiveSize.w(32),
-          vertical: ResponsiveSize.h(12)
+          vertical: ResponsiveSize.h(12),
         ),
         decoration: BoxDecoration(
           color: isSelected ? const Color(0xFFFFE4C4) : Colors.transparent,
@@ -411,7 +402,8 @@ class _PointsManagePageState extends State<PointsManagePage> {
       ),
     );
   }
-    Widget _buildMainContent() {
+
+  Widget _buildMainContent() {
     switch (_selectedTab) {
       case '积分奖励':
         return _buildRewardContent();
@@ -440,10 +432,11 @@ class _PointsManagePageState extends State<PointsManagePage> {
           Expanded(
             child: ListView.builder(
               itemCount: _filteredStudents.length,
-              itemBuilder: (context, index) => _buildStudentListItem(
-                _filteredStudents[index],
-                index + 1,
-              ),
+              itemBuilder:
+                  (context, index) => _buildStudentListItem(
+                    _filteredStudents[index],
+                    index + 1,
+                  ),
             ),
           ),
         ],
@@ -455,7 +448,7 @@ class _PointsManagePageState extends State<PointsManagePage> {
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: ResponsiveSize.w(24),
-        vertical: ResponsiveSize.h(12)
+        vertical: ResponsiveSize.h(12),
       ),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -489,18 +482,19 @@ class _PointsManagePageState extends State<PointsManagePage> {
             });
           }
         },
-        items: _classes.map<DropdownMenuItem<String>>((String value) {
-          return DropdownMenuItem<String>(
-            value: value,
-            child: Text(
-              value,
-              style: TextStyle(
-                fontSize: ResponsiveSize.sp(20),
-                color: const Color(0xFF8B4513),
-              ),
-            ),
-          );
-        }).toList(),
+        items:
+            _classes.map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: ResponsiveSize.sp(20),
+                    color: const Color(0xFF8B4513),
+                  ),
+                ),
+              );
+            }).toList(),
         dropdownColor: Colors.white,
         borderRadius: BorderRadius.circular(ResponsiveSize.w(16)),
         isExpanded: false,
@@ -519,7 +513,7 @@ class _PointsManagePageState extends State<PointsManagePage> {
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: ResponsiveSize.w(24),
-        vertical: ResponsiveSize.h(16)
+        vertical: ResponsiveSize.h(16),
       ),
       decoration: BoxDecoration(
         color: const Color(0xFFFFF8DC),
@@ -596,163 +590,173 @@ class _PointsManagePageState extends State<PointsManagePage> {
       ),
     );
   }
+
   void _showActivityHistory(StudentPoints student) {
-  showDialog(
-    context: context,
-    builder: (context) => Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(ResponsiveSize.w(16)),
-      ),
-      child: Container(
-        width: ResponsiveSize.w(600),
-        padding: EdgeInsets.all(ResponsiveSize.w(24)),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  '${student.name}的积分记录',
-                  style: TextStyle(
-                    fontSize: ResponsiveSize.sp(24),
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF8B4513),
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ],
+    showDialog(
+      context: context,
+      builder:
+          (context) => Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(ResponsiveSize.w(16)),
             ),
-            SizedBox(height: ResponsiveSize.h(24)),
-            Container(
-              padding: EdgeInsets.all(ResponsiveSize.w(16)),
-              decoration: BoxDecoration(
-                color: const Color(0xFFFFF8DC),
-                borderRadius: BorderRadius.circular(ResponsiveSize.w(12)),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Container(
+              width: ResponsiveSize.w(600),
+              padding: EdgeInsets.all(ResponsiveSize.w(24)),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '${student.name}的积分记录',
+                        style: TextStyle(
+                          fontSize: ResponsiveSize.sp(24),
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFF8B4513),
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: ResponsiveSize.h(24)),
+                  Container(
+                    padding: EdgeInsets.all(ResponsiveSize.w(16)),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFFF8DC),
+                      borderRadius: BorderRadius.circular(ResponsiveSize.w(12)),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '当前积分：${student.points}',
+                          style: TextStyle(
+                            fontSize: ResponsiveSize.sp(18),
+                            fontWeight: FontWeight.bold,
+                            color: const Color(0xFF8B4513),
+                          ),
+                        ),
+                        Text(
+                          '班级：${student.className}',
+                          style: TextStyle(
+                            fontSize: ResponsiveSize.sp(18),
+                            color: const Color(0xFF8B4513),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: ResponsiveSize.h(24)),
                   Text(
-                    '当前积分：${student.points}',
+                    '积分变动记录',
                     style: TextStyle(
                       fontSize: ResponsiveSize.sp(18),
                       fontWeight: FontWeight.bold,
                       color: const Color(0xFF8B4513),
                     ),
                   ),
-                  Text(
-                    '班级：${student.className}',
-                    style: TextStyle(
-                      fontSize: ResponsiveSize.sp(18),
-                      color: const Color(0xFF8B4513),
+                  SizedBox(height: ResponsiveSize.h(16)),
+                  Container(
+                    constraints: BoxConstraints(
+                      maxHeight: ResponsiveSize.h(300),
+                    ),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: student.recentActivity.length,
+                      itemBuilder: (context, index) {
+                        final activity = student.recentActivity[index];
+                        return Container(
+                          margin: EdgeInsets.only(bottom: ResponsiveSize.h(12)),
+                          padding: EdgeInsets.all(ResponsiveSize.w(16)),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(
+                              ResponsiveSize.w(12),
+                            ),
+                            border: Border.all(color: const Color(0xFFDEB887)),
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                padding: EdgeInsets.all(ResponsiveSize.w(8)),
+                                decoration: BoxDecoration(
+                                  color:
+                                      activity.type == ActivityType.reward
+                                          ? Colors.green.withOpacity(0.1)
+                                          : Colors.red.withOpacity(0.1),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  activity.type == ActivityType.reward
+                                      ? Icons.add_circle_outline
+                                      : Icons.remove_circle_outline,
+                                  color:
+                                      activity.type == ActivityType.reward
+                                          ? Colors.green
+                                          : Colors.red,
+                                  size: ResponsiveSize.w(24),
+                                ),
+                              ),
+                              SizedBox(width: ResponsiveSize.w(16)),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      activity.reason,
+                                      style: TextStyle(
+                                        fontSize: ResponsiveSize.sp(16),
+                                        color: const Color(0xFF8B4513),
+                                      ),
+                                    ),
+                                    SizedBox(height: ResponsiveSize.h(4)),
+                                    Text(
+                                      activity.date,
+                                      style: TextStyle(
+                                        fontSize: ResponsiveSize.sp(14),
+                                        color: Colors.grey[600],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Text(
+                                activity.type == ActivityType.reward
+                                    ? '+${activity.points}'
+                                    : '-${activity.points}',
+                                style: TextStyle(
+                                  fontSize: ResponsiveSize.sp(18),
+                                  fontWeight: FontWeight.bold,
+                                  color:
+                                      activity.type == ActivityType.reward
+                                          ? Colors.green
+                                          : Colors.red,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ],
               ),
             ),
-            SizedBox(height: ResponsiveSize.h(24)),
-            Text(
-              '积分变动记录',
-              style: TextStyle(
-                fontSize: ResponsiveSize.sp(18),
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFF8B4513),
-              ),
-            ),
-            SizedBox(height: ResponsiveSize.h(16)),
-            Container(
-              constraints: BoxConstraints(maxHeight: ResponsiveSize.h(300)),
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: student.recentActivity.length,
-                itemBuilder: (context, index) {
-                  final activity = student.recentActivity[index];
-                  return Container(
-                    margin: EdgeInsets.only(bottom: ResponsiveSize.h(12)),
-                    padding: EdgeInsets.all(ResponsiveSize.w(16)),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(ResponsiveSize.w(12)),
-                      border: Border.all(color: const Color(0xFFDEB887)),
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          padding: EdgeInsets.all(ResponsiveSize.w(8)),
-                          decoration: BoxDecoration(
-                            color: activity.type == ActivityType.reward
-                                ? Colors.green.withOpacity(0.1)
-                                : Colors.red.withOpacity(0.1),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            activity.type == ActivityType.reward
-                                ? Icons.add_circle_outline
-                                : Icons.remove_circle_outline,
-                            color: activity.type == ActivityType.reward
-                                ? Colors.green
-                                : Colors.red,
-                            size: ResponsiveSize.w(24),
-                          ),
-                        ),
-                        SizedBox(width: ResponsiveSize.w(16)),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                activity.reason,
-                                style: TextStyle(
-                                  fontSize: ResponsiveSize.sp(16),
-                                  color: const Color(0xFF8B4513),
-                                ),
-                              ),
-                              SizedBox(height: ResponsiveSize.h(4)),
-                              Text(
-                                activity.date,
-                                style: TextStyle(
-                                  fontSize: ResponsiveSize.sp(14),
-                                  color: Colors.grey[600],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Text(
-                          activity.type == ActivityType.reward
-                              ? '+${activity.points}'
-                              : '-${activity.points}',
-                          style: TextStyle(
-                            fontSize: ResponsiveSize.sp(18),
-                            fontWeight: FontWeight.bold,
-                            color: activity.type == ActivityType.reward
-                                ? Colors.green
-                                : Colors.red,
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-    ),
-  );
-}
-    Widget _buildStudentListItem(StudentPoints student, int index) {
+          ),
+    );
+  }
+
+  Widget _buildStudentListItem(StudentPoints student, int index) {
     return Container(
       margin: EdgeInsets.only(bottom: ResponsiveSize.h(16)),
       padding: EdgeInsets.symmetric(
         horizontal: ResponsiveSize.w(24),
-        vertical: ResponsiveSize.h(20)
+        vertical: ResponsiveSize.h(20),
       ),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -856,123 +860,135 @@ class _PointsManagePageState extends State<PointsManagePage> {
       ),
     );
   }
-  void _showRewardDialog(StudentPoints student) {
-  final TextEditingController pointsController = TextEditingController();
-  final TextEditingController reasonController = TextEditingController();
 
-  showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: Text(
-        '积分奖励 - ${student.name}',
-        style: TextStyle(
-          fontSize: ResponsiveSize.sp(24),
-          fontWeight: FontWeight.bold,
-          color: const Color(0xFF8B4513),
-        ),
-      ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextField(
-            controller: pointsController,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-              labelText: '奖励积分',
-              labelStyle: TextStyle(
-                fontSize: ResponsiveSize.sp(18),
+  void _showRewardDialog(StudentPoints student) {
+    final TextEditingController pointsController = TextEditingController();
+    final TextEditingController reasonController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: Text(
+              '积分奖励 - ${student.name}',
+              style: TextStyle(
+                fontSize: ResponsiveSize.sp(24),
+                fontWeight: FontWeight.bold,
                 color: const Color(0xFF8B4513),
               ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(ResponsiveSize.w(12)),
-              ),
             ),
-          ),
-          SizedBox(height: ResponsiveSize.h(16)),
-          TextField(
-            controller: reasonController,
-            decoration: InputDecoration(
-              labelText: '奖励原因',
-              labelStyle: TextStyle(
-                fontSize: ResponsiveSize.sp(18),
-                color: const Color(0xFF8B4513),
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(ResponsiveSize.w(12)),
-              ),
-            ),
-          ),
-        ],
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text(
-            '取消',
-            style: TextStyle(
-              fontSize: ResponsiveSize.sp(18),
-              color: const Color(0xFF8B4513),
-            ),
-          ),
-        ),
-        TextButton(
-          onPressed: () {
-            final points = int.tryParse(pointsController.text);
-            final reason = reasonController.text;
-            
-            if (points != null && points > 0 && reason.isNotEmpty) {
-              setState(() {
-                student.points += points;
-                student.recentActivity.insert(
-                  0,
-                  PointActivity(
-                    type: ActivityType.reward,
-                    points: points,
-                    reason: reason,
-                    date: DateTime.now().toString().substring(0, 10),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: pointsController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      labelText: '奖励积分',
+                      labelStyle: TextStyle(
+                        fontSize: ResponsiveSize.sp(18),
+                        color: const Color(0xFF8B4513),
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(
+                          ResponsiveSize.w(12),
+                        ),
+                      ),
+                    ),
                   ),
-                );
-              });
-              Navigator.pop(context);
-              
-              // 显示成功提示
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    '积分奖励成功！',
-                    style: TextStyle(fontSize: ResponsiveSize.sp(16)),
+                  SizedBox(height: ResponsiveSize.h(16)),
+                  TextField(
+                    controller: reasonController,
+                    decoration: InputDecoration(
+                      labelText: '奖励原因',
+                      labelStyle: TextStyle(
+                        fontSize: ResponsiveSize.sp(18),
+                        color: const Color(0xFF8B4513),
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(
+                          ResponsiveSize.w(12),
+                        ),
+                      ),
+                    ),
                   ),
-                  backgroundColor: Colors.green,
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text(
+                  '取消',
+                  style: TextStyle(
+                    fontSize: ResponsiveSize.sp(18),
+                    color: const Color(0xFF8B4513),
+                  ),
                 ),
-              );
-            } else {
-              // 显示错误提示
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    '请输入有效的积分和奖励原因',
-                    style: TextStyle(fontSize: ResponsiveSize.sp(16)),
+              ),
+              TextButton(
+                onPressed: () {
+                  final points = int.tryParse(pointsController.text);
+                  final reason = reasonController.text;
+
+                  if (points != null && points > 0 && reason.isNotEmpty) {
+                    setState(() {
+                      student.points += points;
+                      student.recentActivity.insert(
+                        0,
+                        PointActivity(
+                          type: ActivityType.reward,
+                          points: points,
+                          reason: reason,
+                          date: DateTime.now().toString().substring(0, 10),
+                        ),
+                      );
+                    });
+                    Navigator.pop(context);
+
+                    // 显示成功提示
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          '积分奖励成功！',
+                          style: TextStyle(fontSize: ResponsiveSize.sp(16)),
+                        ),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  } else {
+                    // 显示错误提示
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          '请输入有效的积分和奖励原因',
+                          style: TextStyle(fontSize: ResponsiveSize.sp(16)),
+                        ),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                },
+                child: Text(
+                  '确定',
+                  style: TextStyle(
+                    fontSize: ResponsiveSize.sp(18),
+                    color: const Color(0xFF8B4513),
                   ),
-                  backgroundColor: Colors.red,
                 ),
-              );
-            }
-          },
-          child: Text(
-            '确定',
-            style: TextStyle(
-              fontSize: ResponsiveSize.sp(18),
-              color: const Color(0xFF8B4513),
+              ),
+            ],
+            insetPadding: EdgeInsets.symmetric(
+              horizontal: ResponsiveSize.w(24),
+              vertical: ResponsiveSize.h(24),
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(ResponsiveSize.w(16)),
             ),
           ),
-        ),
-      ],
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(ResponsiveSize.w(16)),
-      ),
-    ),
-  );
-}
+    );
+  }
 
   Widget _buildRecordsContent() {
     return Container(
@@ -998,8 +1014,9 @@ class _PointsManagePageState extends State<PointsManagePage> {
           Expanded(
             child: ListView.builder(
               itemCount: _exchangeRecords.length,
-              itemBuilder: (context, index) =>
-                  _buildExchangeRecordItem(_exchangeRecords[index]),
+              itemBuilder:
+                  (context, index) =>
+                      _buildExchangeRecordItem(_exchangeRecords[index]),
             ),
           ),
         ],
@@ -1011,7 +1028,7 @@ class _PointsManagePageState extends State<PointsManagePage> {
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: ResponsiveSize.w(16),
-        vertical: ResponsiveSize.h(8)
+        vertical: ResponsiveSize.h(8),
       ),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -1029,10 +1046,7 @@ class _PointsManagePageState extends State<PointsManagePage> {
             ),
           ),
           SizedBox(width: ResponsiveSize.w(8)),
-          Icon(
-            Icons.arrow_drop_down,
-            color: Colors.grey[800],
-          ),
+          Icon(Icons.arrow_drop_down, color: Colors.grey[800]),
         ],
       ),
     );
@@ -1042,7 +1056,7 @@ class _PointsManagePageState extends State<PointsManagePage> {
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: ResponsiveSize.w(16),
-        vertical: ResponsiveSize.h(8)
+        vertical: ResponsiveSize.h(8),
       ),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -1069,11 +1083,12 @@ class _PointsManagePageState extends State<PointsManagePage> {
       ),
     );
   }
-    Widget _buildExchangeListHeader() {
+
+  Widget _buildExchangeListHeader() {
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: ResponsiveSize.w(20),
-        vertical: ResponsiveSize.h(16)
+        vertical: ResponsiveSize.h(16),
       ),
       decoration: BoxDecoration(
         color: const Color(0xFFFFF8DC),
@@ -1156,7 +1171,7 @@ class _PointsManagePageState extends State<PointsManagePage> {
       margin: EdgeInsets.only(bottom: ResponsiveSize.h(12)),
       padding: EdgeInsets.symmetric(
         horizontal: ResponsiveSize.w(20),
-        vertical: ResponsiveSize.h(16)
+        vertical: ResponsiveSize.h(16),
       ),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -1217,9 +1232,7 @@ class _PointsManagePageState extends State<PointsManagePage> {
           ),
           Expanded(
             flex: 1,
-            child: Center(
-              child: _buildStatusChip(record.status),
-            ),
+            child: Center(child: _buildStatusChip(record.status)),
           ),
           Expanded(
             flex: 1,
@@ -1260,7 +1273,7 @@ class _PointsManagePageState extends State<PointsManagePage> {
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: ResponsiveSize.w(12),
-        vertical: ResponsiveSize.h(4)
+        vertical: ResponsiveSize.h(4),
       ),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
@@ -1268,10 +1281,7 @@ class _PointsManagePageState extends State<PointsManagePage> {
       ),
       child: Text(
         label,
-        style: TextStyle(
-          color: color,
-          fontSize: ResponsiveSize.sp(14),
-        ),
+        style: TextStyle(color: color, fontSize: ResponsiveSize.sp(14)),
         textAlign: TextAlign.center,
       ),
     );
