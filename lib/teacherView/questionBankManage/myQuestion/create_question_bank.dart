@@ -15,13 +15,15 @@ class _CreateQuestionBankState extends State<CreateQuestionBank> {
   final _nameController = TextEditingController();
   final _noteController = TextEditingController();
   final _durationController = TextEditingController();
-  
+
   String? _selectedGrade;
   double _totalScore = 0;
   int _questionCount = 0;
-  
+
   final List<QuestionItem?> _questions = [null];
-  final List<TextEditingController> _scoreControllers = [TextEditingController()];
+  final List<TextEditingController> _scoreControllers = [
+    TextEditingController(),
+  ];
 
   final List<String> _grades = [
     '一年级上册',
@@ -66,8 +68,9 @@ class _CreateQuestionBankState extends State<CreateQuestionBank> {
   void _addQuestionSlot() {
     setState(() {
       _questions.add(null);
-      _scoreControllers.add(TextEditingController()
-        ..addListener(_updateTotalScore));
+      _scoreControllers.add(
+        TextEditingController()..addListener(_updateTotalScore),
+      );
       _updateQuestionCount();
     });
   }
@@ -88,7 +91,7 @@ class _CreateQuestionBankState extends State<CreateQuestionBank> {
       );
       return;
     }
-    
+
     setState(() {
       _questions.removeAt(index);
       _scoreControllers[index].dispose();
@@ -101,9 +104,7 @@ class _CreateQuestionBankState extends State<CreateQuestionBank> {
   Future<void> _addQuestion(int index) async {
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => const SelectQuestionsPage(),
-      ),
+      MaterialPageRoute(builder: (context) => const SelectQuestionsPage()),
     );
 
     if (result != null && result is List<QuestionItem>) {
@@ -111,13 +112,14 @@ class _CreateQuestionBankState extends State<CreateQuestionBank> {
         _questions.removeAt(index);
         _scoreControllers[index].dispose();
         _scoreControllers.removeAt(index);
-        
+
         for (var question in result) {
           _questions.add(question);
-          _scoreControllers.add(TextEditingController()
-            ..addListener(_updateTotalScore));
+          _scoreControllers.add(
+            TextEditingController()..addListener(_updateTotalScore),
+          );
         }
-        
+
         _updateQuestionCount();
       });
     }
@@ -145,59 +147,62 @@ class _CreateQuestionBankState extends State<CreateQuestionBank> {
       });
     }
   }
-    @override
+
+  @override
   Widget build(BuildContext context) {
     ResponsiveSize.init(context);
-    
+
     return Scaffold(
       backgroundColor: const Color(0xFFFDF5E6),
-      body: Padding(
-        padding: EdgeInsets.all(ResponsiveSize.w(32)),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Image.asset(
-                    'assets/backbutton1.png',
-                    width: ResponsiveSize.w(80),
-                    height: ResponsiveSize.h(80),
-                  ),
-                ),
-                const Spacer(),
-                ElevatedButton.icon(
-                  onPressed: _createQuestionBank,
-                  icon: Icon(Icons.check, size: ResponsiveSize.w(24)),
-                  label: Text(
-                    '创建',
-                    style: TextStyle(
-                      fontSize: ResponsiveSize.sp(24),
-                      fontWeight: FontWeight.w500,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.all(ResponsiveSize.w(32)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Image.asset(
+                      'assets/backbutton1.png',
+                      width: ResponsiveSize.w(80),
+                      height: ResponsiveSize.h(80),
                     ),
                   ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFFFE4C4),
-                    foregroundColor: const Color(0xFF8B4513),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: ResponsiveSize.w(24),
-                      vertical: ResponsiveSize.h(16),
+                  const Spacer(),
+                  ElevatedButton.icon(
+                    onPressed: _createQuestionBank,
+                    icon: Icon(Icons.check, size: ResponsiveSize.w(24)),
+                    label: Text(
+                      '创建',
+                      style: TextStyle(
+                        fontSize: ResponsiveSize.sp(24),
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(ResponsiveSize.w(8)),
-                      side: const BorderSide(
-                        color: Color(0xFFDEB887),
-                        width: 1,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFFFE4C4),
+                      foregroundColor: const Color(0xFF8B4513),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: ResponsiveSize.w(24),
+                        vertical: ResponsiveSize.h(16),
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                          ResponsiveSize.w(8),
+                        ),
+                        side: const BorderSide(
+                          color: Color(0xFFDEB887),
+                          width: 1,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-            SizedBox(height: ResponsiveSize.h(20)),
-                        Expanded(
-              child: Form(
+                ],
+              ),
+              SizedBox(height: ResponsiveSize.h(20)),
+              Form(
                 key: _formKey,
                 child: Column(
                   children: [
@@ -215,19 +220,31 @@ class _CreateQuestionBankState extends State<CreateQuestionBank> {
                                 fontSize: ResponsiveSize.sp(20),
                               ),
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(ResponsiveSize.w(8)),
+                                borderRadius: BorderRadius.circular(
+                                  ResponsiveSize.w(8),
+                                ),
                               ),
                               enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(ResponsiveSize.w(8)),
-                                borderSide: const BorderSide(color: Color(0xFFDEB887)),
+                                borderRadius: BorderRadius.circular(
+                                  ResponsiveSize.w(8),
+                                ),
+                                borderSide: const BorderSide(
+                                  color: Color(0xFFDEB887),
+                                ),
                               ),
                               focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(ResponsiveSize.w(8)),
-                                borderSide: const BorderSide(color: Color(0xFF8B4513)),
+                                borderRadius: BorderRadius.circular(
+                                  ResponsiveSize.w(8),
+                                ),
+                                borderSide: const BorderSide(
+                                  color: Color(0xFF8B4513),
+                                ),
                               ),
                               filled: true,
                               fillColor: Colors.white,
-                              contentPadding: EdgeInsets.all(ResponsiveSize.w(16)),
+                              contentPadding: EdgeInsets.all(
+                                ResponsiveSize.w(16),
+                              ),
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
@@ -248,34 +265,43 @@ class _CreateQuestionBankState extends State<CreateQuestionBank> {
                                 fontSize: ResponsiveSize.sp(20),
                               ),
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(ResponsiveSize.w(8)),
+                                borderRadius: BorderRadius.circular(
+                                  ResponsiveSize.w(8),
+                                ),
                               ),
                               enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(ResponsiveSize.w(8)),
-                                borderSide: const BorderSide(color: Color(0xFFDEB887)),
+                                borderRadius: BorderRadius.circular(
+                                  ResponsiveSize.w(8),
+                                ),
+                                borderSide: const BorderSide(
+                                  color: Color(0xFFDEB887),
+                                ),
                               ),
                               filled: true,
                               fillColor: Colors.white,
-                              contentPadding: EdgeInsets.all(ResponsiveSize.w(16)),
+                              contentPadding: EdgeInsets.all(
+                                ResponsiveSize.w(16),
+                              ),
                             ),
                             style: TextStyle(
                               fontSize: ResponsiveSize.sp(20),
                               color: const Color(0xFF8B4513),
                               fontWeight: FontWeight.w500,
                             ),
-                            items: _grades.map((grade) {
-                              return DropdownMenuItem<String>(
-                                value: grade,
-                                child: Text(
-                                  grade,
-                                  style: TextStyle(
-                                    fontSize: ResponsiveSize.sp(20),
-                                    color: const Color(0xFF8B4513),
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              );
-                            }).toList(),
+                            items:
+                                _grades.map((grade) {
+                                  return DropdownMenuItem<String>(
+                                    value: grade,
+                                    child: Text(
+                                      grade,
+                                      style: TextStyle(
+                                        fontSize: ResponsiveSize.sp(20),
+                                        color: const Color(0xFF8B4513),
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
                             onChanged: (value) {
                               setState(() {
                                 _selectedGrade = value;
@@ -301,19 +327,31 @@ class _CreateQuestionBankState extends State<CreateQuestionBank> {
                                 fontSize: ResponsiveSize.sp(20),
                               ),
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(ResponsiveSize.w(8)),
+                                borderRadius: BorderRadius.circular(
+                                  ResponsiveSize.w(8),
+                                ),
                               ),
                               enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(ResponsiveSize.w(8)),
-                                borderSide: const BorderSide(color: Color(0xFFDEB887)),
+                                borderRadius: BorderRadius.circular(
+                                  ResponsiveSize.w(8),
+                                ),
+                                borderSide: const BorderSide(
+                                  color: Color(0xFFDEB887),
+                                ),
                               ),
                               focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(ResponsiveSize.w(8)),
-                                borderSide: const BorderSide(color: Color(0xFF8B4513)),
+                                borderRadius: BorderRadius.circular(
+                                  ResponsiveSize.w(8),
+                                ),
+                                borderSide: const BorderSide(
+                                  color: Color(0xFF8B4513),
+                                ),
                               ),
                               filled: true,
                               fillColor: Colors.white,
-                              contentPadding: EdgeInsets.all(ResponsiveSize.w(16)),
+                              contentPadding: EdgeInsets.all(
+                                ResponsiveSize.w(16),
+                              ),
                             ),
                             keyboardType: TextInputType.number,
                             validator: (value) {
@@ -326,7 +364,7 @@ class _CreateQuestionBankState extends State<CreateQuestionBank> {
                         ),
                       ],
                     ),
-                                        SizedBox(height: ResponsiveSize.h(16)),
+                    SizedBox(height: ResponsiveSize.h(16)),
                     TextFormField(
                       controller: _noteController,
                       style: TextStyle(fontSize: ResponsiveSize.sp(20)),
@@ -337,15 +375,25 @@ class _CreateQuestionBankState extends State<CreateQuestionBank> {
                           fontSize: ResponsiveSize.sp(20),
                         ),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(ResponsiveSize.w(8)),
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveSize.w(8),
+                          ),
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(ResponsiveSize.w(8)),
-                          borderSide: const BorderSide(color: Color(0xFFDEB887)),
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveSize.w(8),
+                          ),
+                          borderSide: const BorderSide(
+                            color: Color(0xFFDEB887),
+                          ),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(ResponsiveSize.w(8)),
-                          borderSide: const BorderSide(color: Color(0xFF8B4513)),
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveSize.w(8),
+                          ),
+                          borderSide: const BorderSide(
+                            color: Color(0xFF8B4513),
+                          ),
                         ),
                         filled: true,
                         fillColor: Colors.white,
@@ -363,8 +411,12 @@ class _CreateQuestionBankState extends State<CreateQuestionBank> {
                             padding: EdgeInsets.all(ResponsiveSize.w(16)),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              border: Border.all(color: const Color(0xFFDEB887)),
-                              borderRadius: BorderRadius.circular(ResponsiveSize.w(8)),
+                              border: Border.all(
+                                color: const Color(0xFFDEB887),
+                              ),
+                              borderRadius: BorderRadius.circular(
+                                ResponsiveSize.w(8),
+                              ),
                             ),
                             child: Text(
                               '总分：$_totalScore',
@@ -382,8 +434,12 @@ class _CreateQuestionBankState extends State<CreateQuestionBank> {
                             padding: EdgeInsets.all(ResponsiveSize.w(16)),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              border: Border.all(color: const Color(0xFFDEB887)),
-                              borderRadius: BorderRadius.circular(ResponsiveSize.w(8)),
+                              border: Border.all(
+                                color: const Color(0xFFDEB887),
+                              ),
+                              borderRadius: BorderRadius.circular(
+                                ResponsiveSize.w(8),
+                              ),
                             ),
                             child: Text(
                               '题目数：$_questionCount',
@@ -398,126 +454,164 @@ class _CreateQuestionBankState extends State<CreateQuestionBank> {
                       ],
                     ),
                     SizedBox(height: ResponsiveSize.h(16)),
-                                        // 题目列表区域
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(ResponsiveSize.w(8)),
-                          border: Border.all(color: const Color(0xFFDEB887)),
+                    // 题目列表区域
+                    Container(
+                      height: ResponsiveSize.h(400), // 给一个固定高度
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(
+                          ResponsiveSize.w(8),
                         ),
-                        child: ListView.builder(
-                          padding: EdgeInsets.all(ResponsiveSize.w(16)),
-                          itemCount: _questions.length,
-                          itemBuilder: (context, index) {
-                            return Card(
-                              margin: EdgeInsets.only(bottom: ResponsiveSize.h(16)),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(ResponsiveSize.w(8)),
-                                side: const BorderSide(
-                                  color: Color(0xFFDEB887),
-                                  width: 1,
-                                ),
+                        border: Border.all(color: const Color(0xFFDEB887)),
+                      ),
+                      child: ListView.builder(
+                        padding: EdgeInsets.all(ResponsiveSize.w(16)),
+                        itemCount: _questions.length,
+                        itemBuilder: (context, index) {
+                          return Card(
+                            margin: EdgeInsets.only(
+                              bottom: ResponsiveSize.h(16),
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                ResponsiveSize.w(8),
                               ),
-                              elevation: 0,
-                              color: Colors.white,
-                              child: Padding(
-                                padding: EdgeInsets.all(ResponsiveSize.w(16)),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      '${index + 1}.',
-                                      style: TextStyle(
-                                        fontSize: ResponsiveSize.sp(20),
-                                        color: const Color(0xFF8B4513),
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                              side: const BorderSide(
+                                color: Color(0xFFDEB887),
+                                width: 1,
+                              ),
+                            ),
+                            elevation: 0,
+                            color: Colors.white,
+                            child: Padding(
+                              padding: EdgeInsets.all(ResponsiveSize.w(16)),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '${index + 1}.',
+                                    style: TextStyle(
+                                      fontSize: ResponsiveSize.sp(20),
+                                      color: const Color(0xFF8B4513),
+                                      fontWeight: FontWeight.bold,
                                     ),
-                                    SizedBox(width: ResponsiveSize.w(16)),
-                                    Expanded(
-                                      child: InkWell(
-                                        onTap: () => _addQuestion(index),
-                                        child: _questions[index] == null
-                                            ? Container(
+                                  ),
+                                  SizedBox(width: ResponsiveSize.w(16)),
+                                  Expanded(
+                                    child: InkWell(
+                                      onTap: () => _addQuestion(index),
+                                      child:
+                                          _questions[index] == null
+                                              ? Container(
                                                 height: ResponsiveSize.h(100),
                                                 decoration: BoxDecoration(
-                                                  color: const Color(0xFFFDF5E6),
-                                                  borderRadius: BorderRadius.circular(ResponsiveSize.w(8)),
-                                                  border: Border.all(color: const Color(0xFFDEB887)),
+                                                  color: const Color(
+                                                    0xFFFDF5E6,
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                        ResponsiveSize.w(8),
+                                                      ),
+                                                  border: Border.all(
+                                                    color: const Color(
+                                                      0xFFDEB887,
+                                                    ),
+                                                  ),
                                                 ),
                                                 child: Center(
                                                   child: Text(
                                                     '点击添加题目',
                                                     style: TextStyle(
-                                                      fontSize: ResponsiveSize.sp(18),
-                                                      color: const Color(0xFF8B4513),
+                                                      fontSize:
+                                                          ResponsiveSize.sp(18),
+                                                      color: const Color(
+                                                        0xFF8B4513,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
                                               )
-                                            : Text(
+                                              : Text(
                                                 _questions[index]!.title,
                                                 style: TextStyle(
-                                                  fontSize: ResponsiveSize.sp(18),
-                                                  color: const Color(0xFF8B4513),
+                                                  fontSize: ResponsiveSize.sp(
+                                                    18,
+                                                  ),
+                                                  color: const Color(
+                                                    0xFF8B4513,
+                                                  ),
                                                 ),
                                               ),
-                                      ),
                                     ),
-                                    SizedBox(width: ResponsiveSize.w(16)),
-                                    SizedBox(
-                                      width: ResponsiveSize.w(100),
-                                      child: TextFormField(
-                                        controller: _scoreControllers[index],
-                                        style: TextStyle(fontSize: ResponsiveSize.sp(20)),
-                                        decoration: InputDecoration(
-                                          labelText: '分值',
-                                          labelStyle: TextStyle(
-                                            color: const Color(0xFF8B4513),
-                                            fontSize: ResponsiveSize.sp(20),
-                                          ),
-                                          border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(ResponsiveSize.w(8)),
-                                          ),
-                                          enabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(ResponsiveSize.w(8)),
-                                            borderSide: const BorderSide(color: Color(0xFFDEB887)),
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(ResponsiveSize.w(8)),
-                                            borderSide: const BorderSide(color: Color(0xFF8B4513)),
-                                          ),
-                                          filled: true,
-                                          fillColor: Colors.white,
-                                          contentPadding: EdgeInsets.all(ResponsiveSize.w(16)),
+                                  ),
+                                  SizedBox(width: ResponsiveSize.w(16)),
+                                  SizedBox(
+                                    width: ResponsiveSize.w(100),
+                                    child: TextFormField(
+                                      controller: _scoreControllers[index],
+                                      style: TextStyle(
+                                        fontSize: ResponsiveSize.sp(20),
+                                      ),
+                                      decoration: InputDecoration(
+                                        labelText: '分值',
+                                        labelStyle: TextStyle(
+                                          color: const Color(0xFF8B4513),
+                                          fontSize: ResponsiveSize.sp(20),
                                         ),
-                                        keyboardType: TextInputType.number,
-                                        onChanged: (value) => _updateTotalScore(),
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            ResponsiveSize.w(8),
+                                          ),
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            ResponsiveSize.w(8),
+                                          ),
+                                          borderSide: const BorderSide(
+                                            color: Color(0xFFDEB887),
+                                          ),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            ResponsiveSize.w(8),
+                                          ),
+                                          borderSide: const BorderSide(
+                                            color: Color(0xFF8B4513),
+                                          ),
+                                        ),
+                                        filled: true,
+                                        fillColor: Colors.white,
+                                        contentPadding: EdgeInsets.all(
+                                          ResponsiveSize.w(16),
+                                        ),
                                       ),
+                                      keyboardType: TextInputType.number,
+                                      onChanged: (value) => _updateTotalScore(),
                                     ),
-                                    SizedBox(width: ResponsiveSize.w(16)),
-                                    IconButton(
-                                      icon: Icon(
-                                        Icons.remove_circle_outline,
-                                        color: const Color(0xFF8B4513),
-                                        size: ResponsiveSize.w(24),
-                                      ),
-                                      onPressed: () => _removeQuestionSlot(index),
+                                  ),
+                                  SizedBox(width: ResponsiveSize.w(16)),
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.remove_circle_outline,
+                                      color: const Color(0xFF8B4513),
+                                      size: ResponsiveSize.w(24),
                                     ),
-                                  ],
-                                ),
+                                    onPressed: () => _removeQuestionSlot(index),
+                                  ),
+                                ],
                               ),
-                            );
-                          },
-                        ),
+                            ),
+                          );
+                        },
                       ),
                     ),
+                    // Add some padding at the bottom to ensure content isn't covered by FAB
+                    SizedBox(height: ResponsiveSize.h(80)),
                   ],
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
