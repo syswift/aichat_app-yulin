@@ -23,17 +23,19 @@ class _CreateTextbookPageState extends State<CreateTextbookPage> {
   final TextEditingController _startTimeController = TextEditingController();
   final TextEditingController _endTimeController = TextEditingController();
   final ImagePicker _imagePicker = ImagePicker();
-    @override
+  @override
   void initState() {
     super.initState();
     _initializeVideo();
   }
 
   void _initializeVideo() {
-    _videoPlayerController = VideoPlayerController.asset('assets/test_video.mp4')
+    _videoPlayerController = VideoPlayerController.asset(
+        'assets/test_video.mp4',
+      )
       ..initialize().then((_) {
         _videoDuration = _videoPlayerController.value.duration;
-        
+
         _chewieController = ChewieController(
           videoPlayerController: _videoPlayerController,
           aspectRatio: 16 / 9,
@@ -53,7 +55,7 @@ class _CreateTextbookPageState extends State<CreateTextbookPage> {
             _currentPosition = _videoPlayerController.value.position;
           });
         });
-        
+
         setState(() {});
       });
   }
@@ -83,158 +85,170 @@ class _CreateTextbookPageState extends State<CreateTextbookPage> {
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(
-          '添加时间段',
-          style: TextStyle(
-            color: const Color(0xFF8B4513),
-            fontSize: ResponsiveSize.sp(32),
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        content: SizedBox(
-          width: ResponsiveSize.w(600),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: _startTimeController,
-                style: TextStyle(
-                  fontSize: ResponsiveSize.sp(24),
-                  color: const Color(0xFF8B4513),
+      builder:
+          (context) => AlertDialog(
+            title: Text(
+              '添加时间段',
+              style: TextStyle(
+                color: const Color(0xFF8B4513),
+                fontSize: ResponsiveSize.sp(32),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            content: SingleChildScrollView(
+              child: SizedBox(
+                width: ResponsiveSize.w(600),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextField(
+                      controller: _startTimeController,
+                      style: TextStyle(
+                        fontSize: ResponsiveSize.sp(24),
+                        color: const Color(0xFF8B4513),
+                      ),
+                      decoration: InputDecoration(
+                        labelText: '开始时间 (分:秒)',
+                        labelStyle: TextStyle(
+                          color: const Color(0xFF8B4513),
+                          fontSize: ResponsiveSize.sp(22),
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveSize.w(16),
+                          ),
+                          borderSide: const BorderSide(width: 2),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveSize.w(16),
+                          ),
+                          borderSide: const BorderSide(
+                            color: Color(0xFF8B4513),
+                            width: 3,
+                          ),
+                        ),
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: ResponsiveSize.w(24),
+                          vertical: ResponsiveSize.h(28),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: ResponsiveSize.h(32)),
+                    TextField(
+                      controller: _endTimeController,
+                      style: TextStyle(
+                        fontSize: ResponsiveSize.sp(24),
+                        color: const Color(0xFF8B4513),
+                      ),
+                      decoration: InputDecoration(
+                        labelText: '结束时间 (分:秒)',
+                        labelStyle: TextStyle(
+                          color: const Color(0xFF8B4513),
+                          fontSize: ResponsiveSize.sp(22),
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveSize.w(16),
+                          ),
+                          borderSide: const BorderSide(width: 2),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveSize.w(16),
+                          ),
+                          borderSide: const BorderSide(
+                            color: Color(0xFF8B4513),
+                            width: 3,
+                          ),
+                        ),
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: ResponsiveSize.w(24),
+                          vertical: ResponsiveSize.h(28),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                decoration: InputDecoration(
-                  labelText: '开始时间 (分:秒)',
-                  labelStyle: TextStyle(
+              ),
+            ),
+            contentPadding: EdgeInsets.fromLTRB(
+              ResponsiveSize.w(32),
+              ResponsiveSize.h(24),
+              ResponsiveSize.w(32),
+              ResponsiveSize.h(32),
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(ResponsiveSize.w(24)),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: ResponsiveSize.w(32),
+                    vertical: ResponsiveSize.h(20),
+                  ),
+                ),
+                child: Text(
+                  '取消',
+                  style: TextStyle(
                     color: const Color(0xFF8B4513),
                     fontSize: ResponsiveSize.sp(22),
-                  ),
-                                    border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(ResponsiveSize.w(16)),
-                    borderSide: const BorderSide(width: 2),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(ResponsiveSize.w(16)),
-                    borderSide: const BorderSide(
-                      color: Color(0xFF8B4513),
-                      width: 3,
-                    ),
-                  ),
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: ResponsiveSize.w(24),
-                    vertical: ResponsiveSize.h(28),
                   ),
                 ),
               ),
-              SizedBox(height: ResponsiveSize.h(32)),
-              TextField(
-                controller: _endTimeController,
-                style: TextStyle(
-                  fontSize: ResponsiveSize.sp(24),
-                  color: const Color(0xFF8B4513),
+              ElevatedButton(
+                onPressed: () {
+                  final startTime = _parseDuration(_startTimeController.text);
+                  final endTime = _parseDuration(_endTimeController.text);
+
+                  if (endTime > startTime && endTime <= _videoDuration) {
+                    setState(() {
+                      _videoSections.add({
+                        'timeRange':
+                            '${_formatDuration(startTime)} - ${_formatDuration(endTime)}',
+                        'startTime': startTime,
+                        'endTime': endTime,
+                        'attachments': [],
+                      });
+                    });
+                    Navigator.pop(context);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          '请输入有效的时间范围',
+                          style: TextStyle(fontSize: ResponsiveSize.sp(18)),
+                        ),
+                      ),
+                    );
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFFFE4C4),
+                  foregroundColor: const Color(0xFF8B4513),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: ResponsiveSize.w(32),
+                    vertical: ResponsiveSize.h(20),
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(ResponsiveSize.w(16)),
+                  ),
                 ),
-                decoration: InputDecoration(
-                  labelText: '结束时间 (分:秒)',
-                  labelStyle: TextStyle(
-                    color: const Color(0xFF8B4513),
-                    fontSize: ResponsiveSize.sp(22),
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(ResponsiveSize.w(16)),
-                    borderSide: const BorderSide(width: 2),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(ResponsiveSize.w(16)),
-                    borderSide: const BorderSide(
-                      color: Color(0xFF8B4513),
-                      width: 3,
-                    ),
-                  ),
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: ResponsiveSize.w(24),
-                    vertical: ResponsiveSize.h(28),
-                  ),
+                child: Text(
+                  '添加',
+                  style: TextStyle(fontSize: ResponsiveSize.sp(22)),
                 ),
               ),
             ],
-          ),
-        ),
-        contentPadding: EdgeInsets.fromLTRB(
-          ResponsiveSize.w(32),
-          ResponsiveSize.h(24),
-          ResponsiveSize.w(32),
-          ResponsiveSize.h(32)
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(ResponsiveSize.w(24)),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            style: TextButton.styleFrom(
-              padding: EdgeInsets.symmetric(
-                horizontal: ResponsiveSize.w(32),
-                vertical: ResponsiveSize.h(20),
-              ),
-            ),
-            child: Text(
-              '取消',
-              style: TextStyle(
-                color: const Color(0xFF8B4513),
-                fontSize: ResponsiveSize.sp(22),
-              ),
+            actionsPadding: EdgeInsets.fromLTRB(
+              ResponsiveSize.w(32),
+              0,
+              ResponsiveSize.w(32),
+              ResponsiveSize.h(24),
             ),
           ),
-                    ElevatedButton(
-            onPressed: () {
-              final startTime = _parseDuration(_startTimeController.text);
-              final endTime = _parseDuration(_endTimeController.text);
-              
-              if (endTime > startTime && endTime <= _videoDuration) {
-                setState(() {
-                  _videoSections.add({
-                    'timeRange': '${_formatDuration(startTime)} - ${_formatDuration(endTime)}',
-                    'startTime': startTime,
-                    'endTime': endTime,
-                    'attachments': [],
-                  });
-                });
-                Navigator.pop(context);
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      '请输入有效的时间范围',
-                      style: TextStyle(fontSize: ResponsiveSize.sp(18)),
-                    ),
-                  ),
-                );
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFFFE4C4),
-              foregroundColor: const Color(0xFF8B4513),
-              padding: EdgeInsets.symmetric(
-                horizontal: ResponsiveSize.w(32),
-                vertical: ResponsiveSize.h(20),
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(ResponsiveSize.w(16)),
-              ),
-            ),
-            child: Text(
-              '添加',
-              style: TextStyle(fontSize: ResponsiveSize.sp(22)),
-            ),
-          ),
-        ],
-        actionsPadding: EdgeInsets.fromLTRB(
-          ResponsiveSize.w(32),
-          0,
-          ResponsiveSize.w(32),
-          ResponsiveSize.h(24)
-        ),
-      ),
     );
   }
 
@@ -255,7 +269,8 @@ class _CreateTextbookPageState extends State<CreateTextbookPage> {
       }
     });
   }
-    Future<void> _pickImage() async {
+
+  Future<void> _pickImage() async {
     try {
       final XFile? image = await _imagePicker.pickImage(
         source: ImageSource.gallery,
@@ -280,17 +295,17 @@ class _CreateTextbookPageState extends State<CreateTextbookPage> {
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('选择图片失败: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('选择图片失败: $e')));
     }
   }
 
   void _addAttachment(String type) {
     if (_selectedSectionIndex == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('请先选择一个时间段')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('请先选择一个时间段')));
       return;
     }
 
@@ -318,395 +333,491 @@ class _CreateTextbookPageState extends State<CreateTextbookPage> {
   void _showSaveDialog() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(ResponsiveSize.w(20)),
-        ),
-        title: Row(
-          children: [
-            Icon(
-              Icons.save_outlined,
-              color: const Color(0xFF8B4513),
-              size: ResponsiveSize.w(28),
+      builder:
+          (context) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(ResponsiveSize.w(20)),
             ),
-            SizedBox(width: ResponsiveSize.w(12)),
-            Text(
-              '保存教材',
-              style: TextStyle(
-                color: const Color(0xFF8B4513),
-                fontWeight: FontWeight.bold,
-                fontSize: ResponsiveSize.sp(24),
-              ),
+            title: Row(
+              children: [
+                Icon(
+                  Icons.save_outlined,
+                  color: const Color(0xFF8B4513),
+                  size: ResponsiveSize.w(28),
+                ),
+                SizedBox(width: ResponsiveSize.w(12)),
+                Text(
+                  '保存教材',
+                  style: TextStyle(
+                    color: const Color(0xFF8B4513),
+                    fontWeight: FontWeight.bold,
+                    fontSize: ResponsiveSize.sp(24),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-                contentPadding: EdgeInsets.fromLTRB(
-          ResponsiveSize.w(24),
-          ResponsiveSize.h(20),
-          ResponsiveSize.w(24),
-          ResponsiveSize.h(24)
-        ),
-        content: SizedBox(
-          width: ResponsiveSize.w(500),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                decoration: InputDecoration(
-                  labelText: '教材名称',
-                  labelStyle: const TextStyle(color: Color(0xFF8B4513)),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(ResponsiveSize.w(12)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(ResponsiveSize.w(12)),
-                    borderSide: const BorderSide(color: Color(0xFF8B4513), width: 2),
-                  ),
-                  prefixIcon: const Icon(Icons.book_outlined, color: Color(0xFF8B4513)),
-                ),
-              ),
-              SizedBox(height: ResponsiveSize.h(20)),
-              TextField(
-                maxLines: 3,
-                decoration: InputDecoration(
-                  labelText: '备注',
-                  labelStyle: const TextStyle(color: Color(0xFF8B4513)),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(ResponsiveSize.w(12)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(ResponsiveSize.w(12)),
-                    borderSide: const BorderSide(color: Color(0xFF8B4513), width: 2),
-                  ),
-                  prefixIcon: const Icon(Icons.note_outlined, color: Color(0xFF8B4513)),
-                ),
-              ),
-              SizedBox(height: ResponsiveSize.h(20)),
-              DropdownButtonFormField<String>(
-                decoration: InputDecoration(
-                  labelText: '适用年级',
-                  labelStyle: const TextStyle(color: Color(0xFF8B4513)),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(ResponsiveSize.w(12)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(ResponsiveSize.w(12)),
-                    borderSide: const BorderSide(color: Color(0xFF8B4513), width: 2),
-                  ),
-                  prefixIcon: const Icon(Icons.school_outlined, color: Color(0xFF8B4513)),
-                ),
-                items: ['一年级', '二年级', '三年级']
-                    .map((grade) => DropdownMenuItem(
-                          value: grade,
-                          child: Text(
-                            grade,
-                            style: const TextStyle(color: Color(0xFF8B4513)),
+            contentPadding: EdgeInsets.fromLTRB(
+              ResponsiveSize.w(24),
+              ResponsiveSize.h(20),
+              ResponsiveSize.w(24),
+              ResponsiveSize.h(24),
+            ),
+            content: SingleChildScrollView(
+              child: SizedBox(
+                width: ResponsiveSize.w(500),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextField(
+                      decoration: InputDecoration(
+                        labelText: '教材名称',
+                        labelStyle: const TextStyle(color: Color(0xFF8B4513)),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveSize.w(12),
                           ),
-                        ))
-                    .toList(),
-                onChanged: (value) {},
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveSize.w(12),
+                          ),
+                          borderSide: const BorderSide(
+                            color: Color(0xFF8B4513),
+                            width: 2,
+                          ),
+                        ),
+                        prefixIcon: const Icon(
+                          Icons.book_outlined,
+                          color: Color(0xFF8B4513),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: ResponsiveSize.h(20)),
+                    TextField(
+                      maxLines: 3,
+                      decoration: InputDecoration(
+                        labelText: '备注',
+                        labelStyle: const TextStyle(color: Color(0xFF8B4513)),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveSize.w(12),
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveSize.w(12),
+                          ),
+                          borderSide: const BorderSide(
+                            color: Color(0xFF8B4513),
+                            width: 2,
+                          ),
+                        ),
+                        prefixIcon: const Icon(
+                          Icons.note_outlined,
+                          color: Color(0xFF8B4513),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: ResponsiveSize.h(20)),
+                    DropdownButtonFormField<String>(
+                      decoration: InputDecoration(
+                        labelText: '适用年级',
+                        labelStyle: const TextStyle(color: Color(0xFF8B4513)),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveSize.w(12),
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveSize.w(12),
+                          ),
+                          borderSide: const BorderSide(
+                            color: Color(0xFF8B4513),
+                            width: 2,
+                          ),
+                        ),
+                        prefixIcon: const Icon(
+                          Icons.school_outlined,
+                          color: Color(0xFF8B4513),
+                        ),
+                      ),
+                      items:
+                          ['一年级', '二年级', '三年级']
+                              .map(
+                                (grade) => DropdownMenuItem(
+                                  value: grade,
+                                  child: Text(
+                                    grade,
+                                    style: const TextStyle(
+                                      color: Color(0xFF8B4513),
+                                    ),
+                                  ),
+                                ),
+                              )
+                              .toList(),
+                      onChanged: (value) {},
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text(
+                  '取消',
+                  style: TextStyle(
+                    color: const Color(0xFF8B4513),
+                    fontSize: ResponsiveSize.sp(16),
+                  ),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  // TODO: 实现保存功能
+                  Navigator.pop(context);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFFFE4C4),
+                  foregroundColor: const Color(0xFF8B4513),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: ResponsiveSize.w(24),
+                    vertical: ResponsiveSize.h(12),
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(ResponsiveSize.w(12)),
+                  ),
+                ),
+                child: Text(
+                  '保存',
+                  style: TextStyle(fontSize: ResponsiveSize.sp(16)),
+                ),
               ),
             ],
           ),
-        ),
-                actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(
-              '取消',
-              style: TextStyle(
-                color: const Color(0xFF8B4513),
-                fontSize: ResponsiveSize.sp(16),
-              ),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              // TODO: 实现保存功能
-              Navigator.pop(context);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFFFE4C4),
-              foregroundColor: const Color(0xFF8B4513),
-              padding: EdgeInsets.symmetric(
-                horizontal: ResponsiveSize.w(24),
-                vertical: ResponsiveSize.h(12)
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(ResponsiveSize.w(12)),
-              ),
-            ),
-            child: Text(
-              '保存',
-              style: TextStyle(fontSize: ResponsiveSize.sp(16)),
-            ),
-          ),
-        ],
-      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     ResponsiveSize.init(context);
-    
+
     return Scaffold(
       backgroundColor: const Color(0xFFFDF5E6),
       body: Stack(
         children: [
-          Padding(
-            padding: EdgeInsets.all(ResponsiveSize.w(32)),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: Image.asset(
-                        'assets/backbutton1.png',
-                        width: ResponsiveSize.w(80),
-                        height: ResponsiveSize.h(80),
-                      ),
-                    ),
-                    const Spacer(),
-                                        ElevatedButton.icon(
-                      onPressed: () {}, 
-                      icon: Icon(
-                        Icons.access_time,
-                        size: ResponsiveSize.w(20)
-                      ),
-                      label: Text(
-                        '当前时间: ${_formatDuration(_currentPosition)}',
-                        style: TextStyle(
-                          fontSize: ResponsiveSize.sp(20),
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFFFE4C4),
-                        foregroundColor: const Color(0xFF8B4513),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: ResponsiveSize.w(20),
-                          vertical: ResponsiveSize.h(12),
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(ResponsiveSize.w(8)),
-                          side: const BorderSide(
-                            color: Color(0xFFDEB887),
-                            width: 1,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: ResponsiveSize.w(16)),
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        // TODO: 实现添加教材功能
-                      },
-                      icon: Icon(
-                        Icons.add,
-                        size: ResponsiveSize.w(20)
-                      ),
-                      label: Text(
-                        '添加教材',
-                        style: TextStyle(
-                          fontSize: ResponsiveSize.sp(20),
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFFFE4C4),
-                        foregroundColor: const Color(0xFF8B4513),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: ResponsiveSize.w(20),
-                          vertical: ResponsiveSize.h(12),
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(ResponsiveSize.w(8)),
-                          side: const BorderSide(
-                            color: Color(0xFFDEB887),
-                            width: 1,
-                          ),
-                        ),
-                      ),
-                    ),
-                                        SizedBox(width: ResponsiveSize.w(16)),
-                    ElevatedButton.icon(
-                      onPressed: _showSaveDialog,
-                      icon: Icon(
-                        Icons.save,
-                        size: ResponsiveSize.w(20)
-                      ),
-                      label: Text(
-                        '保存',
-                        style: TextStyle(
-                          fontSize: ResponsiveSize.sp(20),
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFFFE4C4),
-                        foregroundColor: const Color(0xFF8B4513),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: ResponsiveSize.w(20),
-                          vertical: ResponsiveSize.h(12),
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(ResponsiveSize.w(8)),
-                          side: const BorderSide(
-                            color: Color(0xFFDEB887),
-                            width: 1,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: ResponsiveSize.h(20)),
-                Expanded(
-                  child: Row(
+          SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.all(ResponsiveSize.w(32)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
                     children: [
-                      Expanded(
-                        flex: 3,
-                        child: Column(
-                          children: [
-                            Expanded(
-                              child: Stack(
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(ResponsiveSize.w(12)),
-                                      border: Border.all(
-                                        color: const Color(0xFFDEB887),
-                                      ),
-                                    ),
-                                                                        child: _chewieController != null
-                                        ? ClipRRect(
-                                            borderRadius: BorderRadius.circular(ResponsiveSize.w(12)),
-                                            child: Chewie(
-                                              controller: _chewieController!,
-                                            ),
-                                          )
-                                        : const Center(
-                                            child: CircularProgressIndicator(
-                                              color: Color(0xFF8B4513),
-                                            ),
-                                          ),
-                                  ),
-                                  if (_selectedSectionIndex != null)
-                                    ImageAttachmentsManager(
-                                      attachments: _videoSections[_selectedSectionIndex!]['attachments']
-                                          .map<AttachmentModel>((attachment) => AttachmentModel(
-                                                type: attachment['type'],
-                                                name: attachment['name'],
-                                                filePath: attachment['file'],
-                                                position: attachment['position'] ?? const Offset(100, 100),
-                                                scale: attachment['scale'] ?? 1.0,
-                                              ))
-                                          .toList(),
-                                      onPositionChanged: (index, position) {
-                                        setState(() {
-                                          _videoSections[_selectedSectionIndex!]['attachments'][index]
-                                              ['position'] = position;
-                                        });
-                                      },
-                                      onScaleChanged: (index, scale) {
-                                        setState(() {
-                                          _videoSections[_selectedSectionIndex!]['attachments'][index]
-                                              ['scale'] = scale;
-                                        });
-                                      },
-                                      onDelete: (index) {
-                                        setState(() {
-                                          _videoSections[_selectedSectionIndex!]['attachments']
-                                              .removeAt(index);
-                                        });
-                                      },
-                                    ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(height: ResponsiveSize.h(20)),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                _buildActionButton('图片', 'assets/image_icon.png', () => _addAttachment('图片')),
-                                _buildActionButton('音频', 'assets/audio_icon.png', () => _addAttachment('音频')),
-                                _buildActionButton('视频', 'assets/video_icon.png', () => _addAttachment('视频')),
-                                _buildActionButton('习题', 'assets/checklist_icon.png', () => _addAttachment('习题')),
-                              ],
-                            ),
-                          ],
+                      GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: Image.asset(
+                          'assets/backbutton1.png',
+                          width: ResponsiveSize.w(80),
+                          height: ResponsiveSize.h(80),
                         ),
                       ),
-                                            Container(
-                        width: 1,
-                        margin: EdgeInsets.symmetric(horizontal: ResponsiveSize.w(16)),
-                        color: const Color(0xFFDEB887),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(ResponsiveSize.w(12)),
-                            border: Border.all(
-                              color: const Color(0xFFDEB887),
+                      const Spacer(),
+                      ElevatedButton.icon(
+                        onPressed: () {},
+                        icon: Icon(
+                          Icons.access_time,
+                          size: ResponsiveSize.w(20),
+                        ),
+                        label: Text(
+                          '当前时间: ${_formatDuration(_currentPosition)}',
+                          style: TextStyle(
+                            fontSize: ResponsiveSize.sp(20),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFFFE4C4),
+                          foregroundColor: const Color(0xFF8B4513),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: ResponsiveSize.w(20),
+                            vertical: ResponsiveSize.h(12),
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                              ResponsiveSize.w(8),
+                            ),
+                            side: const BorderSide(
+                              color: Color(0xFFDEB887),
+                              width: 1,
                             ),
                           ),
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.all(ResponsiveSize.w(16)),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      '时间段列表',
-                                      style: TextStyle(
-                                        fontSize: ResponsiveSize.sp(20),
-                                        fontWeight: FontWeight.bold,
-                                        color: const Color(0xFF8B4513),
-                                      ),
-                                    ),
-                                    Row(
-                                      children: [
-                                        _buildListActionButton('添加', Icons.add),
-                                        SizedBox(width: ResponsiveSize.w(8)),
-                                        _buildListActionButton('删除', Icons.delete),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Expanded(
-                                child: ListView.builder(
-                                  itemCount: _videoSections.length,
-                                  itemBuilder: (context, index) {
-                                    return _buildVideoSection(
-                                      _videoSections[index],
-                                      index,
-                                    );
-                                  },
-                                ),
-                              ),
-                            ],
+                        ),
+                      ),
+                      SizedBox(width: ResponsiveSize.w(16)),
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          // TODO: 实现添加教材功能
+                        },
+                        icon: Icon(Icons.add, size: ResponsiveSize.w(20)),
+                        label: Text(
+                          '添加教材',
+                          style: TextStyle(
+                            fontSize: ResponsiveSize.sp(20),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFFFE4C4),
+                          foregroundColor: const Color(0xFF8B4513),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: ResponsiveSize.w(20),
+                            vertical: ResponsiveSize.h(12),
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                              ResponsiveSize.w(8),
+                            ),
+                            side: const BorderSide(
+                              color: Color(0xFFDEB887),
+                              width: 1,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: ResponsiveSize.w(16)),
+                      ElevatedButton.icon(
+                        onPressed: _showSaveDialog,
+                        icon: Icon(Icons.save, size: ResponsiveSize.w(20)),
+                        label: Text(
+                          '保存',
+                          style: TextStyle(
+                            fontSize: ResponsiveSize.sp(20),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFFFE4C4),
+                          foregroundColor: const Color(0xFF8B4513),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: ResponsiveSize.w(20),
+                            vertical: ResponsiveSize.h(12),
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                              ResponsiveSize.w(8),
+                            ),
+                            side: const BorderSide(
+                              color: Color(0xFFDEB887),
+                              width: 1,
+                            ),
                           ),
                         ),
                       ),
                     ],
                   ),
-                ),
-              ],
+                  SizedBox(height: ResponsiveSize.h(20)),
+                  SizedBox(
+                    height:
+                        MediaQuery.of(context).size.height -
+                        ResponsiveSize.h(150),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 3,
+                          child: Column(
+                            children: [
+                              Expanded(
+                                child: Stack(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(
+                                          ResponsiveSize.w(12),
+                                        ),
+                                        border: Border.all(
+                                          color: const Color(0xFFDEB887),
+                                        ),
+                                      ),
+                                      child:
+                                          _chewieController != null
+                                              ? ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                      ResponsiveSize.w(12),
+                                                    ),
+                                                child: Chewie(
+                                                  controller:
+                                                      _chewieController!,
+                                                ),
+                                              )
+                                              : const Center(
+                                                child:
+                                                    CircularProgressIndicator(
+                                                      color: Color(0xFF8B4513),
+                                                    ),
+                                              ),
+                                    ),
+                                    if (_selectedSectionIndex != null)
+                                      ImageAttachmentsManager(
+                                        attachments:
+                                            _videoSections[_selectedSectionIndex!]['attachments']
+                                                .map<AttachmentModel>(
+                                                  (
+                                                    attachment,
+                                                  ) => AttachmentModel(
+                                                    type: attachment['type'],
+                                                    name: attachment['name'],
+                                                    filePath:
+                                                        attachment['file'],
+                                                    position:
+                                                        attachment['position'] ??
+                                                        const Offset(100, 100),
+                                                    scale:
+                                                        attachment['scale'] ??
+                                                        1.0,
+                                                  ),
+                                                )
+                                                .toList(),
+                                        onPositionChanged: (index, position) {
+                                          setState(() {
+                                            _videoSections[_selectedSectionIndex!]['attachments'][index]['position'] =
+                                                position;
+                                          });
+                                        },
+                                        onScaleChanged: (index, scale) {
+                                          setState(() {
+                                            _videoSections[_selectedSectionIndex!]['attachments'][index]['scale'] =
+                                                scale;
+                                          });
+                                        },
+                                        onDelete: (index) {
+                                          setState(() {
+                                            _videoSections[_selectedSectionIndex!]['attachments']
+                                                .removeAt(index);
+                                          });
+                                        },
+                                      ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: ResponsiveSize.h(20)),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  _buildActionButton(
+                                    '图片',
+                                    'assets/image_icon.png',
+                                    () => _addAttachment('图片'),
+                                  ),
+                                  _buildActionButton(
+                                    '音频',
+                                    'assets/audio_icon.png',
+                                    () => _addAttachment('音频'),
+                                  ),
+                                  _buildActionButton(
+                                    '视频',
+                                    'assets/video_icon.png',
+                                    () => _addAttachment('视频'),
+                                  ),
+                                  _buildActionButton(
+                                    '习题',
+                                    'assets/checklist_icon.png',
+                                    () => _addAttachment('习题'),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          width: 1,
+                          margin: EdgeInsets.symmetric(
+                            horizontal: ResponsiveSize.w(16),
+                          ),
+                          color: const Color(0xFFDEB887),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(
+                                ResponsiveSize.w(12),
+                              ),
+                              border: Border.all(
+                                color: const Color(0xFFDEB887),
+                              ),
+                            ),
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.all(ResponsiveSize.w(16)),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        '时间段列表',
+                                        style: TextStyle(
+                                          fontSize: ResponsiveSize.sp(20),
+                                          fontWeight: FontWeight.bold,
+                                          color: const Color(0xFF8B4513),
+                                        ),
+                                      ),
+                                      Row(
+                                        children: [
+                                          _buildListActionButton(
+                                            '添加',
+                                            Icons.add,
+                                          ),
+                                          SizedBox(width: ResponsiveSize.w(8)),
+                                          _buildListActionButton(
+                                            '删除',
+                                            Icons.delete,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Expanded(
+                                  child: ListView.builder(
+                                    itemCount: _videoSections.length,
+                                    itemBuilder: (context, index) {
+                                      return _buildVideoSection(
+                                        _videoSections[index],
+                                        index,
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
       ),
+      // Make sure the keyboard doesn't resize the UI
+      resizeToAvoidBottomInset: false,
     );
   }
-    Widget _buildActionButton(String label, String iconPath, VoidCallback onPressed) {
+
+  Widget _buildActionButton(
+    String label,
+    String iconPath,
+    VoidCallback onPressed,
+  ) {
     return GestureDetector(
       onTap: onPressed,
       child: Column(
@@ -739,16 +850,13 @@ class _CreateTextbookPageState extends State<CreateTextbookPage> {
         } else if (label == '删除' && _selectedSectionIndex != null) {
           _deleteSection(_selectedSectionIndex!);
         } else if (label == '删除') {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('请先选择一个时间段')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('请先选择一个时间段')));
         }
       },
       icon: Icon(icon, size: ResponsiveSize.w(20)),
-      label: Text(
-        label,
-        style: TextStyle(fontSize: ResponsiveSize.sp(16)),
-      ),
+      label: Text(label, style: TextStyle(fontSize: ResponsiveSize.sp(16))),
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color(0xFFFFE4C4),
         foregroundColor: const Color(0xFF8B4513),
@@ -758,10 +866,7 @@ class _CreateTextbookPageState extends State<CreateTextbookPage> {
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(ResponsiveSize.w(8)),
-          side: const BorderSide(
-            color: Color(0xFFDEB887),
-            width: 1,
-          ),
+          side: const BorderSide(color: Color(0xFFDEB887), width: 1),
         ),
       ),
     );
@@ -769,7 +874,7 @@ class _CreateTextbookPageState extends State<CreateTextbookPage> {
 
   Widget _buildVideoSection(Map<String, dynamic> section, int index) {
     final isSelected = _selectedSectionIndex == index;
-    
+
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -822,7 +927,10 @@ class _CreateTextbookPageState extends State<CreateTextbookPage> {
     );
   }
 
-  Widget _buildAttachmentChip(Map<String, dynamic> attachment, VoidCallback onDelete) {
+  Widget _buildAttachmentChip(
+    Map<String, dynamic> attachment,
+    VoidCallback onDelete,
+  ) {
     return Chip(
       label: Text(
         attachment['name'],
