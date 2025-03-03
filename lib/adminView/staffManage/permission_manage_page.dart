@@ -89,9 +89,7 @@ class _PermissionManagePageState extends State<PermissionManagePage> {
           children: [
             _buildHeader(),
             SizedBox(height: ResponsiveSize.h(24)),
-            Expanded(
-              child: _buildRoleList(),
-            ),
+            Expanded(child: _buildRoleList()),
           ],
         ),
       ),
@@ -131,9 +129,7 @@ class _PermissionManagePageState extends State<PermissionManagePage> {
       onPressed: () {
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (context) => const CampusManagePage(),
-          ),
+          MaterialPageRoute(builder: (context) => const CampusManagePage()),
         );
       },
       icon: Icon(
@@ -153,7 +149,7 @@ class _PermissionManagePageState extends State<PermissionManagePage> {
         backgroundColor: const Color(0xFFFFE4C4),
         padding: EdgeInsets.symmetric(
           horizontal: ResponsiveSize.w(24),
-          vertical: ResponsiveSize.h(16)
+          vertical: ResponsiveSize.h(16),
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(ResponsiveSize.w(12)),
@@ -183,7 +179,7 @@ class _PermissionManagePageState extends State<PermissionManagePage> {
         backgroundColor: const Color(0xFFFFE4C4),
         padding: EdgeInsets.symmetric(
           horizontal: ResponsiveSize.w(24),
-          vertical: ResponsiveSize.h(16)
+          vertical: ResponsiveSize.h(16),
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(ResponsiveSize.w(12)),
@@ -214,9 +210,7 @@ class _PermissionManagePageState extends State<PermissionManagePage> {
     return Container(
       padding: EdgeInsets.all(ResponsiveSize.w(16)),
       decoration: const BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: Color(0xFFDEB887)),
-        ),
+        border: Border(bottom: BorderSide(color: Color(0xFFDEB887))),
       ),
       child: Row(
         children: [
@@ -264,177 +258,187 @@ class _PermissionManagePageState extends State<PermissionManagePage> {
 
     showDialog(
       context: context,
-      builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(ResponsiveSize.w(16)),
-        ),
-        child: Container(
-          width: ResponsiveSize.w(800),
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).size.height * 0.8,
-          ),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.all(ResponsiveSize.w(32)),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.add_moderator,
-                        color: const Color(0xFF8B4513),
-                        size: ResponsiveSize.w(32),
-                      ),
-                      SizedBox(width: ResponsiveSize.w(16)),
-                      Text(
-                        '添加自定义角色',
-                        style: TextStyle(
-                          fontSize: ResponsiveSize.sp(28),
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF8B4513),
-                        ),
-                      ),
-                      const Spacer(),
-                      IconButton(
-                        icon: Icon(
-                          Icons.close,
-                          color: const Color(0xFF8B4513),
-                          size: ResponsiveSize.w(28),
-                        ),
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(
-                    left: ResponsiveSize.w(32),
-                    right: ResponsiveSize.w(32),
-                    bottom: MediaQuery.of(context).viewInsets.bottom + ResponsiveSize.h(32),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildDialogTextField(
-                        controller: nameController,
-                        label: '角色名称',
-                        hintText: '请输入角色名称',
-                      ),
-                      SizedBox(height: ResponsiveSize.h(24)),
-                      _buildDialogTextField(
-                        controller: descriptionController,
-                        label: '角色说明',
-                        hintText: '请输入角色说明',
-                        maxLines: 3,
-                      ),
-                      SizedBox(height: ResponsiveSize.h(24)),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+      builder:
+          (context) => Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(ResponsiveSize.w(16)),
+            ),
+            child: Container(
+              width: ResponsiveSize.w(800),
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.8,
+              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.all(ResponsiveSize.w(32)),
+                      child: Row(
                         children: [
+                          Icon(
+                            Icons.add_moderator,
+                            color: const Color(0xFF8B4513),
+                            size: ResponsiveSize.w(32),
+                          ),
+                          SizedBox(width: ResponsiveSize.w(16)),
                           Text(
-                            '所属校区',
+                            '添加自定义角色',
                             style: TextStyle(
-                              fontSize: ResponsiveSize.sp(20),
-                              fontWeight: FontWeight.w500,
+                              fontSize: ResponsiveSize.sp(28),
+                              fontWeight: FontWeight.bold,
                               color: const Color(0xFF8B4513),
                             ),
                           ),
-                          SizedBox(height: ResponsiveSize.h(12)),
-                          Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(color: const Color(0xFFDEB887)),
-                              borderRadius: BorderRadius.circular(ResponsiveSize.w(8)),
+                          const Spacer(),
+                          IconButton(
+                            icon: Icon(
+                              Icons.close,
+                              color: const Color(0xFF8B4513),
+                              size: ResponsiveSize.w(28),
                             ),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton<String>(
-                                value: selectedCampus,
-                                isExpanded: true,
-                                hint: Text(
-                                  '请选择所属校区',
-                                  style: TextStyle(
-                                    color: const Color(0xFF8B4513).withOpacity(0.5),
-                                    fontSize: ResponsiveSize.sp(18),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                        left: ResponsiveSize.w(32),
+                        right: ResponsiveSize.w(32),
+                        bottom:
+                            MediaQuery.of(context).viewInsets.bottom +
+                            ResponsiveSize.h(32),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildDialogTextField(
+                            controller: nameController,
+                            label: '角色名称',
+                            hintText: '请输入角色名称',
+                          ),
+                          SizedBox(height: ResponsiveSize.h(24)),
+                          _buildDialogTextField(
+                            controller: descriptionController,
+                            label: '角色说明',
+                            hintText: '请输入角色说明',
+                            maxLines: 3,
+                          ),
+                          SizedBox(height: ResponsiveSize.h(24)),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '所属校区',
+                                style: TextStyle(
+                                  fontSize: ResponsiveSize.sp(20),
+                                  fontWeight: FontWeight.w500,
+                                  color: const Color(0xFF8B4513),
+                                ),
+                              ),
+                              SizedBox(height: ResponsiveSize.h(12)),
+                              Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: const Color(0xFFDEB887),
+                                  ),
+                                  borderRadius: BorderRadius.circular(
+                                    ResponsiveSize.w(8),
                                   ),
                                 ),
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: ResponsiveSize.w(16),
-                                  vertical: ResponsiveSize.h(12),
-                                ),
-                                items: ['总校区', '分校区1', '分校区2'].map((campus) {
-                                  return DropdownMenuItem<String>(
-                                    value: campus,
-                                    child: Text(
-                                      campus,
+                                child: DropdownButtonHideUnderline(
+                                  child: DropdownButton<String>(
+                                    value: selectedCampus,
+                                    isExpanded: true,
+                                    hint: Text(
+                                      '请选择所属校区',
                                       style: TextStyle(
+                                        color: const Color(
+                                          0xFF8B4513,
+                                        ).withOpacity(0.5),
                                         fontSize: ResponsiveSize.sp(18),
-                                        color: const Color(0xFF8B4513),
                                       ),
                                     ),
-                                  );
-                                }).toList(),
-                                onChanged: (value) {
-                                  if (value != null) {
-                                    (context as Element).markNeedsBuild();
-                                    selectedCampus = value;
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: ResponsiveSize.w(16),
+                                      vertical: ResponsiveSize.h(12),
+                                    ),
+                                    items:
+                                        ['总校区', '分校区1', '分校区2'].map((campus) {
+                                          return DropdownMenuItem<String>(
+                                            value: campus,
+                                            child: Text(
+                                              campus,
+                                              style: TextStyle(
+                                                fontSize: ResponsiveSize.sp(18),
+                                                color: const Color(0xFF8B4513),
+                                              ),
+                                            ),
+                                          );
+                                        }).toList(),
+                                    onChanged: (value) {
+                                      if (value != null) {
+                                        (context as Element).markNeedsBuild();
+                                        selectedCampus = value;
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: ResponsiveSize.h(40)),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: Text(
+                                  '取消',
+                                  style: TextStyle(
+                                    fontSize: ResponsiveSize.sp(18),
+                                    color: const Color(0xFF8B4513),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: ResponsiveSize.w(16)),
+                              ElevatedButton(
+                                onPressed: () {
+                                  if (_validateCustomRole(
+                                    nameController.text,
+                                    selectedCampus,
+                                    descriptionController.text,
+                                  )) {
+                                    Navigator.pop(context);
                                   }
                                 },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF8B4513),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: ResponsiveSize.w(24),
+                                    vertical: ResponsiveSize.h(12),
+                                  ),
+                                ),
+                                child: Text(
+                                  '确定',
+                                  style: TextStyle(
+                                    fontSize: ResponsiveSize.sp(18),
+                                    color: Colors.white,
+                                  ),
+                                ),
                               ),
-                            ),
+                            ],
                           ),
                         ],
                       ),
-                      SizedBox(height: ResponsiveSize.h(40)),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: Text(
-                              '取消',
-                              style: TextStyle(
-                                fontSize: ResponsiveSize.sp(18),
-                                color: const Color(0xFF8B4513),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: ResponsiveSize.w(16)),
-                          ElevatedButton(
-                            onPressed: () {
-                              if (_validateCustomRole(
-                                nameController.text,
-                                selectedCampus,
-                                descriptionController.text,
-                              )) {
-                                Navigator.pop(context);
-                              }
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF8B4513),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: ResponsiveSize.w(24),
-                                vertical: ResponsiveSize.h(12),
-                              ),
-                            ),
-                            child: Text(
-                              '确定',
-                              style: TextStyle(
-                                fontSize: ResponsiveSize.sp(18),
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
     );
   }
 
@@ -460,9 +464,7 @@ class _PermissionManagePageState extends State<PermissionManagePage> {
         TextField(
           controller: controller,
           maxLines: maxLines ?? 1,
-          style: TextStyle(
-            fontSize: ResponsiveSize.sp(18),
-          ),
+          style: TextStyle(fontSize: ResponsiveSize.sp(18)),
           decoration: InputDecoration(
             hintText: hintText,
             hintStyle: TextStyle(
@@ -494,9 +496,9 @@ class _PermissionManagePageState extends State<PermissionManagePage> {
 
   bool _validateCustomRole(String name, String? campus, String description) {
     if (name.isEmpty || campus == null || description.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('请填写所有必填项')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('请填写所有必填项')));
       return false;
     }
     return true;
@@ -554,183 +556,197 @@ class _PermissionManagePageState extends State<PermissionManagePage> {
 
     showDialog(
       context: context,
-      builder: (context) => Dialog(
-        insetPadding: EdgeInsets.symmetric(
-          horizontal: ResponsiveSize.w(100),
-          vertical: ResponsiveSize.h(40),
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(ResponsiveSize.w(16)),
-        ),
-        child: Container(
-          width: ResponsiveSize.w(800),
-          padding: EdgeInsets.all(ResponsiveSize.w(32)),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Icon(
-                    Icons.edit,
-                    color: const Color(0xFF8B4513),
-                    size: ResponsiveSize.w(32),
-                  ),
-                  SizedBox(width: ResponsiveSize.w(16)),
-                  Text(
-                    '编辑角色',
-                    style: TextStyle(
-                      fontSize: ResponsiveSize.sp(28),
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF8B4513),
-                    ),
-                  ),
-                  const Spacer(),
-                  IconButton(
-                    icon: Icon(
-                      Icons.close,
-                      color: const Color(0xFF8B4513),
-                      size: ResponsiveSize.w(28),
-                    ),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ],
+      builder:
+          (context) => Dialog(
+            insetPadding: EdgeInsets.symmetric(
+              horizontal: ResponsiveSize.w(100),
+              vertical: ResponsiveSize.h(40),
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(ResponsiveSize.w(16)),
+            ),
+            child: Container(
+              width: ResponsiveSize.w(800),
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.8,
               ),
-              SizedBox(height: ResponsiveSize.h(32)),
-              _buildDialogTextField(
-                controller: nameController,
-                label: '角色名称',
-                hintText: '请输入角色名称',
-                enabled: role.isCustom, // 只有自定义角色可以修改名称
-              ),
-              SizedBox(height: ResponsiveSize.h(24)),
-              _buildDialogTextField(
-                controller: descriptionController,
-                label: '角色说明',
-                hintText: '请输入角色说明',
-                maxLines: 3,
-                enabled: role.isCustom, // 只有自定义角色可以修改说明
-              ),
-              SizedBox(height: ResponsiveSize.h(24)),
-              Text(
-                '已分配员工',
-                style: TextStyle(
-                  fontSize: ResponsiveSize.sp(20),
-                  fontWeight: FontWeight.w500,
-                  color: const Color(0xFF8B4513),
-                ),
-              ),
-              SizedBox(height: ResponsiveSize.h(12)),
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: const Color(0xFFDEB887)),
-                  borderRadius: BorderRadius.circular(ResponsiveSize.w(8)),
-                ),
-                height: ResponsiveSize.h(200),
-                child: ListView.builder(
-                  itemCount: assignedStaff.length,
-                  itemBuilder: (context, index) {
-                    final staff = assignedStaff[index];
-                    return ListTile(
-                      title: Row(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.all(ResponsiveSize.w(32)),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
                         children: [
-                          Text(
-                            staff.name,
-                            style: TextStyle(
-                              fontSize: ResponsiveSize.sp(18),
-                              color: const Color(0xFF8B4513),
-                            ),
+                          Icon(
+                            Icons.edit,
+                            color: const Color(0xFF8B4513),
+                            size: ResponsiveSize.w(32),
                           ),
                           SizedBox(width: ResponsiveSize.w(16)),
                           Text(
-                            '(${staff.role})',  // 显示当前角色
+                            '编辑角色',
                             style: TextStyle(
-                              fontSize: ResponsiveSize.sp(16),
-                              color: const Color(0xFF8B4513).withOpacity(0.7),
+                              fontSize: ResponsiveSize.sp(28),
+                              fontWeight: FontWeight.bold,
+                              color: const Color(0xFF8B4513),
                             ),
                           ),
                           const Spacer(),
+                          IconButton(
+                            icon: Icon(
+                              Icons.close,
+                              color: const Color(0xFF8B4513),
+                              size: ResponsiveSize.w(28),
+                            ),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: ResponsiveSize.h(32)),
+                      _buildDialogTextField(
+                        controller: nameController,
+                        label: '角色名称',
+                        hintText: '请输入角色名称',
+                        enabled: role.isCustom, // 只有自定义角色可以修改名称
+                      ),
+                      SizedBox(height: ResponsiveSize.h(24)),
+                      _buildDialogTextField(
+                        controller: descriptionController,
+                        label: '角色说明',
+                        hintText: '请输入角色说明',
+                        maxLines: 3,
+                        enabled: role.isCustom, // 只有自定义角色可以修改说明
+                      ),
+                      SizedBox(height: ResponsiveSize.h(24)),
+                      Text(
+                        '已分配员工',
+                        style: TextStyle(
+                          fontSize: ResponsiveSize.sp(20),
+                          fontWeight: FontWeight.w500,
+                          color: const Color(0xFF8B4513),
+                        ),
+                      ),
+                      SizedBox(height: ResponsiveSize.h(12)),
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: const Color(0xFFDEB887)),
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveSize.w(8),
+                          ),
+                        ),
+                        height: ResponsiveSize.h(200),
+                        child: ListView.builder(
+                          itemCount: assignedStaff.length,
+                          itemBuilder: (context, index) {
+                            final staff = assignedStaff[index];
+                            return ListTile(
+                              title: Row(
+                                children: [
+                                  Text(
+                                    staff.name,
+                                    style: TextStyle(
+                                      fontSize: ResponsiveSize.sp(18),
+                                      color: const Color(0xFF8B4513),
+                                    ),
+                                  ),
+                                  SizedBox(width: ResponsiveSize.w(16)),
+                                  Text(
+                                    '(${staff.role})', // 显示当前角色
+                                    style: TextStyle(
+                                      fontSize: ResponsiveSize.sp(16),
+                                      color: const Color(
+                                        0xFF8B4513,
+                                      ).withOpacity(0.7),
+                                    ),
+                                  ),
+                                  const Spacer(),
+                                  TextButton(
+                                    onPressed: () {
+                                      _showChangeRoleDialog(staff); // 调用角色调整对话框
+                                    },
+                                    child: Text(
+                                      '调整角色',
+                                      style: TextStyle(
+                                        fontSize: ResponsiveSize.sp(16),
+                                        color: const Color(0xFF8B4513),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      SizedBox(height: ResponsiveSize.h(40)),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          if (role.isCustom) // 只有自定义角色可以删除
+                            TextButton(
+                              onPressed: () {
+                                // TODO: 实现删除角色功能
+                                Navigator.pop(context);
+                              },
+                              child: Text(
+                                '删除角色',
+                                style: TextStyle(
+                                  fontSize: ResponsiveSize.sp(20),
+                                  color: Colors.red,
+                                ),
+                              ),
+                            ),
+                          const Spacer(),
                           TextButton(
-                            onPressed: () {
-                              _showChangeRoleDialog(staff);  // 调用角色调整对话框
-                            },
+                            onPressed: () => Navigator.pop(context),
                             child: Text(
-                              '调整角色',
+                              '取消',
                               style: TextStyle(
-                                fontSize: ResponsiveSize.sp(16),
+                                fontSize: ResponsiveSize.sp(20),
                                 color: const Color(0xFF8B4513),
                               ),
                             ),
                           ),
+                          SizedBox(width: ResponsiveSize.w(24)),
+                          ElevatedButton(
+                            onPressed: () {
+                              if (role.isCustom) {
+                                // 更新自定义角色信息
+                                setState(() {
+                                  role.name = nameController.text;
+                                  role.description = descriptionController.text;
+                                });
+                              }
+                              Navigator.pop(context);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor: const Color(0xFF8B4513),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: ResponsiveSize.w(32),
+                                vertical: ResponsiveSize.h(16),
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                  ResponsiveSize.w(8),
+                                ),
+                              ),
+                            ),
+                            child: Text(
+                              '保存',
+                              style: TextStyle(fontSize: ResponsiveSize.sp(20)),
+                            ),
+                          ),
                         ],
                       ),
-                    );
-                  },
+                    ],
+                  ),
                 ),
               ),
-              SizedBox(height: ResponsiveSize.h(40)),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  if (role.isCustom) // 只有自定义角色可以删除
-                    TextButton(
-                      onPressed: () {
-                        // TODO: 实现删除角色功能
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        '删除角色',
-                        style: TextStyle(
-                          fontSize: ResponsiveSize.sp(20),
-                          color: Colors.red,
-                        ),
-                      ),
-                    ),
-                  const Spacer(),
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: Text(
-                      '取消',
-                      style: TextStyle(
-                        fontSize: ResponsiveSize.sp(20),
-                        color: const Color(0xFF8B4513),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: ResponsiveSize.w(24)),
-                  ElevatedButton(
-                    onPressed: () {
-                      if (role.isCustom) {
-                        // 更新自定义角色信息
-                        setState(() {
-                          role.name = nameController.text;
-                          role.description = descriptionController.text;
-                        });
-                      }
-                      Navigator.pop(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: const Color(0xFF8B4513),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: ResponsiveSize.w(32),
-                        vertical: ResponsiveSize.h(16),
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(ResponsiveSize.w(8)),
-                      ),
-                    ),
-                    child: Text(
-                      '保存',
-                      style: TextStyle(fontSize: ResponsiveSize.sp(20)),
-                    ),
-                  ),
-                ],
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
     );
   }
 
@@ -748,148 +764,156 @@ class _PermissionManagePageState extends State<PermissionManagePage> {
 
   void _showChangeRoleDialog(Staff staff) {
     String selectedRole = staff.role;
-    final List<String> roles = _predefinedRoles
-        .map((role) => role.name)
-        .toSet()
-        .toList();
+    final List<String> roles =
+        _predefinedRoles.map((role) => role.name).toSet().toList();
 
     showDialog(
       context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, dialogSetState) => Dialog(
-          insetPadding: EdgeInsets.symmetric(
-            horizontal: ResponsiveSize.w(100),
-            vertical: ResponsiveSize.h(24),
-          ),
-          child: Container(
-            width: ResponsiveSize.w(500),
-            padding: EdgeInsets.all(ResponsiveSize.w(24)),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      '调整 ${staff.name} 的角色',
-                      style: TextStyle(
-                        fontSize: ResponsiveSize.sp(24),
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0xFF8B4513),
-                      ),
-                    ),
-                    const Spacer(),
-                    IconButton(
-                      icon: Icon(
-                        Icons.close,
-                        color: const Color(0xFF8B4513),
-                        size: ResponsiveSize.w(24),
-                      ),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ],
-                ),
-                SizedBox(height: ResponsiveSize.h(32)),
-                Text(
-                  '当前角色：${staff.role}',
-                  style: TextStyle(
-                    fontSize: ResponsiveSize.sp(18),
-                    color: const Color(0xFF8B4513),
+      builder:
+          (context) => StatefulBuilder(
+            builder:
+                (context, dialogSetState) => Dialog(
+                  insetPadding: EdgeInsets.symmetric(
+                    horizontal: ResponsiveSize.w(100),
+                    vertical: ResponsiveSize.h(24),
                   ),
-                ),
-                SizedBox(height: ResponsiveSize.h(24)),
-                Text(
-                  '选择新角色：',
-                  style: TextStyle(
-                    fontSize: ResponsiveSize.sp(18),
-                    color: const Color(0xFF8B4513),
-                  ),
-                ),
-                SizedBox(height: ResponsiveSize.h(16)),
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: const Color(0xFFDEB887)),
-                    borderRadius: BorderRadius.circular(ResponsiveSize.w(8)),
-                  ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      value: selectedRole,
-                      isExpanded: true,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: ResponsiveSize.w(16),
-                        vertical: ResponsiveSize.h(12),
-                      ),
-                      items: roles.map((role) {
-                        return DropdownMenuItem<String>(
-                          value: role,
-                          child: Text(
-                            role,
-                            style: TextStyle(
-                              fontSize: ResponsiveSize.sp(18),
-                              color: const Color(0xFF8B4513),
+                  child: Container(
+                    width: ResponsiveSize.w(500),
+                    padding: EdgeInsets.all(ResponsiveSize.w(24)),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              '调整 ${staff.name} 的角色',
+                              style: TextStyle(
+                                fontSize: ResponsiveSize.sp(24),
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xFF8B4513),
+                              ),
+                            ),
+                            const Spacer(),
+                            IconButton(
+                              icon: Icon(
+                                Icons.close,
+                                color: const Color(0xFF8B4513),
+                                size: ResponsiveSize.w(24),
+                              ),
+                              onPressed: () => Navigator.pop(context),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: ResponsiveSize.h(32)),
+                        Text(
+                          '当前角色：${staff.role}',
+                          style: TextStyle(
+                            fontSize: ResponsiveSize.sp(18),
+                            color: const Color(0xFF8B4513),
+                          ),
+                        ),
+                        SizedBox(height: ResponsiveSize.h(24)),
+                        Text(
+                          '选择新角色：',
+                          style: TextStyle(
+                            fontSize: ResponsiveSize.sp(18),
+                            color: const Color(0xFF8B4513),
+                          ),
+                        ),
+                        SizedBox(height: ResponsiveSize.h(16)),
+                        Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(color: const Color(0xFFDEB887)),
+                            borderRadius: BorderRadius.circular(
+                              ResponsiveSize.w(8),
                             ),
                           ),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        if (value != null) {
-                          dialogSetState(() {
-                            selectedRole = value;
-                          });
-                        }
-                      },
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              value: selectedRole,
+                              isExpanded: true,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: ResponsiveSize.w(16),
+                                vertical: ResponsiveSize.h(12),
+                              ),
+                              items:
+                                  roles.map((role) {
+                                    return DropdownMenuItem<String>(
+                                      value: role,
+                                      child: Text(
+                                        role,
+                                        style: TextStyle(
+                                          fontSize: ResponsiveSize.sp(18),
+                                          color: const Color(0xFF8B4513),
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+                              onChanged: (value) {
+                                if (value != null) {
+                                  dialogSetState(() {
+                                    selectedRole = value;
+                                  });
+                                }
+                              },
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: ResponsiveSize.h(40)),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: Text(
+                                '取消',
+                                style: TextStyle(
+                                  fontSize: ResponsiveSize.sp(18),
+                                  color: const Color(0xFF8B4513),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: ResponsiveSize.w(24)),
+                            ElevatedButton(
+                              onPressed: () {
+                                setState(() {
+                                  staff.role = selectedRole;
+                                });
+
+                                // 更新对话框内的显示
+                                dialogSetState(() {});
+
+                                // 延迟关闭对话框，让用户看到更新效果
+                                Future.delayed(
+                                  const Duration(milliseconds: 300),
+                                  () {
+                                    Navigator.pop(context);
+                                  },
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                backgroundColor: const Color(0xFF8B4513),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: ResponsiveSize.w(24),
+                                  vertical: ResponsiveSize.h(12),
+                                ),
+                              ),
+                              child: Text(
+                                '确定',
+                                style: TextStyle(
+                                  fontSize: ResponsiveSize.sp(18),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 ),
-                SizedBox(height: ResponsiveSize.h(40)),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: Text(
-                        '取消',
-                        style: TextStyle(
-                          fontSize: ResponsiveSize.sp(18),
-                          color: const Color(0xFF8B4513),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: ResponsiveSize.w(24)),
-                    ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          staff.role = selectedRole;
-                        });
-                        
-                        // 更新对话框内的显示
-                        dialogSetState(() {});
-                        
-                        // 延迟关闭对话框，让用户看到更新效果
-                        Future.delayed(const Duration(milliseconds: 300), () {
-                          Navigator.pop(context);
-                        });
-                      },
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: const Color(0xFF8B4513),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: ResponsiveSize.w(24),
-                          vertical: ResponsiveSize.h(12),
-                        ),
-                      ),
-                      child: Text(
-                        '确定',
-                        style: TextStyle(fontSize: ResponsiveSize.sp(18)),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
           ),
-        ),
-      ),
     );
   }
-} 
+}
