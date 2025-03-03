@@ -12,7 +12,8 @@ class HappyListenPage extends StatefulWidget {
   State<HappyListenPage> createState() => _HappyListenPageState();
 }
 
-class _HappyListenPageState extends State<HappyListenPage> with SingleTickerProviderStateMixin {
+class _HappyListenPageState extends State<HappyListenPage>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late AudioPlayer _audioPlayer;
   late List<StreamSubscription> _subscriptions;
@@ -28,21 +29,12 @@ class _HappyListenPageState extends State<HappyListenPage> with SingleTickerProv
   Timer? alarmTimer;
   DateTime? alarmTime;
   String? alarmAudioPath;
-  
+
   // 音频列表
   final List<AudioItem> audioList = [
-    AudioItem(
-      path: 'assets/test_audio.mp3',
-      title: '测试音频1',
-    ),
-    AudioItem(
-      path: 'assets/test_audio2.mp3',
-      title: '测试音频2',
-    ),
-    AudioItem(
-      path: 'assets/test_audio3.mp3',
-      title: '测试音频3',
-    ),
+    AudioItem(path: 'assets/test_audio.mp3', title: '测试音频1'),
+    AudioItem(path: 'assets/test_audio2.mp3', title: '测试音频2'),
+    AudioItem(path: 'assets/test_audio3.mp3', title: '测试音频3'),
   ];
   int currentAudioIndex = 0;
 
@@ -62,54 +54,59 @@ class _HappyListenPageState extends State<HappyListenPage> with SingleTickerProv
     await _loadCurrentAudio();
   }
 
-    Future<void> _loadCurrentAudio() async {
+  Future<void> _loadCurrentAudio() async {
     if (!mounted) return;
     if (audioList.isEmpty) return;
-    
+
     await _audioPlayer.setAsset(audioList[currentAudioIndex].path);
-    
-    _subscriptions.add(_audioPlayer.durationStream.listen((duration) {
-      if (mounted) {
-        setState(() {
-          totalDuration = duration ?? const Duration(minutes: 3);
-        });
-      }
-    }));
 
-    _subscriptions.add(_audioPlayer.positionStream.listen((position) {
-      if (mounted) {
-        setState(() {
-          currentDuration = position;
-        });
-      }
-    }));
-
-    _subscriptions.add(_audioPlayer.playerStateStream.listen((state) {
-      if (!mounted) return;
-      if (state.processingState == ProcessingState.completed) {
-        if (isLooping) {
-          _audioPlayer.seek(Duration.zero);
-          _audioPlayer.play();
-        } else if (audioList.length > 1 && currentAudioIndex < audioList.length - 1) {
-          // 只有在不是最后一首歌时才自动播放下一首
-          _playNext();
-        } else {
-          // 最后一首歌或只有一首歌时，停止播放并重置状态
+    _subscriptions.add(
+      _audioPlayer.durationStream.listen((duration) {
+        if (mounted) {
           setState(() {
-            isPlaying = false;
-            _controller.stop();
-            currentDuration = Duration.zero;
-            _audioPlayer.seek(Duration.zero);
-            _audioPlayer.stop();
+            totalDuration = duration ?? const Duration(minutes: 3);
           });
         }
-      }
-    }));
-      
+      }),
+    );
+
+    _subscriptions.add(
+      _audioPlayer.positionStream.listen((position) {
+        if (mounted) {
+          setState(() {
+            currentDuration = position;
+          });
+        }
+      }),
+    );
+
+    _subscriptions.add(
+      _audioPlayer.playerStateStream.listen((state) {
+        if (!mounted) return;
+        if (state.processingState == ProcessingState.completed) {
+          if (isLooping) {
+            _audioPlayer.seek(Duration.zero);
+            _audioPlayer.play();
+          } else if (audioList.length > 1 &&
+              currentAudioIndex < audioList.length - 1) {
+            // 只有在不是最后一首歌时才自动播放下一首
+            _playNext();
+          } else {
+            // 最后一首歌或只有一首歌时，停止播放并重置状态
+            setState(() {
+              isPlaying = false;
+              _controller.stop();
+              currentDuration = Duration.zero;
+              _audioPlayer.seek(Duration.zero);
+              _audioPlayer.stop();
+            });
+          }
+        }
+      }),
+    );
   }
 
-
-    void _playNext() {
+  void _playNext() {
     if (!mounted) return;
     if (currentAudioIndex < audioList.length - 1) {
       setState(() {
@@ -149,7 +146,7 @@ class _HappyListenPageState extends State<HappyListenPage> with SingleTickerProv
     });
   }
 
-    void _toggleLoop() {
+  void _toggleLoop() {
     if (!mounted) return;
     setState(() {
       isLooping = !isLooping;
@@ -184,7 +181,7 @@ class _HappyListenPageState extends State<HappyListenPage> with SingleTickerProv
     final hours = timerDuration!.inHours;
     final minutes = timerDuration!.inMinutes.remainder(60);
     final seconds = timerDuration!.inSeconds.remainder(60);
-    
+
     if (hours > 0) {
       return '$hours:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
     }
@@ -198,174 +195,188 @@ class _HappyListenPageState extends State<HappyListenPage> with SingleTickerProv
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(
-          '设置定时',
-          style: TextStyle(
-            color: const Color(0xFFE6B788),
-            fontSize: ResponsiveSize.sp(35),
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        content: StatefulBuilder(
-          builder: (context, setState) => Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // 小时选择
-                  Column(
+      builder:
+          (context) => AlertDialog(
+            title: Text(
+              '设置定时',
+              style: TextStyle(
+                color: const Color(0xFFE6B788),
+                fontSize: ResponsiveSize.sp(35),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            content: StatefulBuilder(
+              builder:
+                  (context, setState) => Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      IconButton(
-                        icon: Icon(Icons.arrow_drop_up, 
-                          color: const Color(0xFFE6B788), 
-                          size: ResponsiveSize.w(40)
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            if (hours < 12) hours++;
-                          });
-                        },
-                      ),
-                                            Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: ResponsiveSize.w(30), 
-                          vertical: ResponsiveSize.h(15)
-                        ),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: const Color(0xFFE6B788)),
-                          borderRadius: BorderRadius.circular(ResponsiveSize.w(12)),
-                        ),
-                        child: Text(
-                          hours.toString().padLeft(2, '0'),
-                          style: TextStyle(
-                            fontSize: ResponsiveSize.sp(35),
-                            color: const Color(0xFFE6B788),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // 小时选择
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: Icon(
+                                  Icons.arrow_drop_up,
+                                  color: const Color(0xFFE6B788),
+                                  size: ResponsiveSize.w(40),
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    if (hours < 12) hours++;
+                                  });
+                                },
+                              ),
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: ResponsiveSize.w(30),
+                                  vertical: ResponsiveSize.h(15),
+                                ),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: const Color(0xFFE6B788),
+                                  ),
+                                  borderRadius: BorderRadius.circular(
+                                    ResponsiveSize.w(12),
+                                  ),
+                                ),
+                                child: Text(
+                                  hours.toString().padLeft(2, '0'),
+                                  style: TextStyle(
+                                    fontSize: ResponsiveSize.sp(35),
+                                    color: const Color(0xFFE6B788),
+                                  ),
+                                ),
+                              ),
+                              IconButton(
+                                icon: Icon(
+                                  Icons.arrow_drop_down,
+                                  color: const Color(0xFFE6B788),
+                                  size: ResponsiveSize.w(40),
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    if (hours > 0) hours--;
+                                  });
+                                },
+                              ),
+                              Text(
+                                '小时',
+                                style: TextStyle(
+                                  color: const Color(0xFFE6B788),
+                                  fontSize: ResponsiveSize.sp(24),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
+                          SizedBox(width: ResponsiveSize.w(40)),
+                          // 分钟选择
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: Icon(
+                                  Icons.arrow_drop_up,
+                                  color: const Color(0xFFE6B788),
+                                  size: ResponsiveSize.w(40),
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    if (minutes < 59) minutes++;
+                                  });
+                                },
+                              ),
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: ResponsiveSize.w(30),
+                                  vertical: ResponsiveSize.h(15),
+                                ),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: const Color(0xFFE6B788),
+                                  ),
+                                  borderRadius: BorderRadius.circular(
+                                    ResponsiveSize.w(12),
+                                  ),
+                                ),
+                                child: Text(
+                                  minutes.toString().padLeft(2, '0'),
+                                  style: TextStyle(
+                                    fontSize: ResponsiveSize.sp(35),
+                                    color: const Color(0xFFE6B788),
+                                  ),
+                                ),
+                              ),
+                              IconButton(
+                                icon: Icon(
+                                  Icons.arrow_drop_down,
+                                  color: const Color(0xFFE6B788),
+                                  size: ResponsiveSize.w(40),
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    if (minutes > 0) minutes--;
+                                  });
+                                },
+                              ),
+                              Text(
+                                '分钟',
+                                style: TextStyle(
+                                  color: const Color(0xFFE6B788),
+                                  fontSize: ResponsiveSize.sp(24),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                      IconButton(
-                        icon: Icon(Icons.arrow_drop_down, 
-                          color: const Color(0xFFE6B788), 
-                          size: ResponsiveSize.w(40)
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            if (hours > 0) hours--;
-                          });
-                        },
-                      ),
-                      Text(
-                        '小时',
-                        style: TextStyle(
-                          color: const Color(0xFFE6B788),
-                          fontSize: ResponsiveSize.sp(24),
-                        ),
+                      SizedBox(height: ResponsiveSize.h(30)),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          TextButton(
+                            onPressed: () {
+                              shutdownTimer?.cancel();
+                              countdownTimer?.cancel();
+                              timerDuration = null;
+                              Navigator.pop(context);
+                            },
+                            child: Text(
+                              '取消',
+                              style: TextStyle(
+                                color: const Color(0xFFE6B788),
+                                fontSize: ResponsiveSize.sp(24),
+                              ),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context, hours * 60 + minutes);
+                            },
+                            child: Text(
+                              '确定',
+                              style: TextStyle(
+                                color: const Color(0xFFE6B788),
+                                fontSize: ResponsiveSize.sp(24),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                  SizedBox(width: ResponsiveSize.w(40)),
-                  // 分钟选择
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.arrow_drop_up, 
-                          color: const Color(0xFFE6B788), 
-                          size: ResponsiveSize.w(40)
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            if (minutes < 59) minutes++;
-                          });
-                        },
-                      ),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: ResponsiveSize.w(30), 
-                          vertical: ResponsiveSize.h(15)
-                        ),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: const Color(0xFFE6B788)),
-                          borderRadius: BorderRadius.circular(ResponsiveSize.w(12)),
-                        ),
-                        child: Text(
-                          minutes.toString().padLeft(2, '0'),
-                          style: TextStyle(
-                            fontSize: ResponsiveSize.sp(35),
-                            color: const Color(0xFFE6B788),
-                          ),
-                        ),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.arrow_drop_down, 
-                          color: const Color(0xFFE6B788), 
-                          size: ResponsiveSize.w(40)
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            if (minutes > 0) minutes--;
-                          });
-                        },
-                      ),
-                      Text(
-                        '分钟',
-                        style: TextStyle(
-                          color: const Color(0xFFE6B788),
-                          fontSize: ResponsiveSize.sp(24),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              SizedBox(height: ResponsiveSize.h(30)),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      shutdownTimer?.cancel();
-                      countdownTimer?.cancel();
-                      timerDuration = null;
-                      Navigator.pop(context);
-                    },
-                    child: Text(
-                      '取消',
-                      style: TextStyle(
-                        color: const Color(0xFFE6B788),
-                        fontSize: ResponsiveSize.sp(24),
-                      ),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context, hours * 60 + minutes);
-                    },
-                    child: Text(
-                      '确定',
-                      style: TextStyle(
-                        color: const Color(0xFFE6B788),
-                        fontSize: ResponsiveSize.sp(24),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
     ).then((value) {
       if (value != null && mounted) {
         shutdownTimer?.cancel();
         countdownTimer?.cancel();
-        
+
         final totalMinutes = value;
         timerDuration = Duration(minutes: totalMinutes);
-        
+
         shutdownTimer = Timer(Duration(minutes: totalMinutes), () {
           if (!mounted) return;
           setState(() {
@@ -391,45 +402,47 @@ class _HappyListenPageState extends State<HappyListenPage> with SingleTickerProv
       }
     });
   }
-    void _showAddContentDialog() {
+
+  void _showAddContentDialog() {
     if (!mounted) return;
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(
-          '添加内容',
-          style: TextStyle(
-            color: const Color(0xFFE6B788),
-            fontSize: ResponsiveSize.sp(35),
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        content: Text(
-          '该功能正在开发中...',
-          style: TextStyle(
-            color: const Color(0xFFE6B788),
-            fontSize: ResponsiveSize.sp(24),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(
-              '确定',
+      builder:
+          (context) => AlertDialog(
+            title: Text(
+              '添加内容',
+              style: TextStyle(
+                color: const Color(0xFFE6B788),
+                fontSize: ResponsiveSize.sp(35),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            content: Text(
+              '该功能正在开发中...',
               style: TextStyle(
                 color: const Color(0xFFE6B788),
                 fontSize: ResponsiveSize.sp(24),
               ),
             ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text(
+                  '确定',
+                  style: TextStyle(
+                    color: const Color(0xFFE6B788),
+                    fontSize: ResponsiveSize.sp(24),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 
   void _showAlarmDialog() {
     if (!mounted) return;
-    
+
     showDialog(
       context: context,
       builder: (context) => AlarmDialog(audioList: audioList),
@@ -443,74 +456,75 @@ class _HappyListenPageState extends State<HappyListenPage> with SingleTickerProv
   void _setAlarm(DateTime time, String? audioPath) {
     // 取消之前的闹钟
     alarmTimer?.cancel();
-    
+
     if (audioPath == null) return;
-    
+
     alarmTime = time;
     alarmAudioPath = audioPath;
-    
+
     // 计算延迟时间
     final now = DateTime.now();
     final delay = time.difference(now);
-    
+
     // 设置新闹钟
     alarmTimer = Timer(delay, () async {
       if (!mounted) return;
-      
+
       // 保存当前播放状态
       final wasPlaying = isPlaying;
       final currentAudioPath = audioList[currentAudioIndex].path;
       final currentPosition = _audioPlayer.position;
-      
+
       // 播放闹钟音频
       await _audioPlayer.setAsset(alarmAudioPath!);
       await _audioPlayer.play();
-      
+
       // 显示闹钟提醒对话框
       showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (context) => AlertDialog(
-          title: Text(
-            '闹钟',
-            style: TextStyle(
-              color: const Color(0xFFE6B788),
-              fontSize: ResponsiveSize.sp(35),
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          content: Text(
-            '时间到了！',
-            style: TextStyle(
-              color: const Color(0xFFE6B788),
-              fontSize: ResponsiveSize.sp(24),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () async {
-                // 停止闹钟音频
-                await _audioPlayer.stop();
-                
-                // 恢复之前的播放状态
-                await _audioPlayer.setAsset(currentAudioPath);
-                await _audioPlayer.seek(currentPosition);
-                if (wasPlaying) {
-                  await _audioPlayer.play();
-                }
-                
-                Navigator.pop(context);
-              },
-              child: Text(
-                '关闭',
+        builder:
+            (context) => AlertDialog(
+              title: Text(
+                '闹钟',
+                style: TextStyle(
+                  color: const Color(0xFFE6B788),
+                  fontSize: ResponsiveSize.sp(35),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              content: Text(
+                '时间到了！',
                 style: TextStyle(
                   color: const Color(0xFFE6B788),
                   fontSize: ResponsiveSize.sp(24),
                 ),
               ),
+              actions: [
+                TextButton(
+                  onPressed: () async {
+                    // 停止闹钟音频
+                    await _audioPlayer.stop();
+
+                    // 恢复之前的播放状态
+                    await _audioPlayer.setAsset(currentAudioPath);
+                    await _audioPlayer.seek(currentPosition);
+                    if (wasPlaying) {
+                      await _audioPlayer.play();
+                    }
+
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    '关闭',
+                    style: TextStyle(
+                      color: const Color(0xFFE6B788),
+                      fontSize: ResponsiveSize.sp(24),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
       );
     });
   }
@@ -546,8 +560,9 @@ class _HappyListenPageState extends State<HappyListenPage> with SingleTickerProv
           ),
           // 左侧内容区
           Positioned(
-            top: ResponsiveSize.h(200),
+            top: ResponsiveSize.h(180),
             left: ResponsiveSize.w(100),
+            bottom: ResponsiveSize.h(100),
             child: Container(
               width: ResponsiveSize.w(500),
               height: ResponsiveSize.h(700),
@@ -581,20 +596,22 @@ class _HappyListenPageState extends State<HappyListenPage> with SingleTickerProv
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: const Color(0xFFE6B788),
-                          image: currentCover != null
-                              ? DecorationImage(
-                                  image: AssetImage(currentCover!),
-                                  fit: BoxFit.cover,
-                                )
-                              : null,
+                          image:
+                              currentCover != null
+                                  ? DecorationImage(
+                                    image: AssetImage(currentCover!),
+                                    fit: BoxFit.cover,
+                                  )
+                                  : null,
                         ),
-                        child: currentCover == null
-                            ? Icon(
-                                Icons.music_note,
-                                size: ResponsiveSize.w(100),
-                                color: Colors.white,
-                              )
-                            : null,
+                        child:
+                            currentCover == null
+                                ? Icon(
+                                  Icons.music_note,
+                                  size: ResponsiveSize.w(100),
+                                  color: Colors.white,
+                                )
+                                : null,
                       ),
                     ),
                     // 播放控制按钮
@@ -603,31 +620,40 @@ class _HappyListenPageState extends State<HappyListenPage> with SingleTickerProv
                       children: [
                         IconButton(
                           icon: const Icon(Icons.skip_previous),
-                          onPressed: currentAudioIndex > 0 ? _playPrevious : null,
+                          onPressed:
+                              currentAudioIndex > 0 ? _playPrevious : null,
                           iconSize: ResponsiveSize.w(40),
-                          color: currentAudioIndex > 0 
-                              ? const Color(0xFFE6B788)
-                              : const Color(0xFFE6B788).withOpacity(0.3),
+                          color:
+                              currentAudioIndex > 0
+                                  ? const Color(0xFFE6B788)
+                                  : const Color(0xFFE6B788).withOpacity(0.3),
                         ),
                         SizedBox(width: ResponsiveSize.w(20)),
                         IconButton(
                           icon: Icon(
-                            isPlaying ? Icons.pause_circle_filled : Icons.play_circle_filled,
+                            isPlaying
+                                ? Icons.pause_circle_filled
+                                : Icons.play_circle_filled,
                           ),
                           onPressed: audioList.isNotEmpty ? _togglePlay : null,
                           iconSize: ResponsiveSize.w(60),
-                          color: audioList.isNotEmpty 
-                              ? const Color(0xFFE6B788)
-                              : const Color(0xFFE6B788).withOpacity(0.3),
+                          color:
+                              audioList.isNotEmpty
+                                  ? const Color(0xFFE6B788)
+                                  : const Color(0xFFE6B788).withOpacity(0.3),
                         ),
                         SizedBox(width: ResponsiveSize.w(20)),
                         IconButton(
                           icon: const Icon(Icons.skip_next),
-                          onPressed: currentAudioIndex < audioList.length - 1 ? _playNext : null,
+                          onPressed:
+                              currentAudioIndex < audioList.length - 1
+                                  ? _playNext
+                                  : null,
                           iconSize: ResponsiveSize.w(40),
-                          color: currentAudioIndex < audioList.length - 1 
-                              ? const Color(0xFFE6B788)
-                              : const Color(0xFFE6B788).withOpacity(0.3),
+                          color:
+                              currentAudioIndex < audioList.length - 1
+                                  ? const Color(0xFFE6B788)
+                                  : const Color(0xFFE6B788).withOpacity(0.3),
                         ),
                         SizedBox(width: ResponsiveSize.w(20)),
                         IconButton(
@@ -636,39 +662,53 @@ class _HappyListenPageState extends State<HappyListenPage> with SingleTickerProv
                           ),
                           onPressed: audioList.isNotEmpty ? _toggleLoop : null,
                           iconSize: ResponsiveSize.w(40),
-                          color: audioList.isNotEmpty 
-                              ? const Color(0xFFE6B788)
-                              : const Color(0xFFE6B788).withOpacity(0.3),
+                          color:
+                              audioList.isNotEmpty
+                                  ? const Color(0xFFE6B788)
+                                  : const Color(0xFFE6B788).withOpacity(0.3),
                         ),
                       ],
                     ),
                     // 进度条
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: ResponsiveSize.w(30)),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: ResponsiveSize.w(30),
+                      ),
                       child: Column(
                         children: [
                           SliderTheme(
                             data: SliderTheme.of(context).copyWith(
                               activeTrackColor: const Color(0xFFE6B788),
-                              inactiveTrackColor: const Color(0xFFE6B788).withOpacity(0.3),
+                              inactiveTrackColor: const Color(
+                                0xFFE6B788,
+                              ).withOpacity(0.3),
                               thumbColor: const Color(0xFFE6B788),
-                              overlayColor: const Color(0xFFE6B788).withOpacity(0.3),
+                              overlayColor: const Color(
+                                0xFFE6B788,
+                              ).withOpacity(0.3),
                             ),
                             child: Slider(
                               value: currentDuration.inSeconds.toDouble(),
                               max: totalDuration.inSeconds.toDouble(),
-                              onChanged: audioList.isNotEmpty ? (value) async {
-                                if (!mounted) return;
-                                final newPosition = Duration(seconds: value.toInt());
-                                setState(() {
-                                  currentDuration = newPosition;
-                                });
-                                await _audioPlayer.seek(newPosition);
-                              } : null,
+                              onChanged:
+                                  audioList.isNotEmpty
+                                      ? (value) async {
+                                        if (!mounted) return;
+                                        final newPosition = Duration(
+                                          seconds: value.toInt(),
+                                        );
+                                        setState(() {
+                                          currentDuration = newPosition;
+                                        });
+                                        await _audioPlayer.seek(newPosition);
+                                      }
+                                      : null,
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.symmetric(horizontal: ResponsiveSize.w(20)),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: ResponsiveSize.w(20),
+                            ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -702,9 +742,9 @@ class _HappyListenPageState extends State<HappyListenPage> with SingleTickerProv
                           audioList.isNotEmpty ? _showTimerDialog : null,
                         ),
                         _buildFunctionButton(
-                          Icons.alarm,  // 添加闹钟图标
+                          Icons.alarm, // 添加闹钟图标
                           '闹钟',
-                          _showAlarmDialog,  // 添加闹钟对话框
+                          _showAlarmDialog, // 添加闹钟对话框
                         ),
                         _buildFunctionButton(
                           Icons.add_circle_outline,
@@ -726,7 +766,10 @@ class _HappyListenPageState extends State<HappyListenPage> with SingleTickerProv
           // 返回按钮
           SafeArea(
             child: Padding(
-              padding: EdgeInsets.only(left: ResponsiveSize.w(50), top: ResponsiveSize.h(20)),
+              padding: EdgeInsets.only(
+                left: ResponsiveSize.w(50),
+                top: ResponsiveSize.h(20),
+              ),
               child: GestureDetector(
                 onTap: () => Navigator.pop(context),
                 child: Image.asset(
@@ -749,7 +792,7 @@ class _HappyListenPageState extends State<HappyListenPage> with SingleTickerProv
   ) {
     final buttonLabel = label == '定时' ? _formatTimerDuration() : label;
     final isEnabled = onPressed != null;
-    
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -757,16 +800,18 @@ class _HappyListenPageState extends State<HappyListenPage> with SingleTickerProv
           icon: Icon(icon),
           onPressed: onPressed,
           iconSize: ResponsiveSize.w(35),
-          color: isEnabled 
-              ? const Color(0xFFE6B788)
-              : const Color(0xFFE6B788).withOpacity(0.3),
+          color:
+              isEnabled
+                  ? const Color(0xFFE6B788)
+                  : const Color(0xFFE6B788).withOpacity(0.3),
         ),
         Text(
           buttonLabel,
           style: TextStyle(
-            color: isEnabled 
-                ? const Color(0xFFE6B788)
-                : const Color(0xFFE6B788).withOpacity(0.3),
+            color:
+                isEnabled
+                    ? const Color(0xFFE6B788)
+                    : const Color(0xFFE6B788).withOpacity(0.3),
             fontSize: ResponsiveSize.sp(18),
           ),
         ),

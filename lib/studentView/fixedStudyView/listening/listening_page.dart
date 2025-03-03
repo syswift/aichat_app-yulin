@@ -12,34 +12,36 @@ class ListeningPage extends StatefulWidget {
 class _ListeningPageState extends State<ListeningPage> {
   String? selectedLevel;
   String? selectedWeek;
-  int levelCount = 4;  
-  int weekCount = 8;   
-  final int contentCount = 20; 
-  List<bool> completedTasks = List.generate(20, (index) => false); 
-  int lastUnlockedTask = 0; 
+  int levelCount = 4;
+  int weekCount = 8;
+  final int contentCount = 20;
+  List<bool> completedTasks = List.generate(20, (index) => false);
+  int lastUnlockedTask = 0;
 
   final List<Color> levelColors = [
-    const Color.fromARGB(255, 230, 136, 136),  
-    const Color.fromARGB(255, 251, 202, 110),  
-    const Color.fromARGB(255, 156, 194, 62),   
-    const Color.fromARGB(255, 45, 178, 176),   
+    const Color.fromARGB(255, 230, 136, 136),
+    const Color.fromARGB(255, 251, 202, 110),
+    const Color.fromARGB(255, 156, 194, 62),
+    const Color.fromARGB(255, 45, 178, 176),
   ];
-    // 处理任务完成
+  // 处理任务完成
   void handleTaskCompletion(int index) {
-  if (index <= lastUnlockedTask) {
-    setState(() {
-      completedTasks[index] = true;
-      if (index == lastUnlockedTask) {
-        lastUnlockedTask = index + 1;
-        
-        // 检查是否完成了所有任务（最后一个任务）
-        if (index == contentCount - 1) {  // contentCount 是当前周的总任务数
-          _showCongratulationsDialog();
+    if (index <= lastUnlockedTask) {
+      setState(() {
+        completedTasks[index] = true;
+        if (index == lastUnlockedTask) {
+          lastUnlockedTask = index + 1;
+
+          // 检查是否完成了所有任务（最后一个任务）
+          if (index == contentCount - 1) {
+            // contentCount 是当前周的总任务数
+            _showCongratulationsDialog();
+          }
         }
-      }
-    });
+      });
+    }
   }
-}
+
   // 检查任务是否被锁定
   bool isTaskLocked(int index) {
     return index > lastUnlockedTask;
@@ -48,7 +50,7 @@ class _ListeningPageState extends State<ListeningPage> {
   void handleLevelSelection(int levelIndex) {
     setState(() {
       selectedLevel = 'Level ${levelIndex + 1}';
-      selectedWeek = 'Week 1';  
+      selectedWeek = 'Week 1';
       completedTasks = List.generate(20, (index) => false);
       lastUnlockedTask = 0;
     });
@@ -56,7 +58,7 @@ class _ListeningPageState extends State<ListeningPage> {
 
   // 获取当前选中Level的颜色
   Color getCurrentLevelColor() {
-    if (selectedLevel == null) return levelColors[0];  
+    if (selectedLevel == null) return levelColors[0];
     int levelIndex = int.parse(selectedLevel!.split(' ')[1]) - 1;
     return levelColors[levelIndex];
   }
@@ -77,7 +79,7 @@ class _ListeningPageState extends State<ListeningPage> {
     int r = random.nextInt(156) + 100;
     int g = random.nextInt(156) + 100;
     int b = random.nextInt(156) + 100;
-    
+
     int maxComponent = max(r, max(g, b));
     if (maxComponent < 200) {
       double scale = 200.0 / maxComponent;
@@ -85,7 +87,7 @@ class _ListeningPageState extends State<ListeningPage> {
       g = min(255, (g * scale).round());
       b = min(255, (b * scale).round());
     }
-    
+
     return Color.fromARGB(255, r, g, b);
   }
 
@@ -119,10 +121,7 @@ class _ListeningPageState extends State<ListeningPage> {
                   borderRadius: BorderRadius.circular(ResponsiveSize.w(13)),
                   child: Stack(
                     children: [
-                      Image.asset(
-                        'assets/sunset.png',
-                        fit: BoxFit.cover,
-                      ),
+                      Image.asset('assets/sunset.png', fit: BoxFit.cover),
                       if (isLocked)
                         Container(
                           color: Colors.black.withOpacity(0.5),
@@ -154,7 +153,8 @@ class _ListeningPageState extends State<ListeningPage> {
       },
     );
   }
-    @override
+
+  @override
   Widget build(BuildContext context) {
     ResponsiveSize.init(context);
     return Scaffold(
@@ -173,7 +173,7 @@ class _ListeningPageState extends State<ListeningPage> {
                 left: ResponsiveSize.px(20),
                 right: ResponsiveSize.px(20),
                 top: ResponsiveSize.py(250),
-                bottom: ResponsiveSize.py(20),
+                bottom: ResponsiveSize.py(100),
                 child: Center(
                   child: FractionallySizedBox(
                     widthFactor: 0.9,
@@ -185,7 +185,9 @@ class _ListeningPageState extends State<ListeningPage> {
                           height: constraints.maxHeight,
                           decoration: BoxDecoration(
                             color: const Color.fromARGB(255, 255, 214, 126),
-                            borderRadius: BorderRadius.circular(ResponsiveSize.w(30)),
+                            borderRadius: BorderRadius.circular(
+                              ResponsiveSize.w(30),
+                            ),
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black.withOpacity(0.1),
@@ -194,7 +196,7 @@ class _ListeningPageState extends State<ListeningPage> {
                               ),
                             ],
                           ),
-                                                    child: Row(
+                          child: Row(
                             children: [
                               // 第一个白色方框（带滚动的级别列表）
                               Expanded(
@@ -208,10 +210,18 @@ class _ListeningPageState extends State<ListeningPage> {
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(ResponsiveSize.w(30)),
-                                      bottomLeft: Radius.circular(ResponsiveSize.w(30)),
-                                      topRight: Radius.circular(ResponsiveSize.w(20)),
-                                      bottomRight: Radius.circular(ResponsiveSize.w(20)),
+                                      topLeft: Radius.circular(
+                                        ResponsiveSize.w(30),
+                                      ),
+                                      bottomLeft: Radius.circular(
+                                        ResponsiveSize.w(30),
+                                      ),
+                                      topRight: Radius.circular(
+                                        ResponsiveSize.w(20),
+                                      ),
+                                      bottomRight: Radius.circular(
+                                        ResponsiveSize.w(20),
+                                      ),
                                     ),
                                     boxShadow: [
                                       BoxShadow(
@@ -223,9 +233,11 @@ class _ListeningPageState extends State<ListeningPage> {
                                   ),
                                   child: LayoutBuilder(
                                     builder: (context, constraints) {
-                                      final availableHeight = constraints.maxHeight - ResponsiveSize.h(15);
+                                      final availableHeight =
+                                          constraints.maxHeight -
+                                          ResponsiveSize.h(15);
                                       final itemHeight = availableHeight / 4;
-                                      
+
                                       return SingleChildScrollView(
                                         padding: EdgeInsets.only(
                                           left: ResponsiveSize.w(15),
@@ -233,35 +245,54 @@ class _ListeningPageState extends State<ListeningPage> {
                                           top: ResponsiveSize.h(15),
                                         ),
                                         child: Column(
-                                          children: List.generate(levelCount, (index) {
+                                          children: List.generate(levelCount, (
+                                            index,
+                                          ) {
                                             if (index >= levelColors.length) {
-                                              levelColors.add(generateBrightColor());
+                                              levelColors.add(
+                                                generateBrightColor(),
+                                              );
                                             }
-                                            
+
                                             return Container(
                                               width: double.infinity,
-                                              height: itemHeight - ResponsiveSize.h(10),
-                                              margin: EdgeInsets.only(bottom: ResponsiveSize.h(10)),
+                                              height:
+                                                  itemHeight -
+                                                  ResponsiveSize.h(10),
+                                              margin: EdgeInsets.only(
+                                                bottom: ResponsiveSize.h(10),
+                                              ),
                                               decoration: BoxDecoration(
                                                 color: levelColors[index],
-                                                borderRadius: BorderRadius.circular(ResponsiveSize.w(15)),
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                      ResponsiveSize.w(15),
+                                                    ),
                                               ),
                                               child: Material(
                                                 color: Colors.transparent,
                                                 child: InkWell(
-                                                  borderRadius: BorderRadius.circular(ResponsiveSize.w(15)),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                        ResponsiveSize.w(15),
+                                                      ),
                                                   onTap: () {
                                                     handleLevelSelection(index);
                                                   },
                                                   child: Center(
                                                     child: Text(
-                                                      selectedLevel == 'Level ${index + 1}'
+                                                      selectedLevel ==
+                                                              'Level ${index + 1}'
                                                           ? '当前级别: Level ${index + 1}'
                                                           : 'Level ${index + 1}',
                                                       style: TextStyle(
                                                         color: Colors.white,
-                                                        fontSize: ResponsiveSize.sp(28),
-                                                        fontWeight: FontWeight.bold,
+                                                        fontSize:
+                                                            ResponsiveSize.sp(
+                                                              28,
+                                                            ),
+                                                        fontWeight:
+                                                            FontWeight.bold,
                                                       ),
                                                     ),
                                                   ),
@@ -271,11 +302,11 @@ class _ListeningPageState extends State<ListeningPage> {
                                           }),
                                         ),
                                       );
-                                    }
+                                    },
                                   ),
                                 ),
                               ),
-                                                            // 第二个白色方框（周数列表）
+                              // 第二个白色方框（周数列表）
                               Expanded(
                                 flex: 2,
                                 child: Container(
@@ -285,7 +316,9 @@ class _ListeningPageState extends State<ListeningPage> {
                                   ),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
-                                    borderRadius: BorderRadius.circular(ResponsiveSize.w(20)),
+                                    borderRadius: BorderRadius.circular(
+                                      ResponsiveSize.w(20),
+                                    ),
                                     boxShadow: [
                                       BoxShadow(
                                         color: Colors.black.withOpacity(0.1),
@@ -296,7 +329,9 @@ class _ListeningPageState extends State<ListeningPage> {
                                   ),
                                   child: LayoutBuilder(
                                     builder: (context, constraints) {
-                                      final availableHeight = constraints.maxHeight - ResponsiveSize.h(15);
+                                      final availableHeight =
+                                          constraints.maxHeight -
+                                          ResponsiveSize.h(15);
                                       final itemHeight = availableHeight / 4;
 
                                       return SingleChildScrollView(
@@ -306,53 +341,89 @@ class _ListeningPageState extends State<ListeningPage> {
                                           top: ResponsiveSize.h(15),
                                         ),
                                         child: Column(
-                                          children: List.generate(weekCount, (index) {
+                                          children: List.generate(weekCount, (
+                                            index,
+                                          ) {
                                             return Container(
                                               width: double.infinity,
-                                              height: itemHeight - ResponsiveSize.h(10),
-                                              margin: EdgeInsets.only(bottom: ResponsiveSize.h(10)),
+                                              height:
+                                                  itemHeight -
+                                                  ResponsiveSize.h(10),
+                                              margin: EdgeInsets.only(
+                                                bottom: ResponsiveSize.h(10),
+                                              ),
                                               decoration: BoxDecoration(
-                                                color: selectedLevel == null 
-                                                    ? Colors.grey[300]
-                                                    : getCurrentLevelColor(),
-                                                borderRadius: BorderRadius.circular(ResponsiveSize.w(15)),
+                                                color:
+                                                    selectedLevel == null
+                                                        ? Colors.grey[300]
+                                                        : getCurrentLevelColor(),
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                      ResponsiveSize.w(15),
+                                                    ),
                                               ),
                                               child: Material(
                                                 color: Colors.transparent,
                                                 child: InkWell(
-                                                  borderRadius: BorderRadius.circular(ResponsiveSize.w(15)),
-                                                  onTap: selectedLevel == null 
-                                                      ? null 
-                                                      : () {
-                                                          setState(() {
-                                                            selectedWeek = 'Week ${index + 1}';
-                                                          });
-                                                        },
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                        ResponsiveSize.w(15),
+                                                      ),
+                                                  onTap:
+                                                      selectedLevel == null
+                                                          ? null
+                                                          : () {
+                                                            setState(() {
+                                                              selectedWeek =
+                                                                  'Week ${index + 1}';
+                                                            });
+                                                          },
                                                   child: Center(
                                                     child: Column(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
                                                       children: [
                                                         Text(
-                                                          selectedWeek == 'Week ${index + 1}'
+                                                          selectedWeek ==
+                                                                  'Week ${index + 1}'
                                                               ? '当前内容: 第${index + 1}周'
                                                               : 'Week ${index + 1}',
                                                           style: TextStyle(
-                                                            color: selectedLevel == null 
-                                                                ? Colors.grey[600]
-                                                                : Colors.white,
-                                                            fontSize: ResponsiveSize.sp(24),
-                                                            fontWeight: FontWeight.bold,
+                                                            color:
+                                                                selectedLevel ==
+                                                                        null
+                                                                    ? Colors
+                                                                        .grey[600]
+                                                                    : Colors
+                                                                        .white,
+                                                            fontSize:
+                                                                ResponsiveSize.sp(
+                                                                  24,
+                                                                ),
+                                                            fontWeight:
+                                                                FontWeight.bold,
                                                           ),
                                                         ),
-                                                        if (selectedWeek != 'Week ${index + 1}')
+                                                        if (selectedWeek !=
+                                                            'Week ${index + 1}')
                                                           Text(
                                                             '第${index + 1}周',
                                                             style: TextStyle(
-                                                              color: selectedLevel == null 
-                                                                  ? Colors.grey[600]
-                                                                  : Colors.white,
-                                                              fontSize: ResponsiveSize.sp(20),
-                                                              fontWeight: FontWeight.bold,
+                                                              color:
+                                                                  selectedLevel ==
+                                                                          null
+                                                                      ? Colors
+                                                                          .grey[600]
+                                                                      : Colors
+                                                                          .white,
+                                                              fontSize:
+                                                                  ResponsiveSize.sp(
+                                                                    20,
+                                                                  ),
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
                                                             ),
                                                           ),
                                                       ],
@@ -364,11 +435,11 @@ class _ListeningPageState extends State<ListeningPage> {
                                           }),
                                         ),
                                       );
-                                    }
+                                    },
                                   ),
                                 ),
                               ),
-                                                            // 第三个白色方框（较宽）
+                              // 第三个白色方框（较宽）
                               Expanded(
                                 flex: 4,
                                 child: Container(
@@ -380,10 +451,18 @@ class _ListeningPageState extends State<ListeningPage> {
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(ResponsiveSize.w(20)),
-                                      bottomLeft: Radius.circular(ResponsiveSize.w(20)),
-                                      topRight: Radius.circular(ResponsiveSize.w(30)),
-                                      bottomRight: Radius.circular(ResponsiveSize.w(30)),
+                                      topLeft: Radius.circular(
+                                        ResponsiveSize.w(20),
+                                      ),
+                                      bottomLeft: Radius.circular(
+                                        ResponsiveSize.w(20),
+                                      ),
+                                      topRight: Radius.circular(
+                                        ResponsiveSize.w(30),
+                                      ),
+                                      bottomRight: Radius.circular(
+                                        ResponsiveSize.w(30),
+                                      ),
                                     ),
                                     boxShadow: [
                                       BoxShadow(
@@ -394,10 +473,13 @@ class _ListeningPageState extends State<ListeningPage> {
                                     ],
                                   ),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Padding(
-                                        padding: EdgeInsets.all(ResponsiveSize.w(15)),
+                                        padding: EdgeInsets.all(
+                                          ResponsiveSize.w(15),
+                                        ),
                                         child: Text(
                                           getCurrentContent(),
                                           style: TextStyle(
@@ -409,17 +491,20 @@ class _ListeningPageState extends State<ListeningPage> {
                                       ),
                                       const Divider(height: 1),
                                       Expanded(
-                                        child: selectedLevel == null || selectedWeek == null
-                                            ? Center(
-                                                child: Text(
-                                                  '请先选择级别和周数',
-                                                  style: TextStyle(
-                                                    fontSize: ResponsiveSize.sp(20),
-                                                    color: Colors.grey,
+                                        child:
+                                            selectedLevel == null ||
+                                                    selectedWeek == null
+                                                ? Center(
+                                                  child: Text(
+                                                    '请先选择级别和周数',
+                                                    style: TextStyle(
+                                                      fontSize:
+                                                          ResponsiveSize.sp(20),
+                                                      color: Colors.grey,
+                                                    ),
                                                   ),
-                                                ),
-                                              )
-                                            : buildContentGrid(),
+                                                )
+                                                : buildContentGrid(),
                                       ),
                                     ],
                                   ),
@@ -433,7 +518,7 @@ class _ListeningPageState extends State<ListeningPage> {
                   ),
                 ),
               ),
-              
+
               // 级别规则按钮
               Positioned(
                 left: ResponsiveSize.px(90),
@@ -485,7 +570,7 @@ class _ListeningPageState extends State<ListeningPage> {
                   ),
                 ),
               ),
-              
+
               // 返回按钮
               Positioned(
                 left: ResponsiveSize.w(50),
@@ -499,7 +584,7 @@ class _ListeningPageState extends State<ListeningPage> {
                   ),
                 ),
               ),
-              
+
               // 小孩图片放在最上层
               Positioned(
                 right: ResponsiveSize.px(170),
@@ -516,172 +601,177 @@ class _ListeningPageState extends State<ListeningPage> {
       ),
     );
   }
+
   void _showCongratulationsDialog() {
-  showDialog(
-    context: context,
-    barrierDismissible: false,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        backgroundColor: Colors.transparent,
-        contentPadding: EdgeInsets.zero,
-        content: Container(
-          constraints: BoxConstraints(
-            maxWidth: ResponsiveSize.w(500),  // 增加宽度
-            maxHeight: MediaQuery.of(context).size.height * 0.8,
-          ),
-          padding: EdgeInsets.all(ResponsiveSize.w(30)),  // 增加内边距
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(ResponsiveSize.w(40)),  // 增加圆角
-            border: Border.all(
-              color: const Color(0xFFFFD700),
-              width: ResponsiveSize.w(4),  // 加粗边框
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.transparent,
+          contentPadding: EdgeInsets.zero,
+          content: Container(
+            constraints: BoxConstraints(
+              maxWidth: ResponsiveSize.w(500), // 增加宽度
+              maxHeight: MediaQuery.of(context).size.height * 0.8,
             ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.yellow.withOpacity(0.3),
-                blurRadius: ResponsiveSize.w(25),
-                spreadRadius: ResponsiveSize.w(8),
+            padding: EdgeInsets.all(ResponsiveSize.w(30)), // 增加内边距
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(ResponsiveSize.w(40)), // 增加圆角
+              border: Border.all(
+                color: const Color(0xFFFFD700),
+                width: ResponsiveSize.w(4), // 加粗边框
               ),
-            ],
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  Icon(
-                    Icons.emoji_events,
-                    size: ResponsiveSize.w(150),  // 增大奖杯图标
-                    color: const Color(0xFFFFD700),
-                  ),
-                  Positioned(
-                    top: ResponsiveSize.h(15),
-                    left: ResponsiveSize.w(50),
-                    child: Icon(
-                      Icons.star,
-                      size: ResponsiveSize.w(50),  // 增大星星
-                      color: const Color(0xFFFFA000),
-                    ),
-                  ),
-                  Positioned(
-                    top: ResponsiveSize.h(35),
-                    right: ResponsiveSize.w(50),
-                    child: Icon(
-                      Icons.star,
-                      size: ResponsiveSize.w(50),  // 增大星星
-                      color: const Color(0xFFFFA000),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: ResponsiveSize.h(25)),
-              Text(
-                '太棒了！',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: ResponsiveSize.sp(40),  // 增大标题文字
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF5C3D2E),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.yellow.withOpacity(0.3),
+                  blurRadius: ResponsiveSize.w(25),
+                  spreadRadius: ResponsiveSize.w(8),
                 ),
-              ),
-              SizedBox(height: ResponsiveSize.h(15)),
-              Text(
-                '你完成了 $selectedLevel 的第${selectedWeek?.split(' ')[1]}周内容',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: ResponsiveSize.sp(28),  // 增大副标题文字
-                  color: Colors.grey[700],
-                ),
-              ),
-              SizedBox(height: ResponsiveSize.h(15)),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.favorite,
-                    color: Colors.red,
-                    size: ResponsiveSize.w(30),  // 增大爱心图标
-                  ),
-                  SizedBox(width: ResponsiveSize.w(10)),
-                  Text(
-                    '继续保持，你是最棒的！',
-                    style: TextStyle(
-                      fontSize: ResponsiveSize.sp(24),  // 增大鼓励文字
-                      color: const Color(0xFFF5A623),
+              ],
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Icon(
+                      Icons.emoji_events,
+                      size: ResponsiveSize.w(150), // 增大奖杯图标
+                      color: const Color(0xFFFFD700),
                     ),
-                  ),
-                  SizedBox(width: ResponsiveSize.w(10)),
-                  Icon(
-                    Icons.favorite,
-                    color: Colors.red,
-                    size: ResponsiveSize.w(30),  // 增大爱心图标
-                  ),
-                ],
-              ),
-              SizedBox(height: ResponsiveSize.h(40)),  // 增加按钮上方间距
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      // TODO: 实现分享功能
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF2BAE85),
-                      foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: ResponsiveSize.w(25),
-                        vertical: ResponsiveSize.h(15),  // 增加按钮高度
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(ResponsiveSize.w(25)),
+                    Positioned(
+                      top: ResponsiveSize.h(15),
+                      left: ResponsiveSize.w(50),
+                      child: Icon(
+                        Icons.star,
+                        size: ResponsiveSize.w(50), // 增大星星
+                        color: const Color(0xFFFFA000),
                       ),
                     ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.share),
-                        SizedBox(width: ResponsiveSize.w(8)),
-                        Text(
-                          '分享成就',
-                          style: TextStyle(
-                            fontSize: ResponsiveSize.sp(20),  // 增大按钮文字
+                    Positioned(
+                      top: ResponsiveSize.h(35),
+                      right: ResponsiveSize.w(50),
+                      child: Icon(
+                        Icons.star,
+                        size: ResponsiveSize.w(50), // 增大星星
+                        color: const Color(0xFFFFA000),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: ResponsiveSize.h(25)),
+                Text(
+                  '太棒了！',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: ResponsiveSize.sp(40), // 增大标题文字
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF5C3D2E),
+                  ),
+                ),
+                SizedBox(height: ResponsiveSize.h(15)),
+                Text(
+                  '你完成了 $selectedLevel 的第${selectedWeek?.split(' ')[1]}周内容',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: ResponsiveSize.sp(28), // 增大副标题文字
+                    color: Colors.grey[700],
+                  ),
+                ),
+                SizedBox(height: ResponsiveSize.h(15)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.favorite,
+                      color: Colors.red,
+                      size: ResponsiveSize.w(30), // 增大爱心图标
+                    ),
+                    SizedBox(width: ResponsiveSize.w(10)),
+                    Text(
+                      '继续保持，你是最棒的！',
+                      style: TextStyle(
+                        fontSize: ResponsiveSize.sp(24), // 增大鼓励文字
+                        color: const Color(0xFFF5A623),
+                      ),
+                    ),
+                    SizedBox(width: ResponsiveSize.w(10)),
+                    Icon(
+                      Icons.favorite,
+                      color: Colors.red,
+                      size: ResponsiveSize.w(30), // 增大爱心图标
+                    ),
+                  ],
+                ),
+                SizedBox(height: ResponsiveSize.h(40)), // 增加按钮上方间距
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        // TODO: 实现分享功能
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF2BAE85),
+                        foregroundColor: Colors.white,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: ResponsiveSize.w(25),
+                          vertical: ResponsiveSize.h(15), // 增加按钮高度
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveSize.w(25),
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(width: ResponsiveSize.w(20)),  // 增加按钮间距
-                  ElevatedButton(
-                    onPressed: () => Navigator.pop(context),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFF5A623),
-                      foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: ResponsiveSize.w(35),
-                        vertical: ResponsiveSize.h(15),  // 增加按钮高度
                       ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(ResponsiveSize.w(25)),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.share),
+                          SizedBox(width: ResponsiveSize.w(8)),
+                          Text(
+                            '分享成就',
+                            style: TextStyle(
+                              fontSize: ResponsiveSize.sp(20), // 增大按钮文字
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    child: Text(
-                      '继续学习',
-                      style: TextStyle(
-                        fontSize: ResponsiveSize.sp(20),  // 增大按钮文字
+                    SizedBox(width: ResponsiveSize.w(20)), // 增加按钮间距
+                    ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFF5A623),
+                        foregroundColor: Colors.white,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: ResponsiveSize.w(35),
+                          vertical: ResponsiveSize.h(15), // 增加按钮高度
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveSize.w(25),
+                          ),
+                        ),
+                      ),
+                      child: Text(
+                        '继续学习',
+                        style: TextStyle(
+                          fontSize: ResponsiveSize.sp(20), // 增大按钮文字
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
-        ),
-      );
-    },
-  );
-}
+        );
+      },
+    );
+  }
 }
