@@ -51,22 +51,6 @@ class _AccountLoginCardState extends State<AccountLoginCard> {
           _buildCheckboxRow(),
           SizedBox(height: ResponsiveSize.h(12)),
           _buildLoginButton(),
-          SizedBox(height: ResponsiveSize.h(10)),
-          TextButton(
-            onPressed: () {},
-            style: TextButton.styleFrom(
-              minimumSize: Size.zero,
-              padding: EdgeInsets.symmetric(vertical: ResponsiveSize.h(8)),
-            ),
-            child: Text(
-              '邀请码注册',
-              style: TextStyle(
-                fontSize: ResponsiveSize.sp(16),
-                fontWeight: FontWeight.w600,
-                color: _themeColor,
-              ),
-            ),
-          ),
         ],
       ),
     );
